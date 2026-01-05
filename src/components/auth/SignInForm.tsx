@@ -25,14 +25,14 @@ const basePhoneOptions = maskitoPhoneOptionsGenerator({
 
 const phoneOptions = {
   ...basePhoneOptions,
-  lazy: false, // +998 darhol ko'rinsin
+  lazy: false,
 };
 
 export default function SignInForm() {
   const inputRef = useMaskito({ options: phoneOptions });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState(""); // Maskali qiymat: +998 90 123 45 67
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
@@ -46,36 +46,37 @@ export default function SignInForm() {
       return;
     }
 
-    // Faqat raqamlarni olamiz: +998 90 123 45 67 → 998901234567
-    const cleanPhone = phone.replace(/\D/g, ""); // \D - raqam bo'lmagan hamma belgi
+    const cleanPhone = phone.replace(/\D/g, "");
 
-    // Tekshiruv: O'zbekiston raqami 998 bilan boshlanishi kerak
     if (!cleanPhone.startsWith("998")) {
       toast.error("Telefon raqam 998 bilan boshlanishi kerak!");
       return;
     }
 
-    // Agar backend + bilan xohlasa: "+" + cleanPhone
-    // Aks holda: cleanPhone (998901234567)
-
     try {
       const response = await loginMutation.mutateAsync({
-        phone: cleanPhone, // API'ga toza raqam yuboriladi: 998901234567
-        // agar backend +998901234567 xohlasa, quyidagicha qil:
-        // phone: "+" + cleanPhone,
+        phone: cleanPhone,
         password,
       });
 
-      if (response.success && response.data) {
-        const userRole = response.message as string;
-        const redirectPath = ROLE_REDIRECTS[userRole] || "/dashboard/teacher";
-
-        toast.success("Xush kelibsiz!");
-        navigate(redirectPath, { replace: true });
+      if (!response?.success) {
+        toast.error("Telefon raqam yoki parol noto‘g‘ri!");
+        return;
       }
+
+      const userRole = response.message as string;
+      const redirectPath = ROLE_REDIRECTS[userRole] || "/dashboard/teacher";
+
+      toast.success("Xush kelibsiz!");
+      navigate(redirectPath, { replace: true });
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error?.message || "Login xatolik!");
+
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Login vaqtida xatolik yuz berdi!"
+      );
     }
   };
 

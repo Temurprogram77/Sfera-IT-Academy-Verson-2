@@ -16,7 +16,7 @@ import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
+// import Home from "./pages/Dashboard/Home";
 import Admin from "./dashboards/admin";
 import SuperAdmin from "./dashboards/super_admin";
 import Teacher from "./dashboards/teacher";
@@ -28,6 +28,7 @@ import Parents from "./pages/Parents/Parents";
 import Attendance from "./pages/Attendance/Attendance";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
+import Grades from "./pages/Grades/Grades";
 
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
@@ -89,7 +90,7 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Home />} />
+          {/* <Route index element={<Home />} /> */}
           <Route path="dashboard/admin" element={<Admin />} />
           <Route path="dashboard/super_admin" element={<SuperAdmin />} />
           <Route path="dashboard/teacher" element={<Teacher />} />
@@ -97,6 +98,7 @@ export default function App() {
           <Route path="dashboard/parent" element={<Parent />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
+          <Route path="grades" element={<Grades />} />
           <Route path="parents" element={<Parents />} />
           <Route path="attendance" element={<Attendance />} />
           <Route path="groups" element={<Groups />} />
