@@ -58,7 +58,13 @@ const allNavItems: NavItem[] = [
     icon: <BoltIcon />,
     name: "Baholar",
     path: "/grades",
-    roles: ["ROLE_PARENT"],
+    roles: [
+      "ROLE_SUPER_ADMIN",
+      "ROLE_ADMIN",
+      "ROLE_TEACHER",
+      "ROLE_STUDENT",
+      "ROLE_PARENT",
+    ],
   },
   {
     icon: <GroupIcon />,
