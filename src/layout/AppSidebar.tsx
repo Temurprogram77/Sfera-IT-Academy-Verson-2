@@ -38,9 +38,27 @@ const allNavItems: NavItem[] = [
   },
   {
     icon: <GridIcon />,
-    name: "Boshqaruv panelii",
+    name: "Student dashboard",
+    path: "/dashboard/student",
+    roles: ["ROLE_STUDENT"],
+  },
+  {
+    icon: <GridIcon />,
+    name: "Boshqaruv paneli",
     path: "/dashboard/admin",
     roles: ["ROLE_ADMIN"],
+  },
+  {
+    icon: <GridIcon />,
+    name: "Boshqaruv paneli",
+    path: "/dashboard/teacher",
+    roles: ["ROLE_TEACHER"],
+  },
+  {
+    icon: <GridIcon />,
+    name: "Boshqaruv paneli",
+    path: "/dashboard/parent",
+    roles: ["ROLE_PARENT"],
   },
   {
     icon: <UserIcon />,
