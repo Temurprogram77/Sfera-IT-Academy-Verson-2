@@ -1,22 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Language } from "../../icons";
 
 export default function SelectLanguage() {
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState<"uz" | "uz_cy">("uz");
+
+  // i18n.language bilan state-ni moslashtiramiz
+  const [currentLang, setCurrentLang] = useState<"uz" | "uz_cy">(
+    i18n.language === "uz_cy" ? "uz_cy" : "uz"
+  );
 
   const toggleDropdown = () => setIsOpen(!isOpen);
   const closeDropdown = () => setIsOpen(false);
 
   const changeLanguage = (lang: "uz" | "uz_cy") => {
-    setCurrentLang(lang);
+    setCurrentLang(lang); // dropdown-da tanlangan tilni ko'rsatadi
+    i18n.changeLanguage(lang); // i18n bilan tilni o'zgartiradi
+    console.log("Tanlangan til:", lang); // <-- bu yerga qo'shildi
     closeDropdown();
-
-    // agar i18n yoki context ishlatsangiz shu yerda ulaysiz
-    // i18n.changeLanguage(lang);
   };
+
+  useEffect(() => {
+    setCurrentLang(i18n.language === "uz_cy" ? "uz_cy" : "uz");
+  }, [i18n.language]);
 
   return (
     <div className="relative">
@@ -41,9 +50,7 @@ export default function SelectLanguage() {
             <DropdownItem
               onItemClick={() => changeLanguage("uz")}
               className={`flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/5 ${
-                currentLang === "uz"
-                  ? "bg-gray-100 dark:bg-white/10"
-                  : ""
+                currentLang === "uz" ? "bg-gray-100 dark:bg-white/10" : ""
               }`}
             >
               <span className="text-sm text-gray-800 dark:text-gray-200">
@@ -52,13 +59,12 @@ export default function SelectLanguage() {
             </DropdownItem>
           </li>
 
+          {/* Krillcha O'zbek */}
           <li>
             <DropdownItem
               onItemClick={() => changeLanguage("uz_cy")}
               className={`flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/5 ${
-                currentLang === "uz_cy"
-                  ? "bg-gray-100 dark:bg-white/10"
-                  : ""
+                currentLang === "uz_cy" ? "bg-gray-100 dark:bg-white/10" : ""
               }`}
             >
               <span className="text-sm text-gray-800 dark:text-gray-200">

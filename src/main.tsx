@@ -12,6 +12,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/tanstack";
 
 import { ConfigProvider } from "antd";
+import "./i18n";
 
 const antTheme = {
   token: {
