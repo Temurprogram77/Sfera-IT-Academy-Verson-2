@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BoltIcon,
-  BoxCubeIcon,
   BoxIcon,
   CalenderIcon,
   CheckCircleIcon,
@@ -10,11 +9,6 @@ import {
   GridIcon,
   GroupIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
   UserCircleIcon,
   UserIcon,
 } from "../icons";
@@ -133,62 +127,9 @@ const allNavItems: NavItem[] = [
     ],
   },
   // UI va test sahifalari faqat SUPER_ADMIN ga
-  {
-    icon: <ListIcon />,
-    name: "Formalar",
-    subItems: [{ name: "Forma elementlari", path: "/form-elements" }],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
-  {
-    icon: <TableIcon />,
-    name: "Jadvallar",
-    subItems: [{ name: "Oddiy jadvallar", path: "/basic-tables" }],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
-  {
-    icon: <PageIcon />,
-    name: "Sahifalar",
-    subItems: [
-      { name: "Bo'sh sahifa", path: "/blank" },
-      { name: "404 Xato", path: "/error-404" },
-    ],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
 ];
 
-const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Diagrammalar",
-    subItems: [
-      { name: "Chiziqli diagramma", path: "/line-chart" },
-      { name: "Ustunli diagramma", path: "/bar-chart" },
-    ],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI elementlari",
-    subItems: [
-      { name: "Ogohlantirishlar", path: "/alerts" },
-      { name: "Avatar", path: "/avatars" },
-      { name: "Belgilar", path: "/badge" },
-      { name: "Tugmalar", path: "/buttons" },
-      { name: "Rasmlar", path: "/images" },
-      { name: "Videolar", path: "/videos" },
-    ],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Autentifikatsiya",
-    subItems: [
-      { name: "Kirish", path: "/signin" },
-      { name: "Ro'yxatdan o'tish", path: "/signup" },
-    ],
-    roles: ["ROLE_SUPER_ADMIN"],
-  },
-];
+// const othersItems: NavItem[] = [];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered } = useSidebar();
@@ -204,6 +145,8 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  const role = localStorage.getItem("user_role");
+
   useEffect(() => {
     const role = authService.getRole();
     setCurrentRole(role);
@@ -214,33 +157,33 @@ const AppSidebar: React.FC = () => {
     (item) => currentRole && item.roles.includes(currentRole)
   );
 
-  const filteredOthersItems = othersItems.filter(
-    (item) => currentRole && item.roles.includes(currentRole)
-  );
+  // const filteredOthersItems = othersItems.filter(
+  //   (item) => currentRole && item.roles.includes(currentRole)
+  // );
 
   const isActive = useCallback(
     (path: string) => location.pathname.startsWith(path),
     [location.pathname]
   );
 
-  useEffect(() => {
-    let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items =
-        menuType === "main" ? filteredNavItems : filteredOthersItems;
-      items.forEach((nav, index) => {
-        if (nav.subItems) {
-          nav.subItems.forEach((subItem) => {
-            if (isActive(subItem.path)) {
-              setOpenSubmenu({ type: menuType as "main" | "others", index });
-              submenuMatched = true;
-            }
-          });
-        }
-      });
-    });
-    if (!submenuMatched) setOpenSubmenu(null);
-  }, [location, isActive, filteredNavItems, filteredOthersItems]);
+  // useEffect(() => {
+  //   let submenuMatched = false;
+  //   ["main", "others"].forEach((menuType) => {
+  //     const items =
+  //       menuType === "main" ? filteredNavItems : filteredOthersItems;
+  //     items.forEach((nav, index) => {
+  //       if (nav.subItems) {
+  //         nav.subItems.forEach((subItem) => {
+  //           if (isActive(subItem.path)) {
+  //             setOpenSubmenu({ type: menuType as "main" | "others", index });
+  //             submenuMatched = true;
+  //           }
+  //         });
+  //       }
+  //     });
+  //   });
+  //   if (!submenuMatched) setOpenSubmenu(null);
+  // }, [location, isActive, filteredNavItems, filteredOthersItems]);
 
   useEffect(() => {
     if (openSubmenu !== null) {
@@ -365,13 +308,21 @@ const AppSidebar: React.FC = () => {
     return null;
   }
 
+  const rolePathMap: Record<string, string> = {
+    ROLE_ADMIN: "/dashboard/admin",
+    ROLE_SUPER_ADMIN: "/dashboard/super_admin",
+    ROLE_TEACHER: "/dashboard/teacher",
+    ROLE_STUDENT: "/dashboard/student",
+    ROLE_PARENT: "/dashboard/parent",
+  };
+
+  const homePath = rolePathMap[role] || "/";
+
   return (
     <aside
-      className={`fixed mt-16 px-3 flex flex-col lg:mt-0 top-0 left-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 h-screen transition-all ease-in-out z-50 border-r border-gray-200 dark:border-gray-700
+      className={`fixed mt-24 px-3 flex flex-col lg:mt-0 top-0 left-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 h-screen transition-all ease-in-out z-50 border-r border-gray-200 dark:border-gray-700
         ${isExpanded || isHovered ? "w-[290px]" : "w-[90px]"} 
-        ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} translate-x-0`}
     >
       {/* Logo */}
       <div
@@ -379,23 +330,31 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/">
+        <Link to={homePath}>
           {isExpanded || isHovered || isMobileOpen ? (
-            <div className="flex items-center gap-2">
-              <img
-                className="w-[60px] h-[60px] object-contain dark:hidden"
-                src="/images/logoOne.png"
-                alt="Logo"
-              />
-              <img
-                className="w-[60px] h-[60px] object-contain hidden dark:block"
-                src="/images/logoTwo.png"
-                alt="Logo Dark"
-              />
-              <span className="text-[33px] leading-6 font-bold dark:text-gray-200">
-                Sfera Academy
-              </span>
-            </div>
+            role === "ROLE_STUDENT" ? (
+              <div className="flex items-center gap-2">
+                <span className="text-[33px] font-bold dark:text-gray-200">
+                  Sfera Student
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <img
+                  className="w-[60px] h-[60px] object-contain dark:hidden"
+                  src="/images/logoOne.png"
+                  alt="Logo"
+                />
+                <img
+                  className="w-[60px] h-[60px] object-contain hidden dark:block"
+                  src="/images/logoTwo.png"
+                  alt="Logo Dark"
+                />
+                <span className="text-[33px] leading-6 font-bold dark:text-gray-200">
+                  Sfera Academy
+                </span>
+              </div>
+            )
           ) : (
             <img src="/images/logoOne.png" alt="Logo" width={32} height={32} />
           )}
@@ -425,7 +384,7 @@ const AppSidebar: React.FC = () => {
               </div>
             )}
 
-            {filteredOthersItems.length > 0 && (
+            {/* {filteredOthersItems.length > 0 && (
               <div>
                 <h2
                   className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 dark:text-gray-500 ${
@@ -442,7 +401,7 @@ const AppSidebar: React.FC = () => {
                 </h2>
                 {renderMenuItems(filteredOthersItems, "others")}
               </div>
-            )}
+            )} */}
           </div>
         </nav>
       </div>
