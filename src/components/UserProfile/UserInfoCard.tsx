@@ -11,7 +11,6 @@ export default function UserInfoCard() {
     console.log("Saving changes...");
     closeModal();
   };
-  const role = localStorage.getItem("user_role") || "Role";
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -26,7 +25,7 @@ export default function UserInfoCard() {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {role}
+                role
               </p>
             </div>
 

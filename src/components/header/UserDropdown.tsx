@@ -22,7 +22,6 @@ export default function UserDropdown() {
 
     closeDropdown();
   }
-  const role = localStorage.getItem("user_role") || "Role";
 
   return (
     <div className="relative">
@@ -33,7 +32,7 @@ export default function UserDropdown() {
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
           <img src="/images/logoOne.png" alt="User" />
         </span>
-        <span className="block mr-1 font-medium text-theme-sm">{role}</span>
+        <span className="block mr-1 font-medium text-theme-sm">Role</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
