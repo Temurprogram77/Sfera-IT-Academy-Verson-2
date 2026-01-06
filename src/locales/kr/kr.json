@@ -38,5 +38,9 @@
   "yes": "Ҳа",
   "no": "Йўқ",
   "confirm_delete": "Ҳақиқатан ҳам ўчирмоқчимисиз?",
-  "select_language": "Тилни танланг"
+  "select_language": "Тилни танланг",
+  "edit_profile": "Профилни таҳрирлаш",
+  "account_settings": "Аккаунт созламалари",
+  "support": "Ёрдам",
+  "sign_out": "Чиқиш"
 }

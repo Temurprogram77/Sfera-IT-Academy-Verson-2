@@ -38,6 +38,9 @@
   "yes": "Ha",
   "no": "Yo‘q",
   "confirm_delete": "Haqiqatan ham o‘chirmoqchimisiz?",
- "select_language": "Tilni tanlang"
-
+ "select_language": "Tilni tanlang",
+  "edit_profile": "Profilni tahrirlash",
+  "account_settings": "Akkaunt sozlamalari",
+  "support": "Yordam",
+  "sign_out": "Chiqish"
 }

@@ -3,6 +3,7 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { authService } from "../../services/authService ";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function UserDropdown() {
 
     closeDropdown();
   }
-
+  const {t}=useTranslation()
   return (
     <div className="relative">
       <button
@@ -72,17 +73,17 @@ export default function UserDropdown() {
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
             <DropdownItem onItemClick={closeDropdown} tag="a" to="/profile">
-              Edit profile
+              {t("edit_profile")}
             </DropdownItem>
           </li>
           <li>
             <DropdownItem onItemClick={closeDropdown} tag="a" to="/profile">
-              Account settings
+              {t("account_settings")}
             </DropdownItem>
           </li>
           <li>
             <DropdownItem onItemClick={closeDropdown} tag="a" to="/profile">
-              Support
+              {t("support")}
             </DropdownItem>
           </li>
         </ul>
@@ -92,7 +93,7 @@ export default function UserDropdown() {
           onClick={handleSignOut}
           className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
-          Sign out
+          {t("sign_out")}
         </button>
       </Dropdown>
     </div>
