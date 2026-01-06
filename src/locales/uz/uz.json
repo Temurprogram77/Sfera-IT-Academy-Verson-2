@@ -37,5 +37,7 @@
   "child_name": "Talaba ismi",
   "yes": "Ha",
   "no": "Yo‘q",
-  "confirm_delete": "Haqiqatan ham o‘chirmoqchimisiz?"
+  "confirm_delete": "Haqiqatan ham o‘chirmoqchimisiz?",
+ "select_language": "Tilni tanlang"
+
 }

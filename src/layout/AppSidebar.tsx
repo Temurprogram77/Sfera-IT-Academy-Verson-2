@@ -25,7 +25,7 @@ type NavItem = {
 };
 
 const AppSidebar: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isExpanded, isMobileOpen, isHovered } = useSidebar();
   const location = useLocation();
 
@@ -152,7 +152,7 @@ const AppSidebar: React.FC = () => {
         ],
       },
     ],
-    [t]
+    [t,i18n.language]
   );
 
   const filteredNavItems = allNavItems.filter(

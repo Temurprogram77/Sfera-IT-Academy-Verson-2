@@ -29,7 +29,7 @@ import Attendance from "./pages/Attendance/Attendance";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
-
+import "./i18n";
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
   const ROLE_REDIRECTS: Record<string, string> = {

@@ -1,31 +1,31 @@
-import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { Language } from "../../icons";
+import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
+import { Dropdown } from "../ui/dropdown/Dropdown"
+import { DropdownItem } from "../ui/dropdown/DropdownItem"
+import { Language } from "../../icons"
+
+type Lang = "uz" | "kr"
 
 export default function SelectLanguage() {
-  const { i18n } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation()
+  const savedLang = (localStorage.getItem("lang") as Lang) || "uz"
+  const [currentLang, setCurrentLang] = useState<Lang>(savedLang)
+  const [isOpen, setIsOpen] = useState(false)
 
-  // i18n.language bilan state-ni moslashtiramiz
-  const [currentLang, setCurrentLang] = useState<"uz" | "uz_cy">(
-    i18n.language === "uz_cy" ? "uz_cy" : "uz"
-  );
+  const toggleDropdown = () => setIsOpen(!isOpen)
+  const closeDropdown = () => setIsOpen(false)
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
-  const closeDropdown = () => setIsOpen(false);
-
-  const changeLanguage = (lang: "uz" | "uz_cy") => {
-    setCurrentLang(lang); // dropdown-da tanlangan tilni ko'rsatadi
-    i18n.changeLanguage(lang); // i18n bilan tilni o'zgartiradi
-    console.log("Tanlangan til:", lang); // <-- bu yerga qo'shildi
-    closeDropdown();
-  };
+  const changeLanguage = async (lang: Lang) => {
+    await i18n.changeLanguage(lang)
+    localStorage.setItem("lang", lang)
+    setCurrentLang(lang)
+    closeDropdown()
+  }
 
   useEffect(() => {
-    setCurrentLang(i18n.language === "uz_cy" ? "uz_cy" : "uz");
-  }, [i18n.language]);
+    if (i18n.language.startsWith("kr")) setCurrentLang("kr")
+    else setCurrentLang("uz")
+  }, [i18n.language])
 
   return (
     <div className="relative">
@@ -42,7 +42,7 @@ export default function SelectLanguage() {
         className="absolute right-0 mt-3 w-[220px] rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
         <h5 className="px-3 py-2 text-sm font-semibold text-gray-800 dark:text-gray-200">
-          Tilni tanlang
+          {t("select_language")}
         </h5>
 
         <ul className="flex flex-col">
@@ -59,12 +59,11 @@ export default function SelectLanguage() {
             </DropdownItem>
           </li>
 
-          {/* Krillcha O'zbek */}
           <li>
             <DropdownItem
-              onItemClick={() => changeLanguage("uz_cy")}
+              onItemClick={() => changeLanguage("kr")}
               className={`flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-gray-100 dark:hover:bg-white/5 ${
-                currentLang === "uz_cy" ? "bg-gray-100 dark:bg-white/10" : ""
+                currentLang === "kr" ? "bg-gray-100 dark:bg-white/10" : ""
               }`}
             >
               <span className="text-sm text-gray-800 dark:text-gray-200">
@@ -75,5 +74,5 @@ export default function SelectLanguage() {
         </ul>
       </Dropdown>
     </div>
-  );
+  )
 }
