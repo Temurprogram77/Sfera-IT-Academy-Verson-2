@@ -8,9 +8,8 @@ import {
   Select,
   Popconfirm,
   message,
-  Input as AntInput,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialStudents = [
@@ -158,35 +157,27 @@ const Students = () => {
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Header — Teachers bilan bir xil */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            Talabalar soni:{" "}
-            <span className="font-bold text-gray-900">
-              {filteredStudents.length}
-            </span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder="Talabani qidirish..."
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              <span className="text-[30px]">+</span>
-              Talaba qo‘shish
-            </button>
-          </div>
-        </div>
-      </div>
+      <ListHeader
+        title="Talabalar soni"
+        count={filteredStudents.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Talabani qidirish..."
+        buttonText="Talaba qo‘shish"
+        onButtonClick={() => showModal()}
+      >
+        {/* Ixtiyoriy filter (kerak bo‘lsa) */}
+        {/* <Select
+          allowClear
+          placeholder="Guruh bo‘yicha"
+          className="w-44"
+          options={[
+            { value: "Frontend", label: "Frontend" },
+            { value: "Backend", label: "Backend" },
+            { value: "Python", label: "Python" },
+          ]}
+        /> */}
+      </ListHeader>
 
       {/* Table */}
       <Table

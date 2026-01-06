@@ -8,9 +8,8 @@ import {
   Select,
   Popconfirm,
   message,
-  Input as AntInput,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialTeachers = [
@@ -199,36 +198,28 @@ const Teachers = () => {
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Tepa qism: soni + search + tugma (rasmga mos dizayn) */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            O'qituvchilar soni:{" "}
-            <span className="font-bold text-gray-900">
-              {filteredTeachers.length}
-            </span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder="O'qituvchini qidirish..."
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              {/* <PlusIcon className="w-5 h-5" /> */}
-              <span className="text-[30px]">+</span>
-              O'qituvchi qo'shish
-            </button>
-          </div>
-        </div>
-      </div>
+      <ListHeader
+        title="O'qituvchilar soni"
+        count={filteredTeachers.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="O'qituvchini qidirish..."
+        buttonText="O'qituvchi qo'shish"
+        onButtonClick={() => showModal()}
+      >
+        {/* IXTİYORİY QO‘SHİMCHA FILTER */}
+        {/* <Select
+          allowClear
+          placeholder="Fan bo‘yicha"
+          className="w-full sm:w-44 h-10"
+          options={[
+            { value: "Frontend", label: "Frontend" },
+            { value: "Backend", label: "Backend" },
+            { value: "Python", label: "Python" },
+            { value: "Java", label: "Java" },
+          ]}
+        /> */}
+      </ListHeader>
 
       {/* Jadval */}
       <Table

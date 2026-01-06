@@ -1,14 +1,45 @@
 import { useState } from "react";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
-import { Table, Modal, Form, Input, Select, Popconfirm, message, Input as AntInput } from "antd";
+import {
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Popconfirm,
+  message,
+  Input as AntInput,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialParents = [
-  { id: 1, name: "Karimov Anvar", student: "Aliyev Jamshid", phone: "+998 90 555 66 77", email: "anvar@parent.uz", status: "active" },
-  { id: 2, name: "Qodirova Dilnoza", student: "Qodirova Mohira", phone: "+998 91 666 77 88", email: "dilnoza@parent.uz", status: "active" },
-  { id: 3, name: "Rustamov Bahodir", student: "Rustamov Aziz", phone: "+998 99 777 88 99", email: "bahodir@parent.uz", status: "on_leave" },
+  {
+    id: 1,
+    name: "Karimov Anvar",
+    student: "Aliyev Jamshid",
+    phone: "+998 90 555 66 77",
+    email: "anvar@parent.uz",
+    status: "active",
+  },
+  {
+    id: 2,
+    name: "Qodirova Dilnoza",
+    student: "Qodirova Mohira",
+    phone: "+998 91 666 77 88",
+    email: "dilnoza@parent.uz",
+    status: "active",
+  },
+  {
+    id: 3,
+    name: "Rustamov Bahodir",
+    student: "Rustamov Aziz",
+    phone: "+998 99 777 88 99",
+    email: "bahodir@parent.uz",
+    status: "on_leave",
+  },
 ];
 
 const Parents = () => {
@@ -62,7 +93,9 @@ const Parents = () => {
             <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{record.name}</div>
+            <div className="text-sm font-medium text-gray-900">
+              {record.name}
+            </div>
             <div className="text-sm text-gray-500">{record.email}</div>
           </div>
         </div>
@@ -89,7 +122,10 @@ const Parents = () => {
       title: t("actions"),
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
+          <button
+            onClick={() => showModal(record)}
+            className="text-brand-600 hover:text-brand-800"
+          >
             <PencilIcon className="w-5 h-5" />
           </button>
           <Popconfirm
@@ -110,33 +146,27 @@ const Parents = () => {
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            {t("total_parents")}:{" "}
-            <span className="font-bold text-gray-900">{filteredParents.length}</span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder={t("search_parent")}
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              <span className="text-[30px]">+</span>
-              {t("add_parent")}
-            </button>
-          </div>
-        </div>
-      </div>
+      <ListHeader
+        title={t("total_parents")}
+        count={filteredParents.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder={t("search_parent")}
+        buttonText={t("add_parent")}
+        onButtonClick={() => showModal()}
+      >
+        {/* Ixtiyoriy filter, masalan: farzandning kursi bo‘yicha */}
+        {/* <Select
+          allowClear
+          placeholder={t("filter_by_course")}
+          className="w-44"
+          options={[
+            { value: "Frontend", label: "Frontend" },
+            { value: "Backend", label: "Backend" },
+            { value: "Python", label: "Python" },
+          ]}
+        /> */}
+      </ListHeader>
 
       {/* Table */}
       <Table
@@ -147,8 +177,18 @@ const Parents = () => {
           pageSize: 10,
           showSizeChanger: false,
           itemRender: (page, type, originalElement) => {
-            if (type === "prev") return <button className="px-3 py-1 border rounded">{t("prev")}</button>;
-            if (type === "next") return <button className="px-3 py-1 border rounded">{t("next")}</button>;
+            if (type === "prev")
+              return (
+                <button className="px-3 py-1 border rounded">
+                  {t("prev")}
+                </button>
+              );
+            if (type === "next")
+              return (
+                <button className="px-3 py-1 border rounded">
+                  {t("next")}
+                </button>
+              );
             return originalElement;
           },
         }}
@@ -164,26 +204,48 @@ const Parents = () => {
         cancelText={t("cancel")}
         width={600}
         zIndex={1000}
-        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
+        okButtonProps={{
+          style: { backgroundColor: "#18A752", border: "none" },
+        }}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label={t("full_name")} rules={[{ required: true }]}>
+          <Form.Item
+            name="name"
+            label={t("full_name")}
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="student" label={t("child")} rules={[{ required: true }]}>
+          <Form.Item
+            name="student"
+            label={t("child")}
+            rules={[{ required: true }]}
+          >
             <Input placeholder={t("child_name")} />
           </Form.Item>
 
-          <Form.Item name="phone" label={t("phone")} rules={[{ required: true }]}>
+          <Form.Item
+            name="phone"
+            label={t("phone")}
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="email" label={t("email")} rules={[{ required: true, type: "email" }]}>
+          <Form.Item
+            name="email"
+            label={t("email")}
+            rules={[{ required: true, type: "email" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="status" label={t("status")} rules={[{ required: true }]}>
+          <Form.Item
+            name="status"
+            label={t("status")}
+            rules={[{ required: true }]}
+          >
             <Select placeholder={t("select_status")}>
               <Select.Option value="active">{t("active")}</Select.Option>
               <Select.Option value="on_leave">{t("on_leave")}</Select.Option>

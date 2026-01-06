@@ -11,6 +11,7 @@ import {
   Input as AntInput,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialGroups = [
@@ -64,16 +65,11 @@ const Groups = () => {
     form.validateFields().then((values) => {
       if (editingGroup) {
         setGroups((prev) =>
-          prev.map((g) =>
-            g.id === editingGroup.id ? { ...g, ...values } : g
-          )
+          prev.map((g) => (g.id === editingGroup.id ? { ...g, ...values } : g))
         );
         message.success("Guruh muvaffaqiyatli yangilandi!");
       } else {
-        setGroups((prev) => [
-          ...prev,
-          { id: Date.now(), ...values },
-        ]);
+        setGroups((prev) => [...prev, { id: Date.now(), ...values }]);
         message.success("Yangi guruh muvaffaqiyatli qo‘shildi!");
       }
       setIsModalVisible(false);
@@ -98,9 +94,7 @@ const Groups = () => {
             <div className="text-sm font-medium text-gray-900">
               {record.name}
             </div>
-            <div className="text-sm text-gray-500">
-              {record.course}
-            </div>
+            <div className="text-sm text-gray-500">{record.course}</div>
           </div>
         </div>
       ),
@@ -161,35 +155,27 @@ const Groups = () => {
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            Guruhlar soni:{" "}
-            <span className="font-bold text-gray-900">
-              {filteredGroups.length}
-            </span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder="Guruhni qidirish..."
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              <span className="text-[30px]">+</span>
-              Guruh qo‘shish
-            </button>
-          </div>
-        </div>
-      </div>
+      <ListHeader
+        title="Guruhlar soni"
+        count={filteredGroups.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Guruhni qidirish..."
+        buttonText="Guruh qo‘shish"
+        onButtonClick={() => showModal()}
+      >
+        {/* Ixtiyoriy filter */}
+        {/* <Select
+          allowClear
+          placeholder="Kurs bo‘yicha"
+          className="w-44"
+          options={[
+            { value: "Frontend", label: "Frontend" },
+            { value: "Backend", label: "Backend" },
+            { value: "Python", label: "Python" },
+          ]}
+        /> */}
+      </ListHeader>
 
       {/* Table */}
       <Table
@@ -202,15 +188,11 @@ const Groups = () => {
           itemRender: (page, type, originalElement) => {
             if (type === "prev")
               return (
-                <button className="px-3 py-1 border rounded">
-                  Oldingi
-                </button>
+                <button className="px-3 py-1 border rounded">Oldingi</button>
               );
             if (type === "next")
               return (
-                <button className="px-3 py-1 border rounded">
-                  Keyingi
-                </button>
+                <button className="px-3 py-1 border rounded">Keyingi</button>
               );
             return originalElement;
           },
@@ -219,9 +201,7 @@ const Groups = () => {
 
       {/* Modal */}
       <Modal
-        title={
-          editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"
-        }
+        title={editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
@@ -242,11 +222,7 @@ const Groups = () => {
             <Input placeholder="Masalan: FE-01" />
           </Form.Item>
 
-          <Form.Item
-            name="course"
-            label="Kurs"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
             <Input placeholder="Masalan: Frontend" />
           </Form.Item>
 
@@ -266,11 +242,7 @@ const Groups = () => {
             <Input type="number" min={0} />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="Holati"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
             <Select placeholder="Holatini tanlang">
               <Select.Option value="Faol">Faol</Select.Option>
               <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
