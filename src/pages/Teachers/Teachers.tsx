@@ -188,12 +188,13 @@ const Teachers = () => {
           columns={columns}
           dataSource={filteredTeachers}
           rowKey="id"
+          className="dark:bg-black"
           pagination={{
             pageSize: 10,
             showSizeChanger: false,
             itemRender: (page, type, originalElement) => {
-              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
-              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
+              if (type === "prev") return <button className="px-3 py-1 border rounded dark:text-white">{t("prev")}</button>;
+              if (type === "next") return <button className="px-3 py-1 border rounded dark:text-white">{t("next")}</button>;
               return originalElement;
             },
           }}

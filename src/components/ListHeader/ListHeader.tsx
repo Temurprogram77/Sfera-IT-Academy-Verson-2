@@ -16,17 +16,17 @@ interface ListHeaderProps {
 }
 
 /* ===== Component ===== */
-const {t}=useTranslation()
 const ListHeader: React.FC<ListHeaderProps> = ({
   title,
   count,
   searchValue,
   onSearchChange,
-  searchPlaceholder = t("search"),
+  searchPlaceholder ="search",
   buttonText,
   onButtonClick,
   children,
 }) => {
+const {t}=useTranslation()
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:border-[#1d2939] dark:bg-black p-4 mb-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -39,7 +39,7 @@ const ListHeader: React.FC<ListHeaderProps> = ({
           {children}
 
           <AntInput
-            placeholder={searchPlaceholder}
+            placeholder={t(searchPlaceholder)}
             prefix={<SearchOutlined className="text-gray-400" />}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
