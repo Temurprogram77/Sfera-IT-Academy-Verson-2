@@ -283,23 +283,17 @@ const AppSidebar: React.FC = () => {
 
   return (
    <aside
-  className={`
-    fixed top-0 left-0 h-screen bg-white dark:bg-gray-900 
-    text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700
-    z-50 transition-all duration-300 ease-in-out overflow-hidden
-
-    /* Desktop holati (lg va undan katta) */
-    lg:w-${isExpanded || isHovered ? "[290px]" : "[90px]"}
-    lg:translate-x-0
-    lg:px-5
-
-    /* Mobil holati (< lg) */
-    ${isMobileOpen 
-      ? "w-[85vw] max-w-[320px] translate-x-0 px-5 shadow-2xl" 
-      : "w-0 -translate-x-full"
-    }
-  `}
->
+      className={`fixed md:mt-16 m-0 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+        ${
+          isExpanded || isMobileOpen
+            ? "w-[290px]"
+            : isHovered
+            ? "w-[290px]"
+            : "w-[90px]"
+        }
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0`}
+    >
       {/* Logo */}
       <div
         className={`py-5 flex ${
