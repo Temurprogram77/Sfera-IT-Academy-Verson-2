@@ -1,69 +1,43 @@
 import { useState } from "react";
-import { Table, Tag, Input, Button, Modal, Select, message } from "antd";
+import { Table, Tag, Modal, Form, Input, Select, Button, Popconfirm } from "antd";
+import { PencilIcon, TrashBinIcon } from "../../icons";
 import { SearchOutlined } from "@ant-design/icons";
+import { toast, Toaster } from "sonner";
 
-// Attendance data tipi
 interface AttendanceRecord {
   id: number;
   student: string;
   course: string;
   group: string;
   date: string;
-  status: "Present" | "Absent";
+  status: "Kelgan" | "Kelmagan";
 }
 
-// Static sample data
 const initialAttendance: AttendanceRecord[] = [
-  {
-    id: 1,
-    student: "Aliyev Jamshid",
-    course: "Frontend",
-    group: "FE-01",
-    date: "2025-12-27",
-    status: "Present",
-  },
-  {
-    id: 2,
-    student: "Qodirova Mohira",
-    course: "Backend",
-    group: "BE-02",
-    date: "2025-12-27",
-    status: "Absent",
-  },
-  {
-    id: 3,
-    student: "Rustamov Aziz",
-    course: "Python",
-    group: "PY-01",
-    date: "2025-12-27",
-    status: "Present",
-  },
+  { id: 1, student: "Aliyev Jamshid", course: "Frontend", group: "FE-01", date: "2025-12-27", status: "Kelgan" },
+  { id: 2, student: "Qodirova Mohira", course: "Backend", group: "BE-02", date: "2025-12-27", status: "Kelmagan" },
+  { id: 3, student: "Rustamov Aziz", course: "Python", group: "PY-01", date: "2025-12-27", status: "Kelgan" },
 ];
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState(initialAttendance);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | null>(
-    null
-  );
+  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | null>(null);
+  const [form] = Form.useForm();
 
   // Qidiruv
   const filteredData = attendance.filter(
-    (record) =>
-      record.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.group.toLowerCase().includes(searchTerm.toLowerCase())
+    (r) =>
+      r.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.group.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const showModal = (record: AttendanceRecord | null = null) => {
     setEditingRecord(record);
+    form.setFieldsValue(record || { student: "", course: "", group: "", date: "", status: "Kelgan" });
     setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setEditingRecord(null);
   };
 
   const handleSave = (values: any) => {
@@ -71,17 +45,19 @@ const Attendance = () => {
       setAttendance((prev) =>
         prev.map((r) => (r.id === editingRecord.id ? { ...r, ...values } : r))
       );
-      message.success("Attendance record updated!");
+      toast.success("Davomat ma'lumotlari yangilandi!");
     } else {
       setAttendance((prev) => [...prev, { id: Date.now(), ...values }]);
-      message.success("New attendance record added!");
+      toast.success("Yangi davomat ma'lumotlari qo‘shildi!");
     }
-    handleCancel();
+    setIsModalVisible(false);
+    setEditingRecord(null);
+    form.resetFields();
   };
 
   const handleDelete = (id: number) => {
     setAttendance((prev) => prev.filter((r) => r.id !== id));
-    message.success("Record deleted!");
+    toast.success("Davomat ma'lumotlari o‘chirildi!");
   };
 
   const columns = [
@@ -89,29 +65,21 @@ const Attendance = () => {
       title: "Talaba",
       dataIndex: "student",
       key: "student",
+      render: (text: string) => <div className="font-medium text-gray-800">{text}</div>,
     },
-    {
-      title: "Kurs",
-      dataIndex: "course",
-      key: "course",
-    },
-    {
-      title: "Guruh",
-      dataIndex: "group",
-      key: "group",
-    },
-    {
-      title: "Sana",
-      dataIndex: "date",
-      key: "date",
-    },
+    { title: "Kurs", dataIndex: "course", key: "course", render: (t: string) => <span className="text-gray-600">{t}</span> },
+    { title: "Guruh", dataIndex: "group", key: "group", render: (t: string) => <span className="text-gray-600">{t}</span> },
+    { title: "Sana", dataIndex: "date", key: "date", render: (d: string) => <span className="text-gray-600">{d}</span> },
     {
       title: "Holati",
       dataIndex: "status",
       key: "status",
       render: (status: string) => (
-        <Tag color={status === "Present" ? "green" : "red"}>
-          {status === "Present" ? "Kelgan" : "Kelmagan"}
+        <Tag
+          color={status === "Kelgan" ? "green" : "red"}
+          className="font-semibold"
+        >
+          {status}
         </Tag>
       ),
     },
@@ -120,71 +88,95 @@ const Attendance = () => {
       key: "action",
       render: (_: any, record: AttendanceRecord) => (
         <div className="flex gap-2">
-          <Button type="link" onClick={() => showModal(record)}>
+          <Button
+            type="primary"
+            icon={<PencilIcon className="w-4 h-4" />}
+            size="small"
+            onClick={() => showModal(record)}
+          >
             Tahrirlash
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record.id)}>
-            O‘chirish
-          </Button>
+          <Popconfirm
+            title="Haqiqatan ham o‘chirmoqchimisiz?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Ha"
+            cancelText="Yo‘q"
+          >
+            <Button type="default" size="small" icon={<TrashBinIcon className="w-4 h-4" />}>
+              O‘chirish
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-4 sm:p-2">
+      {/* Sonner Toaster */}
+      <Toaster position="top-right" richColors />
 
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey="id"
-        pagination={{ pageSize: 10 }}
-      />
+      {/* Qidiruv + Qo‘shish */}
+      <div className="flex flex-col sm:flex-row justify-between mb-4 gap-3">
+        <Input
+          placeholder="Talaba, kurs yoki guruhni qidirish..."
+          prefix={<SearchOutlined />}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="sm:w-80"
+        />
+        <Button type="primary" onClick={() => showModal()} className="sm:self-end">
+          Yangi davomat
+        </Button>
+      </div>
+
+      {/* Jadval */}
+      <div className="overflow-x-auto rounded-lg shadow-md">
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+          scroll={{ x: 800 }}
+          className="rounded-lg"
+        />
+      </div>
 
       {/* Modal */}
       <Modal
-        title={editingRecord ? "Tahrirlash" : "Yangi record qo‘shish"}
+        title={editingRecord ? "Davomat tahrirlash" : "Yangi davomat qo‘shish"}
         open={isModalVisible}
-        onCancel={handleCancel}
+        onCancel={() => setIsModalVisible(false)}
         onOk={() => {
-          const form = document.getElementById("attendance-form") as any;
-          if (form)
-            handleSave({
-              student: form.student.value,
-              course: form.course.value,
-              group: form.group.value,
-              date: form.date.value,
-              status: form.status.value,
-            });
+          form
+            .validateFields()
+            .then((values) => handleSave(values))
+            .catch(() => {});
         }}
+        okText="Saqlash"
+        cancelText="Bekor qilish"
+        width={500}
       >
-        <form id="attendance-form" className="flex flex-col gap-3">
-          <Input
-            name="student"
-            placeholder="Talaba ismi"
-            defaultValue={editingRecord?.student}
-          />
-          <Input
-            name="course"
-            placeholder="Kurs"
-            defaultValue={editingRecord?.course}
-          />
-          <Input
-            name="group"
-            placeholder="Guruh"
-            defaultValue={editingRecord?.group}
-          />
-          <Input name="date" type="date" defaultValue={editingRecord?.date} />
-          <Select
-            name="status"
-            defaultValue={editingRecord?.status}
-            style={{ width: "100%" }}
-          >
-            <Select.Option value="Present">Kelgan</Select.Option>
-            <Select.Option value="Absent">Kelmagan</Select.Option>
-          </Select>
-        </form>
+        <Form form={form} layout="vertical">
+          <Form.Item name="student" label="Talaba" rules={[{ required: true }]}>
+            <Input placeholder="Talaba ismi" />
+          </Form.Item>
+          <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
+            <Input placeholder="Kurs nomi" />
+          </Form.Item>
+          <Form.Item name="group" label="Guruh" rules={[{ required: true }]}>
+            <Input placeholder="Guruh nomi" />
+          </Form.Item>
+          <Form.Item name="date" label="Sana" rules={[{ required: true }]}>
+            <Input type="date" />
+          </Form.Item>
+          <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="Kelgan">Kelgan</Select.Option>
+              <Select.Option value="Kelmagan">Kelmagan</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

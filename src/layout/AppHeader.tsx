@@ -103,9 +103,7 @@ const AppHeader: React.FC = () => {
             <ThemeToggleButton />
             <SelectLanguage />
             <NotificationDropdown />
-            {/* <!-- Notification Menu Area --> */}
           </div>
-          {/* <!-- User Area --> */}
           <UserDropdown />
         </div>
       </div>

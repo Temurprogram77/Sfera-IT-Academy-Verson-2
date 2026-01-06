@@ -29,7 +29,12 @@ import Attendance from "./pages/Attendance/Attendance";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
+<<<<<<< HEAD
 import "./i18n";
+=======
+import Assessnment from "./pages/Assessnment/Assessnment";
+
+>>>>>>> dbfd4940206b9acca6ff7377ae31a7fccda85957
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
   const ROLE_REDIRECTS: Record<string, string> = {
@@ -99,6 +104,7 @@ export default function App() {
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
           <Route path="grades" element={<Grades />} />
+          <Route path="assessment" element={<Assessnment />} />
           <Route path="parents" element={<Parents />} />
           <Route path="attendance" element={<Attendance />} />
           <Route path="groups" element={<Groups />} />

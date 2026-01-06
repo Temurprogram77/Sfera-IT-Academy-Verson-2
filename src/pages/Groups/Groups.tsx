@@ -8,9 +8,8 @@ import {
   Select,
   Popconfirm,
   message,
-  Input as AntInput,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialGroups = [
@@ -64,16 +63,11 @@ const Groups = () => {
     form.validateFields().then((values) => {
       if (editingGroup) {
         setGroups((prev) =>
-          prev.map((g) =>
-            g.id === editingGroup.id ? { ...g, ...values } : g
-          )
+          prev.map((g) => (g.id === editingGroup.id ? { ...g, ...values } : g))
         );
         message.success("Guruh muvaffaqiyatli yangilandi!");
       } else {
-        setGroups((prev) => [
-          ...prev,
-          { id: Date.now(), ...values },
-        ]);
+        setGroups((prev) => [...prev, { id: Date.now(), ...values }]);
         message.success("Yangi guruh muvaffaqiyatli qo‘shildi!");
       }
       setIsModalVisible(false);
@@ -95,32 +89,19 @@ const Groups = () => {
             <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {record.name}
-            </div>
-            <div className="text-sm text-gray-500">
-              {record.course}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{record.name}</div>
+            <div className="text-sm text-gray-500">{record.course}</div>
           </div>
         </div>
       ),
     },
-    {
-      title: "Kurs",
-      dataIndex: "course",
-    },
-    {
-      title: "O‘qituvchi",
-      dataIndex: "teacher",
-    },
-    {
-      title: "Talabalar",
-      dataIndex: "students",
-      render: (count) => `${count} ta`,
-    },
+    { title: "Kurs", dataIndex: "course", key: "course" },
+    { title: "O‘qituvchi", dataIndex: "teacher", key: "teacher" },
+    { title: "Talabalar", dataIndex: "students", key: "students", render: (count) => `${count} ta` },
     {
       title: "Holati",
       dataIndex: "status",
+      key: "status",
       render: (text) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
@@ -135,12 +116,10 @@ const Groups = () => {
     },
     {
       title: "Amallar",
+      key: "action",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
+          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
             <PencilIcon className="w-5 h-5" />
           </button>
           <Popconfirm
@@ -161,67 +140,38 @@ const Groups = () => {
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            Guruhlar soni:{" "}
-            <span className="font-bold text-gray-900">
-              {filteredGroups.length}
-            </span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder="Guruhni qidirish..."
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              <span className="text-[30px]">+</span>
-              Guruh qo‘shish
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={filteredGroups}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          itemRender: (page, type, originalElement) => {
-            if (type === "prev")
-              return (
-                <button className="px-3 py-1 border rounded">
-                  Oldingi
-                </button>
-              );
-            if (type === "next")
-              return (
-                <button className="px-3 py-1 border rounded">
-                  Keyingi
-                </button>
-              );
-            return originalElement;
-          },
-        }}
+      <ListHeader
+        title="Guruhlar soni"
+        count={filteredGroups.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Guruhni qidirish..."
+        buttonText="Guruh qo‘shish"
+        onButtonClick={() => showModal()}
       />
+
+      {/* Responsive Table */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={filteredGroups}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            itemRender: (page, type, originalElement) => {
+              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
+              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
+              return originalElement;
+            },
+          }}
+          scroll={{ x: 900 }} // mobil scroll
+        />
+      </div>
 
       {/* Modal */}
       <Modal
-        title={
-          editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"
-        }
+        title={editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
@@ -229,48 +179,26 @@ const Groups = () => {
         cancelText="Bekor qilish"
         width={600}
         zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
+        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Guruh nomi"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="name" label="Guruh nomi" rules={[{ required: true }]}>
             <Input placeholder="Masalan: FE-01" />
           </Form.Item>
 
-          <Form.Item
-            name="course"
-            label="Kurs"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
             <Input placeholder="Masalan: Frontend" />
           </Form.Item>
 
-          <Form.Item
-            name="teacher"
-            label="O‘qituvchi"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="teacher" label="O‘qituvchi" rules={[{ required: true }]}>
             <Input placeholder="O‘qituvchi ismi" />
           </Form.Item>
 
-          <Form.Item
-            name="students"
-            label="Talabalar soni"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="students" label="Talabalar soni" rules={[{ required: true }]}>
             <Input type="number" min={0} />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="Holati"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
             <Select placeholder="Holatini tanlang">
               <Select.Option value="Faol">Faol</Select.Option>
               <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>

@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
-import {
-  Table,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Popconfirm,
-  message,
-  Input as AntInput,
-} from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Table, Modal, Form, Input, Select, Popconfirm, message } from "antd";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
 const initialTeachers = [
@@ -68,7 +59,6 @@ const Teachers = () => {
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [form] = Form.useForm();
 
-  // Qidiruv filtri
   const filteredTeachers = teachers.filter(
     (teacher) =>
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,11 +68,7 @@ const Teachers = () => {
 
   const showModal = (teacher = null) => {
     setEditingTeacher(teacher);
-    if (teacher) {
-      form.setFieldsValue(teacher);
-    } else {
-      form.resetFields();
-    }
+    teacher ? form.setFieldsValue(teacher) : form.resetFields();
     setIsModalVisible(true);
   };
 
@@ -130,30 +116,15 @@ const Teachers = () => {
             <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {record.name}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{record.name}</div>
             <div className="text-sm text-gray-500">{record.email}</div>
           </div>
         </div>
       ),
     },
-    {
-      title: "Guruh Nomi",
-      dataIndex: "subject",
-      key: "subject",
-    },
-    {
-      title: "Telefon",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Guruhlar",
-      dataIndex: "groups",
-      key: "groups",
-      render: (text) => `${text} ta`,
-    },
+    { title: "Guruh Nomi", dataIndex: "subject", key: "subject" },
+    { title: "Telefon", dataIndex: "phone", key: "phone" },
+    { title: "Guruhlar", dataIndex: "groups", key: "groups", render: (text) => `${text} ta` },
     {
       title: "Holati",
       dataIndex: "status",
@@ -175,10 +146,7 @@ const Teachers = () => {
       key: "action",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
+          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
             <PencilIcon className="w-5 h-5" />
           </button>
           <Popconfirm
@@ -198,67 +166,41 @@ const Teachers = () => {
 
   return (
     <div className="p-3 sm:p-2 lg:p-1">
-      {/* Tepa qism: soni + search + tugma (rasmga mos dizayn) */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-base font-medium text-gray-700">
-            O'qituvchilar soni:{" "}
-            <span className="font-bold text-gray-900">
-              {filteredTeachers.length}
-            </span>
-          </div>
+      {/* Header */}
+      <ListHeader
+        title="O'qituvchilar soni"
+        count={filteredTeachers.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="O'qituvchini qidirish..."
+        buttonText="O'qituvchi qo'shish"
+        onButtonClick={() => showModal()}
+      >
+        {/* Optional filter */}
+      </ListHeader>
 
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
-            <AntInput
-              placeholder="O'qituvchini qidirish..."
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-80 h-10 rounded-lg border-gray-300"
-              allowClear
-            />
-
-            <button
-              onClick={() => showModal()}
-              className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
-            >
-              {/* <PlusIcon className="w-5 h-5" /> */}
-              <span className="text-[30px]">+</span>
-              O'qituvchi qo'shish
-            </button>
-          </div>
-        </div>
+      {/* Responsive Table */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={filteredTeachers}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            itemRender: (page, type, originalElement) => {
+              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
+              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
+              return originalElement;
+            },
+          }}
+          scroll={{ x: 900 }} // mobil scroll
+        />
       </div>
 
-      {/* Jadval */}
-      <Table
-        columns={columns}
-        dataSource={filteredTeachers}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          itemRender: (page, type, originalElement) => {
-            if (type === "prev")
-              return (
-                <button className="px-3 py-1 border rounded">Oldingi</button>
-              );
-            if (type === "next")
-              return (
-                <button className="px-3 py-1 border rounded">Keyingi</button>
-              );
-            return originalElement;
-          },
-        }}
-      />
-
-      {/* Modal - Qo'shish va Tahrirlash */}
+      {/* Modal */}
       <Modal
-        title={
-          editingTeacher
-            ? "O'qituvchini tahrirlash"
-            : "Yangi o'qituvchi qo'shish"
-        }
+        title={editingTeacher ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -266,17 +208,13 @@ const Teachers = () => {
         cancelText="Bekor qilish"
         width={600}
         zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
+        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="name"
             label="Ism familiya"
-            rules={[
-              { required: true, message: "Iltimos, ism familiyani kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, ism familiyani kiriting!" }]}
           >
             <Input placeholder="Masalan: Abdullaev Ahmad" />
           </Form.Item>
@@ -284,9 +222,7 @@ const Teachers = () => {
           <Form.Item
             name="subject"
             label="Guruh nomi (fan)"
-            rules={[
-              { required: true, message: "Iltimos, guruh nomini kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, guruh nomini kiriting!" }]}
           >
             <Input placeholder="Masalan: Frontend" />
           </Form.Item>
@@ -294,12 +230,7 @@ const Teachers = () => {
           <Form.Item
             name="phone"
             label="Telefon raqam"
-            rules={[
-              {
-                required: true,
-                message: "Iltimos, telefon raqamini kiriting!",
-              },
-            ]}
+            rules={[{ required: true, message: "Iltimos, telefon raqamini kiriting!" }]}
           >
             <Input placeholder="+998 90 123 45 67" />
           </Form.Item>
@@ -318,9 +249,7 @@ const Teachers = () => {
           <Form.Item
             name="groups"
             label="Guruhlar soni"
-            rules={[
-              { required: true, message: "Iltimos, guruhlar sonini kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, guruhlar sonini kiriting!" }]}
           >
             <Input type="number" min={0} placeholder="5" />
           </Form.Item>

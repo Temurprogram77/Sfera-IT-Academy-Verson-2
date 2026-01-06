@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BoltIcon,
+  BoxCubeIcon,
   BoxIcon,
   CalenderIcon,
   CheckCircleIcon,
@@ -99,6 +100,14 @@ const AppSidebar: React.FC = () => {
           "ROLE_TEACHER",
           "ROLE_STUDENT",
           "ROLE_PARENT",
+        ],
+      },
+       {
+        icon: <BoxCubeIcon />,
+        name: t("assessment"),
+        path: "/assessment",
+        roles: [
+          "ROLE_TEACHER",
         ],
       },
       {
