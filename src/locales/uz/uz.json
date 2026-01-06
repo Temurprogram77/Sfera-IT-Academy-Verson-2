@@ -43,5 +43,7 @@
   "account_settings": "Akkaunt sozlamalari",
   "support": "Yordam",
   "sign_out": "Chiqish",
-  "assessment": "Baholash"
+  "assessment": "Baholash",
+  "notification": "Bildirishnoma",
+  "view_all_notifications": "Barcha bildirishnomalarni ko‘rish"
 }

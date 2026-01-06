@@ -42,5 +42,7 @@
   "edit_profile": "Профилни таҳрирлаш",
   "account_settings": "Аккаунт созламалари",
   "support": "Ёрдам",
-  "sign_out": "Чиқиш"
+  "sign_out": "Чиқиш",
+  "notification": "Билдиришнома",
+  "view_all_notifications": "Барча билдиришномаларни кўриш"
 }
