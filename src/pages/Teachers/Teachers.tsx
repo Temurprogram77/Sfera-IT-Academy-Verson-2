@@ -2,6 +2,7 @@ import { useState } from "react";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import { Table, Modal, Form, Input, Select, Popconfirm, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTranslation } from "react-i18next";
 
 // Static mock data
 const initialTeachers = [
@@ -163,17 +164,17 @@ const Teachers = () => {
       ),
     },
   ];
-
+  const {t}=useTranslation()
   return (
     <div className="p-3 sm:p-2 lg:p-1">
       {/* Header */}
       <ListHeader
-        title="O'qituvchilar soni"
+        title={t("teachers_count")}
         count={filteredTeachers.length}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        searchPlaceholder="O'qituvchini qidirish..."
-        buttonText="O'qituvchi qo'shish"
+        searchPlaceholder={t("search_teacher")}
+        buttonText={t("add_teacher")}
         onButtonClick={() => showModal()
         }
         

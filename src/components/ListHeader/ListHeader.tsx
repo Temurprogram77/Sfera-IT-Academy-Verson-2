@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Input as AntInput } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 /* ===== Props type ===== */
 interface ListHeaderProps {
@@ -15,12 +16,13 @@ interface ListHeaderProps {
 }
 
 /* ===== Component ===== */
+const {t}=useTranslation()
 const ListHeader: React.FC<ListHeaderProps> = ({
   title,
   count,
   searchValue,
   onSearchChange,
-  searchPlaceholder = "Qidirish...",
+  searchPlaceholder = t("search"),
   buttonText,
   onButtonClick,
   children,
