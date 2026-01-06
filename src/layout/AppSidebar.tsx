@@ -13,7 +13,7 @@ import {
   UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { authService } from "../services/authService ";
+import { authService } from "../services/authService "; // bo'sh joy olib tashlandi
 import { useTranslation } from "react-i18next";
 
 type NavItem = {
@@ -38,8 +38,6 @@ const AppSidebar: React.FC = () => {
     {}
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  const role = localStorage.getItem("user_role");
 
   useEffect(() => {
     const role = authService.getRole();
@@ -196,7 +194,7 @@ const AppSidebar: React.FC = () => {
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
               } cursor-pointer flex items-center gap-3 ${
-                !isExpanded && !isHovered
+                !isExpanded && !isHovered && !isMobileOpen
                   ? "lg:justify-center"
                   : "lg:justify-start"
               }`}
@@ -224,7 +222,7 @@ const AppSidebar: React.FC = () => {
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
               } cursor-pointer flex items-center gap-3 ${
-                !isExpanded && !isHovered
+                !isExpanded && !isHovered && !isMobileOpen
                   ? "lg:justify-center"
                   : "lg:justify-start"
               }`}
@@ -281,45 +279,57 @@ const AppSidebar: React.FC = () => {
     ROLE_STUDENT: "/dashboard/student",
     ROLE_PARENT: "/dashboard/parent",
   };
-  const homePath = rolePathMap[role || ""] || "/";
+  const homePath = rolePathMap[currentRole || ""] || "/";
 
   return (
-    <aside
-      className={`fixed mt-24 px-3 flex flex-col lg:mt-0 top-0 left-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 h-screen transition-all ease-in-out z-50 border-r border-gray-200 dark:border-gray-700
-        ${isExpanded || isHovered ? "w-[290px]" : "w-[90px]"} 
-        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} translate-x-0`}
+   <aside
+      className={`fixed md:mt-16 m-0 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+        ${
+          isExpanded || isMobileOpen
+            ? "w-[290px]"
+            : isHovered
+            ? "w-[290px]"
+            : "w-[90px]"
+        }
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0`}
     >
       {/* Logo */}
       <div
         className={`py-5 flex ${
-          !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
+          !isExpanded && !isHovered && !isMobileOpen
+            ? "lg:justify-center"
+            : "justify-start"
         }`}
       >
         <Link to={homePath}>
           {isExpanded || isHovered || isMobileOpen ? (
-            role === "ROLE_STUDENT" ? (
-              <div className="flex items-center gap-2">
-                <span className="text-[33px] font-bold dark:text-gray-200">
-                  Sfera Student
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <img
-                  className="w-[60px] h-[60px] object-contain dark:hidden"
-                  src="/images/logoOne.png"
-                  alt="Logo"
-                />
-                <img
-                  className="w-[60px] h-[60px] object-contain hidden dark:block"
-                  src="/images/logoTwo.png"
-                  alt="Logo Dark"
-                />
-                <span className="text-[33px] leading-6 font-bold dark:text-gray-200">
-                  Sfera Academy
-                </span>
-              </div>
-            )
+            <div className="flex items-center gap-2">
+              <img
+                className="w-[60px] h-[60px] object-contain dark:hidden"
+                src="/images/logoOne.png"
+                alt="Logo"
+              />
+              <img
+                className="w-[60px] h-[60px] object-contain hidden dark:block"
+                src="/images/logoTwo.png"
+                alt="Logo Dark"
+              />
+              <span className="text-[33px] leading-6 font-bold dark:text-gray-200">
+                Sfera{" "}
+                {currentRole === "ROLE_STUDENT"
+                  ? "Student"
+                  : currentRole === "ROLE_ADMIN"
+                  ? "Admin"
+                  : currentRole === "ROLE_PARENT"
+                  ? "Parent"
+                  : currentRole === "ROLE_TEACHER"
+                  ? "Teacher"
+                  : currentRole === "ROLE_SUPER_ADMIN"
+                  ? "Super Admin"
+                  : ""}
+              </span>
+            </div>
           ) : (
             <img src="/images/logoOne.png" alt="Logo" width={32} height={32} />
           )}
@@ -334,7 +344,7 @@ const AppSidebar: React.FC = () => {
               <div>
                 <h2
                   className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 dark:text-gray-500 ${
-                    !isExpanded && !isHovered
+                    !isExpanded && !isHovered && !isMobileOpen
                       ? "lg:justify-center"
                       : "justify-start"
                   }`}
