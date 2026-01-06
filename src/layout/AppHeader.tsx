@@ -9,9 +9,17 @@ import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import SelectLanguage from "../components/common/SelectLanguage";
 
 const AppHeader: React.FC = () => {
-  const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
-  const { toggleSidebar, isExpanded } = useSidebar();
+  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+
+  const handleToggle = () => {
+    if (window.innerWidth >= 1024) {
+      toggleSidebar();
+    } else {
+      toggleMobileSidebar();
+    }
+  };
 
   const toggleApplicationMenu = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
@@ -39,12 +47,18 @@ const AppHeader: React.FC = () => {
       <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <div className="flex justify-end px-2 py-2">
-            <button
-              onClick={toggleSidebar}
-              className="flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:text-gray-400 dark:border-gray-700"
-            >
-              {isExpanded ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
-            </button>
+                <button
+            className="items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
+            onClick={handleToggle}
+            aria-label="Toggle Sidebar"
+          >
+            {isMobileOpen ? (
+             <MenuFoldOutlined/>
+            ) : (
+              <MenuUnfoldOutlined/>
+            )}
+            {/* Cross Icon */}
+          </button>
           </div>
 
           <Link to="/" className="lg:hidden">
