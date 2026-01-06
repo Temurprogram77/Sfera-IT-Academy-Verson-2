@@ -174,7 +174,9 @@ const Teachers = () => {
         onSearchChange={setSearchTerm}
         searchPlaceholder="O'qituvchini qidirish..."
         buttonText="O'qituvchi qo'shish"
-        onButtonClick={() => showModal()}
+        onButtonClick={() => showModal()
+        }
+        
       >
         {/* Optional filter */}
       </ListHeader>

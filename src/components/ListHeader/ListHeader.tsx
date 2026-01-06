@@ -26,11 +26,11 @@ const ListHeader: React.FC<ListHeaderProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:border-[#1d2939] dark:bg-black p-4 mb-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="text-base font-medium text-gray-700">
+        <div className="text-base font-medium dark:text-white text-gray-700">
           {title}:{" "}
-          <span className="font-bold text-gray-900">{count}</span>
+          <span className="font-bold dark:text-white text-gray-900">{count}</span>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
@@ -47,7 +47,7 @@ const ListHeader: React.FC<ListHeaderProps> = ({
 
           <button
             onClick={onButtonClick}
-            className="flex items-center justify-center gap-2 bg-[#18A752] text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-[#18A752]  text-white px-5 py-2 h-10 rounded-lg hover:bg-[#118740] transition whitespace-nowrap dark:bg-black dark:border-[#1d2939] dark:border-2"
           >
             <span className="text-[30px]">+</span>
             {buttonText}
