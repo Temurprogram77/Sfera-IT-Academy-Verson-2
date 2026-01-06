@@ -155,44 +155,37 @@ const Parents = () => {
         buttonText={t("add_parent")}
         onButtonClick={() => showModal()}
       >
-        {/* Ixtiyoriy filter, masalan: farzandning kursi bo‘yicha */}
-        {/* <Select
-          allowClear
-          placeholder={t("filter_by_course")}
-          className="w-44"
-          options={[
-            { value: "Frontend", label: "Frontend" },
-            { value: "Backend", label: "Backend" },
-            { value: "Python", label: "Python" },
-          ]}
-        /> */}
+        {/* Optional filter */}
       </ListHeader>
 
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={filteredParents}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          itemRender: (page, type, originalElement) => {
-            if (type === "prev")
-              return (
-                <button className="px-3 py-1 border rounded">
-                  {t("prev")}
-                </button>
-              );
-            if (type === "next")
-              return (
-                <button className="px-3 py-1 border rounded">
-                  {t("next")}
-                </button>
-              );
-            return originalElement;
-          },
-        }}
-      />
+      {/* Responsive Table wrapper */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={filteredParents}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            itemRender: (page, type, originalElement) => {
+              if (type === "prev")
+                return (
+                  <button className="px-3 py-1 border rounded">
+                    {t("prev")}
+                  </button>
+                );
+              if (type === "next")
+                return (
+                  <button className="px-3 py-1 border rounded">
+                    {t("next")}
+                  </button>
+                );
+              return originalElement;
+            },
+          }}
+          scroll={{ x: 800 }} // table kengligi mobil uchun scroll
+        />
+      </div>
 
       {/* Modal */}
       <Modal

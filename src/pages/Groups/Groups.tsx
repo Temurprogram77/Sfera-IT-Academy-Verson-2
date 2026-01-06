@@ -8,9 +8,7 @@ import {
   Select,
   Popconfirm,
   message,
-  Input as AntInput,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
@@ -91,30 +89,19 @@ const Groups = () => {
             <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {record.name}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{record.name}</div>
             <div className="text-sm text-gray-500">{record.course}</div>
           </div>
         </div>
       ),
     },
-    {
-      title: "Kurs",
-      dataIndex: "course",
-    },
-    {
-      title: "O‘qituvchi",
-      dataIndex: "teacher",
-    },
-    {
-      title: "Talabalar",
-      dataIndex: "students",
-      render: (count) => `${count} ta`,
-    },
+    { title: "Kurs", dataIndex: "course", key: "course" },
+    { title: "O‘qituvchi", dataIndex: "teacher", key: "teacher" },
+    { title: "Talabalar", dataIndex: "students", key: "students", render: (count) => `${count} ta` },
     {
       title: "Holati",
       dataIndex: "status",
+      key: "status",
       render: (text) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
@@ -129,12 +116,10 @@ const Groups = () => {
     },
     {
       title: "Amallar",
+      key: "action",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
+          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
             <PencilIcon className="w-5 h-5" />
           </button>
           <Popconfirm
@@ -163,41 +148,26 @@ const Groups = () => {
         searchPlaceholder="Guruhni qidirish..."
         buttonText="Guruh qo‘shish"
         onButtonClick={() => showModal()}
-      >
-        {/* Ixtiyoriy filter */}
-        {/* <Select
-          allowClear
-          placeholder="Kurs bo‘yicha"
-          className="w-44"
-          options={[
-            { value: "Frontend", label: "Frontend" },
-            { value: "Backend", label: "Backend" },
-            { value: "Python", label: "Python" },
-          ]}
-        /> */}
-      </ListHeader>
-
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={filteredGroups}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          itemRender: (page, type, originalElement) => {
-            if (type === "prev")
-              return (
-                <button className="px-3 py-1 border rounded">Oldingi</button>
-              );
-            if (type === "next")
-              return (
-                <button className="px-3 py-1 border rounded">Keyingi</button>
-              );
-            return originalElement;
-          },
-        }}
       />
+
+      {/* Responsive Table */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={filteredGroups}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            itemRender: (page, type, originalElement) => {
+              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
+              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
+              return originalElement;
+            },
+          }}
+          scroll={{ x: 900 }} // mobil scroll
+        />
+      </div>
 
       {/* Modal */}
       <Modal
@@ -209,16 +179,10 @@ const Groups = () => {
         cancelText="Bekor qilish"
         width={600}
         zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
+        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Guruh nomi"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="name" label="Guruh nomi" rules={[{ required: true }]}>
             <Input placeholder="Masalan: FE-01" />
           </Form.Item>
 
@@ -226,19 +190,11 @@ const Groups = () => {
             <Input placeholder="Masalan: Frontend" />
           </Form.Item>
 
-          <Form.Item
-            name="teacher"
-            label="O‘qituvchi"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="teacher" label="O‘qituvchi" rules={[{ required: true }]}>
             <Input placeholder="O‘qituvchi ismi" />
           </Form.Item>
 
-          <Form.Item
-            name="students"
-            label="Talabalar soni"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="students" label="Talabalar soni" rules={[{ required: true }]}>
             <Input type="number" min={0} />
           </Form.Item>
 

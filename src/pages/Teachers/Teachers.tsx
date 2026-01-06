@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
-import {
-  Table,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Popconfirm,
-  message,
-} from "antd";
+import { Table, Modal, Form, Input, Select, Popconfirm, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 
 // Static mock data
@@ -67,7 +59,6 @@ const Teachers = () => {
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [form] = Form.useForm();
 
-  // Qidiruv filtri
   const filteredTeachers = teachers.filter(
     (teacher) =>
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,11 +68,7 @@ const Teachers = () => {
 
   const showModal = (teacher = null) => {
     setEditingTeacher(teacher);
-    if (teacher) {
-      form.setFieldsValue(teacher);
-    } else {
-      form.resetFields();
-    }
+    teacher ? form.setFieldsValue(teacher) : form.resetFields();
     setIsModalVisible(true);
   };
 
@@ -129,30 +116,15 @@ const Teachers = () => {
             <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {record.name}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{record.name}</div>
             <div className="text-sm text-gray-500">{record.email}</div>
           </div>
         </div>
       ),
     },
-    {
-      title: "Guruh Nomi",
-      dataIndex: "subject",
-      key: "subject",
-    },
-    {
-      title: "Telefon",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Guruhlar",
-      dataIndex: "groups",
-      key: "groups",
-      render: (text) => `${text} ta`,
-    },
+    { title: "Guruh Nomi", dataIndex: "subject", key: "subject" },
+    { title: "Telefon", dataIndex: "phone", key: "phone" },
+    { title: "Guruhlar", dataIndex: "groups", key: "groups", render: (text) => `${text} ta` },
     {
       title: "Holati",
       dataIndex: "status",
@@ -174,10 +146,7 @@ const Teachers = () => {
       key: "action",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
+          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
             <PencilIcon className="w-5 h-5" />
           </button>
           <Popconfirm
@@ -197,7 +166,7 @@ const Teachers = () => {
 
   return (
     <div className="p-3 sm:p-2 lg:p-1">
-      {/* Tepa qism: soni + search + tugma (rasmga mos dizayn) */}
+      {/* Header */}
       <ListHeader
         title="O'qituvchilar soni"
         count={filteredTeachers.length}
@@ -207,49 +176,31 @@ const Teachers = () => {
         buttonText="O'qituvchi qo'shish"
         onButtonClick={() => showModal()}
       >
-        {/* IXTİYORİY QO‘SHİMCHA FILTER */}
-        {/* <Select
-          allowClear
-          placeholder="Fan bo‘yicha"
-          className="w-full sm:w-44 h-10"
-          options={[
-            { value: "Frontend", label: "Frontend" },
-            { value: "Backend", label: "Backend" },
-            { value: "Python", label: "Python" },
-            { value: "Java", label: "Java" },
-          ]}
-        /> */}
+        {/* Optional filter */}
       </ListHeader>
 
-      {/* Jadval */}
-      <Table
-        columns={columns}
-        dataSource={filteredTeachers}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          itemRender: (page, type, originalElement) => {
-            if (type === "prev")
-              return (
-                <button className="px-3 py-1 border rounded">Oldingi</button>
-              );
-            if (type === "next")
-              return (
-                <button className="px-3 py-1 border rounded">Keyingi</button>
-              );
-            return originalElement;
-          },
-        }}
-      />
+      {/* Responsive Table */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={filteredTeachers}
+          rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            itemRender: (page, type, originalElement) => {
+              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
+              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
+              return originalElement;
+            },
+          }}
+          scroll={{ x: 900 }} // mobil scroll
+        />
+      </div>
 
-      {/* Modal - Qo'shish va Tahrirlash */}
+      {/* Modal */}
       <Modal
-        title={
-          editingTeacher
-            ? "O'qituvchini tahrirlash"
-            : "Yangi o'qituvchi qo'shish"
-        }
+        title={editingTeacher ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -257,17 +208,13 @@ const Teachers = () => {
         cancelText="Bekor qilish"
         width={600}
         zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
+        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="name"
             label="Ism familiya"
-            rules={[
-              { required: true, message: "Iltimos, ism familiyani kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, ism familiyani kiriting!" }]}
           >
             <Input placeholder="Masalan: Abdullaev Ahmad" />
           </Form.Item>
@@ -275,9 +222,7 @@ const Teachers = () => {
           <Form.Item
             name="subject"
             label="Guruh nomi (fan)"
-            rules={[
-              { required: true, message: "Iltimos, guruh nomini kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, guruh nomini kiriting!" }]}
           >
             <Input placeholder="Masalan: Frontend" />
           </Form.Item>
@@ -285,12 +230,7 @@ const Teachers = () => {
           <Form.Item
             name="phone"
             label="Telefon raqam"
-            rules={[
-              {
-                required: true,
-                message: "Iltimos, telefon raqamini kiriting!",
-              },
-            ]}
+            rules={[{ required: true, message: "Iltimos, telefon raqamini kiriting!" }]}
           >
             <Input placeholder="+998 90 123 45 67" />
           </Form.Item>
@@ -309,9 +249,7 @@ const Teachers = () => {
           <Form.Item
             name="groups"
             label="Guruhlar soni"
-            rules={[
-              { required: true, message: "Iltimos, guruhlar sonini kiriting!" },
-            ]}
+            rules={[{ required: true, message: "Iltimos, guruhlar sonini kiriting!" }]}
           >
             <Input type="number" min={0} placeholder="5" />
           </Form.Item>
