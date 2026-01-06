@@ -31,7 +31,16 @@ export default function UserDropdown() {
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img src="/images/logoOne.png" alt="User" />
+          <img
+                className="object-contain dark:hidden"
+                src="/images/logoOne.png"
+                alt="Logo"
+              />
+              <img
+                className=" object-contain hidden dark:block"
+                src="/images/logoTwo.png"
+                alt="Logo Dark"
+              />
         </span>
         <span className="block mr-1 font-medium text-theme-sm">Role</span>
         <svg
