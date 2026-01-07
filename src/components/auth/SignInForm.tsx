@@ -8,6 +8,7 @@ import { useLogin } from "../../hooks/useAuth";
 import { useMaskito } from "@maskito/react";
 import { maskitoPhoneOptionsGenerator } from "@maskito/phone";
 import metadata from "libphonenumber-js/min/metadata";
+import { useTranslation } from "react-i18next";
 
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
@@ -37,19 +38,20 @@ export default function SignInForm() {
 
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const {t}=useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!phone || !password) {
-      toast.error("Telefon raqam va parolni kiriting!");
+      toast.error(t("enterPhoneAndPassword"));
       return;
     }
 
     const cleanPhone = phone.replace(/\D/g, "");
 
     if (!cleanPhone.startsWith("998")) {
-      toast.error("Telefon raqam 998 bilan boshlanishi kerak!");
+      toast.error(t("phoneMustStartWith998"));
       return;
     }
 
@@ -60,14 +62,14 @@ export default function SignInForm() {
       });
 
       if (!response?.success) {
-        toast.error("Telefon raqam yoki parol noto‘g‘ri!");
+        toast.error(t("invalidPhoneOrPassword"));
         return;
       }
 
       const userRole = response.message as string;
       const redirectPath = ROLE_REDIRECTS[userRole] || "/dashboard/teacher";
 
-      toast.success("Xush kelibsiz!");
+      toast.success(t("welcome"));
       navigate(redirectPath, { replace: true });
     } catch (error: any) {
       console.error("Login error:", error);
@@ -75,21 +77,20 @@ export default function SignInForm() {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "Login vaqtida xatolik yuz berdi!"
+          t("loginError")
       );
     }
   };
-
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm sm:text-title-md">
-              Kirish
+              {t("login")}
             </h1>
             <p className="text-sm text-gray-500">
-              Kirish uchun telefon raqamingiz va parolingizni kiriting!
+              {t("enterCredentials")}
             </p>
           </div>
 
@@ -98,7 +99,7 @@ export default function SignInForm() {
               {/* Telefon input */}
               <div>
                 <Label>
-                  Telefon <span className="text-error-500">*</span>
+                  {t("phone")} <span className="text-error-500">*</span>
                 </Label>
                 <input
                   ref={inputRef}
@@ -114,7 +115,7 @@ export default function SignInForm() {
               {/* Parol input */}
               <div>
                 <Label>
-                  Parol <span className="text-error-500">*</span>
+                  {t("password")} <span className="text-error-500">*</span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -148,7 +149,7 @@ export default function SignInForm() {
                   disabled={loginMutation.isPending}
                   size="large"
                 >
-                  {loginMutation.isPending ? "Kirish..." : "Kirish"}
+                  {loginMutation.isPending ? `${t('login')}...`: t("login")}
                 </Button>
               </div>
 
@@ -156,7 +157,7 @@ export default function SignInForm() {
               {loginMutation.isError && (
                 <div className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
                   {(loginMutation.error as any)?.message ||
-                    "Xatolik yuz berdi. Qaytadan urinib ko'ring."}
+                    t("errorOccurred")}
                 </div>
               )}
             </div>
