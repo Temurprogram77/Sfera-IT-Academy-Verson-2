@@ -58,5 +58,8 @@
   "login": "Kirish",
   "enterCredentials": "Kirish uchun telefon raqamingiz va parolingizni kiriting!",
   "password": "Parol",
-  "errorOccurred": "Xatolik yuz berdi. Qaytadan urinib ko'ring."
+  "errorOccurred": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+  "customers": "Mijozlar",
+  "orders": "Buyurtmalar",
+  "monthlyTarget": "Oylik maqsad"
 }
