@@ -39,6 +39,7 @@ import Assessnment from "./pages/Assessnment/Assessnment";
 import { Toaster } from "sonner";
 import { theme } from "antd";
 import { useTheme } from "./context/ThemeContext";
+import Messages from "./pages/Messages/Messages";
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
   const ROLE_REDIRECTS: Record<string, string> = {
@@ -113,6 +114,7 @@ export default function App() {
           <Route path="dashboard/parent" element={<Parent />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="students" element={<Students />} />
+          <Route path="messages" element={<Messages />} />
           <Route path="grades" element={<Grades />} />
           <Route path="assessment" element={<Assessnment />} />
           <Route path="parents" element={<Parents />} />
