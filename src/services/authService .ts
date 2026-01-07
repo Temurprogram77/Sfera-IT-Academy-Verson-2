@@ -2,6 +2,7 @@
 
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
+import { tokenManager } from "../utils/tokenManager";
 
 class AuthService {
     async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -10,15 +11,11 @@ class AuthService {
         );
 
         if (response.success && response.data) {
-            this.saveAuthData(response.data, response.message as UserRole);
+            tokenManager.saveToken(response.data, response.message as UserRole);
+            tokenManager.initialize();
         }
 
         return response;
-    }
-
-    private saveAuthData(token: string, role: UserRole): void {
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_role', role);
     }
 
     decodeToken(token: string): User | null {
@@ -40,32 +37,24 @@ class AuthService {
     }
 
     logout(): void {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_role');
+        tokenManager.clearToken();
         window.location.href = '/signin';
     }
 
     isAuthenticated(): boolean {
-        const token = localStorage.getItem('auth_token');
-        return !!token;
+        return !!tokenManager.getToken() && !tokenManager.isTokenExpired();
     }
 
     getToken(): string | null {
-        return localStorage.getItem('auth_token');
+        return tokenManager.getToken();
     }
 
     getRole(): UserRole | null {
-        return localStorage.getItem('user_role') as UserRole | null;
+        return tokenManager.getRole() as UserRole | null;
     }
 
     isTokenExpired(): boolean {
-        const token = this.getToken();
-        if (!token) return true;
-
-        const decoded = this.decodeToken(token);
-        if (!decoded || !decoded.exp) return true;
-
-        return decoded.exp * 1000 < Date.now();
+        return tokenManager.isTokenExpired();
     }
 }
 
