@@ -16,6 +16,7 @@ import {
 import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService "; // bo'sh joy olib tashlandi
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../context/ThemeContext";
 
 type NavItem = {
   name: string;
@@ -29,6 +30,7 @@ const AppSidebar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isExpanded, isMobileOpen, isHovered } = useSidebar();
   const location = useLocation();
+  const { theme } = useTheme();
 
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<{
@@ -102,13 +104,11 @@ const AppSidebar: React.FC = () => {
           "ROLE_PARENT",
         ],
       },
-       {
+      {
         icon: <BoxCubeIcon />,
         name: t("assessment"),
         path: "/assessment",
-        roles: [
-          "ROLE_TEACHER",
-        ],
+        roles: ["ROLE_TEACHER"],
       },
       {
         icon: <GroupIcon />,
@@ -159,7 +159,7 @@ const AppSidebar: React.FC = () => {
         ],
       },
     ],
-    [t,i18n.language]
+    [t, i18n.language]
   );
 
   const filteredNavItems = allNavItems.filter(
@@ -198,14 +198,14 @@ const AppSidebar: React.FC = () => {
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item group ${
+              className={`menu-item group cursor-pointer flex items-center gap-3 ${
                 openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? "menu-item-active dark:menu-item-active-dark"
-                  : "menu-item-inactive dark:menu-item-inactive-dark"
-              } cursor-pointer flex items-center gap-3 ${
-                !isExpanded && !isHovered && !isMobileOpen
-                  ? "lg:justify-center"
-                  : "lg:justify-start"
+                  ? theme === "dark"
+                    ? "bg-green-700 text-white"
+                    : "menu-item-active"
+                  : theme === "dark"
+                  ? "hover:bg-green-600 text-gray-200"
+                  : "menu-item-inactive"
               }`}
             >
               <span className="menu-item-icon-size">{nav.icon}</span>
@@ -291,7 +291,7 @@ const AppSidebar: React.FC = () => {
   const homePath = rolePathMap[currentRole || ""] || "/";
 
   return (
-   <aside
+    <aside
       className={`fixed md:mt-16 m-0 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import {
   Table,
   Modal,
@@ -8,10 +7,14 @@ import {
   Select,
   Popconfirm,
   message,
+  ConfigProvider,
+  theme as antdTheme,
 } from "antd";
+import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTheme } from "../../context/ThemeContext";
 
-// Static mock data
+// Mock data
 const initialGroups = [
   {
     id: 1,
@@ -40,6 +43,9 @@ const initialGroups = [
 ];
 
 const Groups = () => {
+  const { theme } = useTheme();
+  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+
   const [groups, setGroups] = useState(initialGroups);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -63,12 +69,14 @@ const Groups = () => {
     form.validateFields().then((values) => {
       if (editingGroup) {
         setGroups((prev) =>
-          prev.map((g) => (g.id === editingGroup.id ? { ...g, ...values } : g))
+          prev.map((g) =>
+            g.id === editingGroup.id ? { ...g, ...values } : g
+          )
         );
-        message.success("Guruh muvaffaqiyatli yangilandi!");
+        message.success("Guruh yangilandi");
       } else {
         setGroups((prev) => [...prev, { id: Date.now(), ...values }]);
-        message.success("Yangi guruh muvaffaqiyatli qo‘shildi!");
+        message.success("Yangi guruh qo‘shildi");
       }
       setIsModalVisible(false);
     });
@@ -76,32 +84,35 @@ const Groups = () => {
 
   const handleDelete = (id) => {
     setGroups((prev) => prev.filter((g) => g.id !== id));
-    message.success("Guruh muvaffaqiyatli o‘chirildi!");
+    message.success("Guruh o‘chirildi");
   };
 
   const columns = [
     {
       title: "Guruh",
       dataIndex: "name",
-      render: (text, record) => (
-        <div className="flex items-center">
-          <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-gray-500" />
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{record.name}</div>
-            <div className="text-sm text-gray-500">{record.course}</div>
+          <div>
+            <div className="font-medium">{record.name}</div>
+            <div className="text-xs text-gray-500">{record.course}</div>
           </div>
         </div>
       ),
     },
-    { title: "Kurs", dataIndex: "course", key: "course" },
-    { title: "O‘qituvchi", dataIndex: "teacher", key: "teacher" },
-    { title: "Talabalar", dataIndex: "students", key: "students", render: (count) => `${count} ta` },
+    { title: "Kurs", dataIndex: "course" },
+    { title: "O‘qituvchi", dataIndex: "teacher" },
+    {
+      title: "Talabalar",
+      dataIndex: "students",
+      render: (count) => `${count} ta`,
+    },
     {
       title: "Holati",
       dataIndex: "status",
-      key: "status",
       render: (text) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
@@ -116,20 +127,19 @@ const Groups = () => {
     },
     {
       title: "Amallar",
-      key: "action",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
-            <PencilIcon className="w-5 h-5" />
+          <button onClick={() => showModal(record)}>
+            <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title="Haqiqatan ham o‘chirmoqchimisiz?"
+            title="O‘chirmoqchimisiz?"
             onConfirm={() => handleDelete(record.id)}
             okText="Ha"
             cancelText="Yo‘q"
           >
-            <button className="text-red-600 hover:text-red-800">
-              <TrashBinIcon className="w-5 h-5" />
+            <button>
+              <TrashBinIcon className="w-5 h-5 text-red-600" />
             </button>
           </Popconfirm>
         </div>
@@ -138,75 +148,80 @@ const Groups = () => {
   ];
 
   return (
-    <div className="p-3 sm:p-2 lg:p-1">
-      {/* Header */}
-      <ListHeader
-        title="Guruhlar soni"
-        count={filteredGroups.length}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Guruhni qidirish..."
-        buttonText="Guruh qo‘shish"
-        onButtonClick={() => showModal()}
-      />
-
-      {/* Responsive Table */}
-      <div className="overflow-x-auto">
-        <Table
-          columns={columns}
-          dataSource={filteredGroups}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: false,
-            itemRender: (page, type, originalElement) => {
-              if (type === "prev") return <button className="px-3 py-1 border rounded">Oldingi</button>;
-              if (type === "next") return <button className="px-3 py-1 border rounded">Keyingi</button>;
-              return originalElement;
-            },
-          }}
-          scroll={{ x: 900 }} // mobil scroll
+    <ConfigProvider
+      theme={{
+        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+        token: {
+          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+      }}
+    >
+      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+        <ListHeader
+          title="Guruhlar soni"
+          count={filteredGroups.length}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Guruhni qidirish..."
+          buttonText="Guruh qo‘shish"
+          onButtonClick={() => showModal()}
         />
+
+        <div className="overflow-x-auto mt-4">
+          <Table
+            columns={columns}
+            dataSource={filteredGroups}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: 900 }}
+          />
+        </div>
+
+        <Modal
+          title={editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"}
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={() => setIsModalVisible(false)}
+          okText="Saqlash"
+          cancelText="Bekor qilish"
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label="Guruh nomi" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="teacher"
+              label="O‘qituvchi"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="students"
+              label="Talabalar soni"
+              rules={[{ required: true }]}
+            >
+              <Input type="number" min={0} />
+            </Form.Item>
+
+            <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
+              <Select>
+                <Select.Option value="Faol">Faol</Select.Option>
+                <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-
-      {/* Modal */}
-      <Modal
-        title={editingGroup ? "Guruhni tahrirlash" : "Yangi guruh qo‘shish"}
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={() => setIsModalVisible(false)}
-        okText="Saqlash"
-        cancelText="Bekor qilish"
-        width={600}
-        zIndex={1000}
-        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Guruh nomi" rules={[{ required: true }]}>
-            <Input placeholder="Masalan: FE-01" />
-          </Form.Item>
-
-          <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
-            <Input placeholder="Masalan: Frontend" />
-          </Form.Item>
-
-          <Form.Item name="teacher" label="O‘qituvchi" rules={[{ required: true }]}>
-            <Input placeholder="O‘qituvchi ismi" />
-          </Form.Item>
-
-          <Form.Item name="students" label="Talabalar soni" rules={[{ required: true }]}>
-            <Input type="number" min={0} />
-          </Form.Item>
-
-          <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
-            <Select placeholder="Holatini tanlang">
-              <Select.Option value="Faol">Faol</Select.Option>
-              <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+    </ConfigProvider>
   );
 };
 

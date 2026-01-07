@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import {
   Table,
   Modal,
@@ -8,13 +7,15 @@ import {
   Select,
   Popconfirm,
   message,
-  Input as AntInput,
+  ConfigProvider,
+  theme as antdTheme,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
+import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "../../context/ThemeContext";
 
-// Static mock data
+// Mock data
 const initialParents = [
   {
     id: 1,
@@ -44,6 +45,9 @@ const initialParents = [
 
 const Parents = () => {
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+
   const [parents, setParents] = useState(initialParents);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -67,7 +71,9 @@ const Parents = () => {
     form.validateFields().then((values) => {
       if (editingParent) {
         setParents((prev) =>
-          prev.map((p) => (p.id === editingParent.id ? { ...p, ...values } : p))
+          prev.map((p) =>
+            p.id === editingParent.id ? { ...p, ...values } : p
+          )
         );
         message.success(t("parent_updated"));
       } else {
@@ -88,15 +94,13 @@ const Parents = () => {
       title: t("parent"),
       dataIndex: "name",
       render: (_, record) => (
-        <div className="flex items-center">
-          <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-gray-500" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {record.name}
-            </div>
-            <div className="text-sm text-gray-500">{record.email}</div>
+          <div>
+            <div className="font-medium">{record.name}</div>
+            <div className="text-xs text-gray-500">{record.email}</div>
           </div>
         </div>
       ),
@@ -122,11 +126,8 @@ const Parents = () => {
       title: t("actions"),
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
-            <PencilIcon className="w-5 h-5" />
+          <button onClick={() => showModal(record)}>
+            <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
             title={t("confirm_delete")}
@@ -134,8 +135,8 @@ const Parents = () => {
             okText={t("yes")}
             cancelText={t("no")}
           >
-            <button className="text-red-600 hover:text-red-800">
-              <TrashBinIcon className="w-5 h-5" />
+            <button>
+              <TrashBinIcon className="w-5 h-5 text-red-600" />
             </button>
           </Popconfirm>
         </div>
@@ -144,109 +145,76 @@ const Parents = () => {
   ];
 
   return (
-    <div className="p-3 sm:p-2 lg:p-1">
-      {/* Header */}
-      <ListHeader
-        title={t("total_parents")}
-        count={filteredParents.length}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder={t("search_parent")}
-        buttonText={t("add_parent")}
-        onButtonClick={() => showModal()}
-      >
-        {/* Optional filter */}
-      </ListHeader>
-
-      {/* Responsive Table wrapper */}
-      <div className="overflow-x-auto">
-        <Table
-          columns={columns}
-          dataSource={filteredParents}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: false,
-            itemRender: (page, type, originalElement) => {
-              if (type === "prev")
-                return (
-                  <button className="px-3 py-1 border rounded">
-                    {t("prev")}
-                  </button>
-                );
-              if (type === "next")
-                return (
-                  <button className="px-3 py-1 border rounded">
-                    {t("next")}
-                  </button>
-                );
-              return originalElement;
-            },
-          }}
-          scroll={{ x: 800 }} // table kengligi mobil uchun scroll
+    <ConfigProvider
+      theme={{
+        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+        token: {
+          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+      }}
+    >
+      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+        <ListHeader
+          title={t("total_parents")}
+          count={filteredParents.length}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder={t("search_parent")}
+          buttonText={t("add_parent")}
+          onButtonClick={() => showModal()}
         />
+
+        <div className="overflow-x-auto mt-4">
+          <Table
+            columns={columns}
+            dataSource={filteredParents}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: 800 }}
+          />
+        </div>
+
+        <Modal
+          title={editingParent ? t("edit_parent") : t("add_parent")}
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={() => setIsModalVisible(false)}
+          okText={t("save")}
+          cancelText={t("cancel")}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label={t("full_name")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="student" label={t("child")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="phone" label={t("phone")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label={t("email")}
+              rules={[{ required: true, type: "email" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="status" label={t("status")} rules={[{ required: true }]}>
+              <Select>
+                <Select.Option value="active">{t("active")}</Select.Option>
+                <Select.Option value="on_leave">{t("on_leave")}</Select.Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-
-      {/* Modal */}
-      <Modal
-        title={editingParent ? t("edit_parent") : t("add_parent")}
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={() => setIsModalVisible(false)}
-        okText={t("save")}
-        cancelText={t("cancel")}
-        width={600}
-        zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label={t("full_name")}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="student"
-            label={t("child")}
-            rules={[{ required: true }]}
-          >
-            <Input placeholder={t("child_name")} />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            label={t("phone")}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label={t("email")}
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label={t("status")}
-            rules={[{ required: true }]}
-          >
-            <Select placeholder={t("select_status")}>
-              <Select.Option value="active">{t("active")}</Select.Option>
-              <Select.Option value="on_leave">{t("on_leave")}</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+    </ConfigProvider>
   );
 };
 

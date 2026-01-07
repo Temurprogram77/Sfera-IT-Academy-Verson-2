@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -31,6 +36,9 @@ import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
 import "./i18n";
 import Assessnment from "./pages/Assessnment/Assessnment";
+import { Toaster } from "sonner";
+import { theme } from "antd";
+import { useTheme } from "./context/ThemeContext";
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
   const ROLE_REDIRECTS: Record<string, string> = {
@@ -40,11 +48,15 @@ const getRoleRedirectPath = (role: string | null): string => {
     ROLE_STUDENT: "/dashboard/student",
     ROLE_PARENT: "/dashboard/parent",
   };
-  return role ? (ROLE_REDIRECTS[role] || "/dashboard/teacher") : "/dashboard/teacher";
+  return role
+    ? ROLE_REDIRECTS[role] || "/dashboard/teacher"
+    : "/dashboard/teacher";
 };
 
 // Protected Route - login bo'lmaganlarni sign in ga yo'naltiradi
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const token = localStorage.getItem("auth_token");
 
   if (!token) {
@@ -68,6 +80,8 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 export default function App() {
+  const { theme } = useTheme();
+
   return (
     <Router>
       <ScrollToTop />
@@ -133,6 +147,11 @@ export default function App() {
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Toaster
+        position="top-right"
+        richColors
+        theme={theme === "dark" ? "dark" : "light"}
+      />
     </Router>
   );
 }

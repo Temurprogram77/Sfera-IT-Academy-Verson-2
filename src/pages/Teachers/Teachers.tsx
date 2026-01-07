@@ -1,10 +1,21 @@
 import { useState } from "react";
+import {
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Popconfirm,
+  message,
+  ConfigProvider,
+  theme as antdTheme,
+} from "antd";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
-import { Table, Modal, Form, Input, Select, Popconfirm, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 
-// Static mock data
+// Mock data
 const initialTeachers = [
   {
     id: 1,
@@ -33,27 +44,13 @@ const initialTeachers = [
     groups: 3,
     status: "Ta'tilda",
   },
-  {
-    id: 4,
-    name: "Saidova Madina",
-    subject: "Frontend",
-    phone: "+998 93 456 78 90",
-    email: "madina@school.uz",
-    groups: 6,
-    status: "Faol",
-  },
-  {
-    id: 5,
-    name: "To'rayev Botir",
-    subject: "Java",
-    phone: "+998 97 567 89 01",
-    email: "botir@school.uz",
-    groups: 2,
-    status: "Faol",
-  },
 ];
 
 const Teachers = () => {
+  const { theme } = useTheme();
+  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+  const { t } = useTranslation();
+
   const [teachers, setTeachers] = useState(initialTeachers);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -61,10 +58,10 @@ const Teachers = () => {
   const [form] = Form.useForm();
 
   const filteredTeachers = teachers.filter(
-    (teacher) =>
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.phone.includes(searchTerm)
+    (t) =>
+      t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.phone.includes(searchTerm)
   );
 
   const showModal = (teacher = null) => {
@@ -74,62 +71,53 @@ const Teachers = () => {
   };
 
   const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (editingTeacher) {
-          setTeachers((prev) =>
-            prev.map((t) =>
-              t.id === editingTeacher.id ? { ...t, ...values } : t
-            )
-          );
-          message.success("O'qituvchi muvaffaqiyatli yangilandi!");
-        } else {
-          const newTeacher = {
-            id: Math.max(...teachers.map((t) => t.id)) + 1,
-            ...values,
-          };
-          setTeachers((prev) => [...prev, newTeacher]);
-          message.success("Yangi o'qituvchi muvaffaqiyatli qo'shildi!");
-        }
-        setIsModalVisible(false);
-      })
-      .catch(() => {});
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
+    form.validateFields().then((values) => {
+      if (editingTeacher) {
+        setTeachers((prev) =>
+          prev.map((t) =>
+            t.id === editingTeacher.id ? { ...t, ...values } : t
+          )
+        );
+        message.success(t("teacher_updated"));
+      } else {
+        setTeachers((prev) => [...prev, { id: Date.now(), ...values }]);
+        message.success(t("teacher_added"));
+      }
+      setIsModalVisible(false);
+    });
   };
 
   const handleDelete = (id) => {
     setTeachers((prev) => prev.filter((t) => t.id !== id));
-    message.success("O'qituvchi muvaffaqiyatli o'chirildi!");
+    message.success(t("teacher_deleted"));
   };
 
   const columns = [
     {
-      title: "O'qituvchi",
+      title: t("teacher"),
       dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <div className="flex items-center">
-          <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-gray-500" />
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{record.name}</div>
-            <div className="text-sm text-gray-500">{record.email}</div>
+          <div>
+            <div className="font-medium">{record.name}</div>
+            <div className="text-xs text-gray-500">{record.email}</div>
           </div>
         </div>
       ),
     },
-    { title: "Guruh Nomi", dataIndex: "subject", key: "subject" },
-    { title: "Telefon", dataIndex: "phone", key: "phone" },
-    { title: "Guruhlar", dataIndex: "groups", key: "groups", render: (text) => `${text} ta` },
+    { title: t("subject"), dataIndex: "subject" },
+    { title: t("phone"), dataIndex: "phone" },
     {
-      title: "Holati",
+      title: t("groups"),
+      dataIndex: "groups",
+      render: (v) => `${v} ta`,
+    },
+    {
+      title: t("status"),
       dataIndex: "status",
-      key: "status",
       render: (text) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
@@ -143,134 +131,107 @@ const Teachers = () => {
       ),
     },
     {
-      title: "Amallar",
-      key: "action",
+      title: t("actions"),
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)} className="text-brand-600 hover:text-brand-800">
-            <PencilIcon className="w-5 h-5" />
+          <button onClick={() => showModal(record)}>
+            <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title="Haqiqatan ham o'chirmoqchimisiz?"
+            title={t("confirm_delete")}
             onConfirm={() => handleDelete(record.id)}
-            okText="Ha"
-            cancelText="Yo'q"
+            okText={t("yes")}
+            cancelText={t("no")}
           >
-            <button className="text-red-600 hover:text-red-800">
-              <TrashBinIcon className="w-5 h-5" />
+            <button>
+              <TrashBinIcon className="w-5 h-5 text-red-600" />
             </button>
           </Popconfirm>
         </div>
       ),
     },
   ];
-  const {t}=useTranslation()
+
   return (
-    <div className="p-3 sm:p-2 lg:p-1">
-      {/* Header */}
-      <ListHeader
-        title={t("teachers_count")}
-        count={filteredTeachers.length}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder={t("search_teacher")}
-        buttonText={t("add_teacher")}
-        onButtonClick={() => showModal()
-        }
-        
-      >
-        {/* Optional filter */}
-      </ListHeader>
-
-      {/* Responsive Table */}
-      <div className="overflow-x-auto">
-        <Table
-          columns={columns}
-          dataSource={filteredTeachers}
-          rowKey="id"
-          className="dark:bg-black"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: false,
-            itemRender: (page, type, originalElement) => {
-              if (type === "prev") return <button className="px-3 py-1 border rounded dark:text-white">{t("prev")}</button>;
-              if (type === "next") return <button className="px-3 py-1 border rounded dark:text-white">{t("next")}</button>;
-              return originalElement;
-            },
-          }}
-          scroll={{ x: 900 }} // mobil scroll
+    <ConfigProvider
+      key={theme} // 🔥 MUHIM
+      theme={{
+        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+        token: {
+          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+      }}
+    >
+      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+        <ListHeader
+          title={t("teachers_count")}
+          count={filteredTeachers.length}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder={t("search_teacher")}
+          buttonText={t("add_teacher")}
+          onButtonClick={() => showModal()}
         />
+
+        <div className="overflow-x-auto mt-4">
+          <Table
+            columns={columns}
+            dataSource={filteredTeachers}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: 900 }}
+          />
+        </div>
+
+        <Modal
+          title={
+            editingTeacher
+              ? t("edit_teacher")
+              : t("add_teacher")
+          }
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={() => setIsModalVisible(false)}
+          okText={t("save")}
+          cancelText={t("cancel")}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label={t("fullname")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="subject" label={t("subject")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="phone" label={t("phone")} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label={t("email")}
+              rules={[{ required: true, type: "email" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="groups" label={t("groups")} rules={[{ required: true }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item name="status" label={t("status")} rules={[{ required: true }]}>
+              <Select>
+                <Select.Option value="Faol">Faol</Select.Option>
+                <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-
-      {/* Modal */}
-      <Modal
-        title={editingTeacher ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish"}
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Saqlash"
-        cancelText="Bekor qilish"
-        width={600}
-        zIndex={1000}
-        okButtonProps={{ style: { backgroundColor: "#18A752", border: "none" } }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Ism familiya"
-            rules={[{ required: true, message: "Iltimos, ism familiyani kiriting!" }]}
-          >
-            <Input placeholder="Masalan: Abdullaev Ahmad" />
-          </Form.Item>
-
-          <Form.Item
-            name="subject"
-            label="Guruh nomi (fan)"
-            rules={[{ required: true, message: "Iltimos, guruh nomini kiriting!" }]}
-          >
-            <Input placeholder="Masalan: Frontend" />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            label="Telefon raqam"
-            rules={[{ required: true, message: "Iltimos, telefon raqamini kiriting!" }]}
-          >
-            <Input placeholder="+998 90 123 45 67" />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Iltimos, emailni kiriting!" },
-              { type: "email", message: "Noto'g'ri email formati!" },
-            ]}
-          >
-            <Input placeholder="email@example.uz" />
-          </Form.Item>
-
-          <Form.Item
-            name="groups"
-            label="Guruhlar soni"
-            rules={[{ required: true, message: "Iltimos, guruhlar sonini kiriting!" }]}
-          >
-            <Input type="number" min={0} placeholder="5" />
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label="Holati"
-            rules={[{ required: true, message: "Iltimos, holatni tanlang!" }]}
-          >
-            <Select placeholder="Holati tanlang">
-              <Select.Option value="Faol">Faol</Select.Option>
-              <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+    </ConfigProvider>
   );
 };
 

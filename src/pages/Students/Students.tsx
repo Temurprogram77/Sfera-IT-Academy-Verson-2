@@ -1,9 +1,20 @@
 import { useState } from "react";
+import {
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Popconfirm,
+  message,
+  ConfigProvider,
+  theme as antdTheme,
+} from "antd";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
-import { Table, Modal, Form, Input, Select, Popconfirm, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTheme } from "../../context/ThemeContext";
 
-// Static mock data
+// Mock data
 const initialStudents = [
   {
     id: 1,
@@ -35,6 +46,9 @@ const initialStudents = [
 ];
 
 const Students = () => {
+  const { theme } = useTheme();
+  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+
   const [students, setStudents] = useState(initialStudents);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -62,10 +76,10 @@ const Students = () => {
             s.id === editingStudent.id ? { ...s, ...values } : s
           )
         );
-        message.success("Talaba muvaffaqiyatli yangilandi!");
+        message.success("Talaba yangilandi");
       } else {
         setStudents((prev) => [...prev, { id: Date.now(), ...values }]);
-        message.success("Yangi talaba muvaffaqiyatli qo‘shildi!");
+        message.success("Talaba qo‘shildi");
       }
       setIsModalVisible(false);
     });
@@ -73,7 +87,7 @@ const Students = () => {
 
   const handleDelete = (id) => {
     setStudents((prev) => prev.filter((s) => s.id !== id));
-    message.success("Talaba muvaffaqiyatli o‘chirildi!");
+    message.success("Talaba o‘chirildi");
   };
 
   const columns = [
@@ -81,13 +95,13 @@ const Students = () => {
       title: "Talaba",
       dataIndex: "name",
       render: (_, record) => (
-        <div className="flex items-center">
-          <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-gray-500" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{record.name}</div>
-            <div className="text-sm text-gray-500">{record.email}</div>
+          <div>
+            <div className="font-medium">{record.name}</div>
+            <div className="text-xs text-gray-500">{record.email}</div>
           </div>
         </div>
       ),
@@ -114,20 +128,17 @@ const Students = () => {
       title: "Amallar",
       render: (_, record) => (
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => showModal(record)}
-            className="text-brand-600 hover:text-brand-800"
-          >
-            <PencilIcon className="w-5 h-5" />
+          <button onClick={() => showModal(record)}>
+            <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title="Haqiqatan ham o‘chirmoqchimisiz?"
+            title="O‘chirmoqchimisiz?"
             onConfirm={() => handleDelete(record.id)}
             okText="Ha"
             cancelText="Yo‘q"
           >
-            <button className="text-red-600 hover:text-red-800">
-              <TrashBinIcon className="w-5 h-5" />
+            <button>
+              <TrashBinIcon className="w-5 h-5 text-red-600" />
             </button>
           </Popconfirm>
         </div>
@@ -136,85 +147,80 @@ const Students = () => {
   ];
 
   return (
-    <div className="p-3 sm:p-2 lg:p-1">
-      {/* Header */}
-      <ListHeader
-        title="Talabalar soni"
-        count={filteredStudents.length}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Talabani qidirish..."
-        buttonText="Talaba qo‘shish"
-        onButtonClick={() => showModal()}
-      >
-        {/* Optional filter */}
-      </ListHeader>
-
-      {/* Responsive Table wrapper */}
-      <div className="overflow-x-auto">
-        <Table
-          columns={columns}
-          dataSource={filteredStudents}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: false,
-            itemRender: (page, type, originalElement) => {
-              if (type === "prev")
-                return <button className="px-3 py-1 border rounded">Oldingi</button>;
-              if (type === "next")
-                return <button className="px-3 py-1 border rounded">Keyingi</button>;
-              return originalElement;
-            },
-          }}
-          scroll={{ x: 800 }} // minimal kenglik scroll uchun
+    <ConfigProvider
+      theme={{
+        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+        token: {
+          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+      }}
+    >
+      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+        <ListHeader
+          title="Talabalar soni"
+          count={filteredStudents.length}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Talabani qidirish..."
+          buttonText="Talaba qo‘shish"
+          onButtonClick={() => showModal()}
         />
+
+        <div className="overflow-x-auto mt-4">
+          <Table
+            columns={columns}
+            dataSource={filteredStudents}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: 800 }}
+          />
+        </div>
+
+        <Modal
+          title={editingStudent ? "Talabani tahrirlash" : "Talaba qo‘shish"}
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={() => setIsModalVisible(false)}
+          okText="Saqlash"
+          cancelText="Bekor qilish"
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label="Ism familiya" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="group" label="Guruh" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="phone" label="Telefon" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ required: true, type: "email" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
+              <Select>
+                <Select.Option value="Faol">Faol</Select.Option>
+                <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-
-      {/* Modal */}
-      <Modal
-        title={editingStudent ? "Talabani tahrirlash" : "Yangi talaba qo‘shish"}
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={() => setIsModalVisible(false)}
-        okText="Saqlash"
-        cancelText="Bekor qilish"
-        width={600}
-        zIndex={1000}
-        okButtonProps={{
-          style: { backgroundColor: "#18A752", border: "none" },
-        }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Ism familiya" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="group" label="Guruh" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="phone" label="Telefon" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
-            <Select placeholder="Holatini tanlang">
-              <Select.Option value="Faol">Faol</Select.Option>
-              <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+    </ConfigProvider>
   );
 };
 
