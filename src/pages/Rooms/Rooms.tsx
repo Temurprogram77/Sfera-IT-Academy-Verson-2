@@ -74,7 +74,7 @@ const Rooms = () => {
         },
       }}
     >
-      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+      <div className="p-4 bg-white dark:bg-gray-900">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold dark:text-gray-200">Xonalar</h2>

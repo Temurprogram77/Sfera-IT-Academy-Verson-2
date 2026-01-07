@@ -164,7 +164,7 @@ const Teachers = () => {
         },
       }}
     >
-      <div className="p-4 bg-white dark:bg-gray-900 min-h-screen">
+      <div className="p-4 bg-white dark:bg-gray-900">
         <ListHeader
           title={t("teachers_count")}
           count={filteredTeachers.length}

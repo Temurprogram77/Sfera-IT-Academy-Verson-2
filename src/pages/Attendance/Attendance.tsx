@@ -139,7 +139,7 @@ const Attendance = () => {
         },
       }}
     >
-      <div className={`p-4 sm:p-2 min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+      <div className={`p-4 sm:p-2 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
         {/* Sonner Toaster */}
         <Toaster
           position="top-right"
