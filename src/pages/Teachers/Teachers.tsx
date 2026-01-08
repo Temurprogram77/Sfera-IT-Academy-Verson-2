@@ -14,6 +14,7 @@ import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 // Mock data
 const initialTeachers = [
@@ -78,10 +79,10 @@ const Teachers = () => {
             t.id === editingTeacher.id ? { ...t, ...values } : t
           )
         );
-        message.success(t("teacher_updated"));
+        toast.success(t("teacher_updated"));
       } else {
         setTeachers((prev) => [...prev, { id: Date.now(), ...values }]);
-        message.success(t("teacher_added"));
+        toast.success(t("teacher_added"));
       }
       setIsModalVisible(false);
     });

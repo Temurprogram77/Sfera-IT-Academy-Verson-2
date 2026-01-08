@@ -14,7 +14,7 @@ import {
   UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { authService } from "../services/authService "; // bo'sh joy olib tashlandi
+import { authService } from "../services/authService ";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 
@@ -37,14 +37,11 @@ const AppSidebar: React.FC = () => {
     type: "main" | "others";
     index: number;
   } | null>(null);
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
-  );
+  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
-    const role = authService.getRole();
-    setCurrentRole(role);
+    setCurrentRole(authService.getRole());
   }, []);
 
   const allNavItems = useMemo<NavItem[]>(
@@ -60,26 +57,10 @@ const AppSidebar: React.FC = () => {
         name: t("Foydalanuvchilar"),
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
-          {
-            name: t("Adminlar"),
-            path: "/admins",
-            pro: false,
-          },
-          {
-            name: t("teachers"),
-            path: "/teachers",
-            pro: false,
-          },
-          {
-            name: t("parents"),
-            path: "/parents",
-            pro: false,
-          },
-          {
-            name: t("students"),
-            path: "/students",
-            pro: false,
-          },
+          { name: t("Adminlar"), path: "/admins", pro: false },
+          { name: t("teachers"), path: "/teachers", pro: false },
+          { name: t("parents"), path: "/parents", pro: false },
+          { name: t("students"), path: "/students", pro: false },
         ],
       },
       {
@@ -87,16 +68,8 @@ const AppSidebar: React.FC = () => {
         name: t("Sinflar"),
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
-          {
-            name: t("groups"),
-            path: "/groups",
-            pro: false,
-          },
-          {
-            name: t("rooms"),
-            path: "/rooms",
-            pro: false,
-          },
+          { name: t("groups"), path: "/groups", pro: false },
+          { name: t("rooms"), path: "/rooms", pro: false },
         ],
       },
       {
@@ -146,16 +119,8 @@ const AppSidebar: React.FC = () => {
         name: t("grades"),
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
         subItems: [
-          {
-            name: t("grades"),
-            path: "/grades",
-            pro: false,
-          },
-          {
-            name: t("assessment"),
-            path: "/assessment",
-            pro: false,
-          },
+          { name: t("grades"), path: "/grades", pro: false },
+          { name: t("assessment"), path: "/assessment", pro: false },
         ],
       },
       {
@@ -175,16 +140,8 @@ const AppSidebar: React.FC = () => {
         name: t("attendance"),
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
         subItems: [
-          {
-            name: t("attendance"),
-            path: "/attendance",
-            pro: false,
-          },
-          {
-            name: t("Davomat Tarix"),
-            path: "/history-attendance",
-            pro: false,
-          },
+          { name: t("attendance"), path: "/attendance", pro: false },
+          { name: t("Davomat Tarix"), path: "/history-attendance", pro: false },
         ],
       },
       {
@@ -243,22 +200,20 @@ const AppSidebar: React.FC = () => {
   );
 
   useEffect(() => {
-    if (openSubmenu !== null) {
+    if (openSubmenu) {
       const key = `${openSubmenu.type}-${openSubmenu.index}`;
       if (subMenuRefs.current[key]) {
-        setSubMenuHeight((prev) => ({
-          ...prev,
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
+        setSubMenuHeight((p) => ({
+          ...p,
+          [key]: subMenuRefs.current[key]!.scrollHeight,
         }));
       }
     }
   }, [openSubmenu]);
 
-  const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
-    setOpenSubmenu((prev) =>
-      prev && prev.type === menuType && prev.index === index
-        ? null
-        : { type: menuType, index }
+  const handleSubmenuToggle = (index: number, type: "main" | "others") => {
+    setOpenSubmenu((p) =>
+      p && p.index === index && p.type === type ? null : { index, type }
     );
   };
 
@@ -267,44 +222,51 @@ const AppSidebar: React.FC = () => {
       {items.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
-            <button
-              onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item group cursor-pointer flex items-center gap-3 ${
-                openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? theme === "dark"
-                    ? "bg-green-700 text-white"
-                    : "menu-item-active"
-                  : theme === "dark"
-                  ? "hover:bg-green-600 text-gray-200"
-                  : "menu-item-inactive"
-              }`}
-            >
-              <span className="menu-item-icon-size">{nav.icon}</span>
-              {(isExpanded || isHovered || isMobileOpen) && (
+            isExpanded || isHovered || isMobileOpen ? (
+              <button
+                onClick={() => handleSubmenuToggle(index, menuType)}
+                onMouseOver={()=>handleSubmenuToggle(index, menuType)}
+                className={`menu-item group flex items-center gap-3 ${
+                  openSubmenu?.index === index && openSubmenu?.type === menuType
+                    ? theme === "dark"
+                      ? "bg-green-700 text-white"
+                      : "menu-item-active"
+                    : theme === "dark"
+                    ? "hover:bg-green-600 text-gray-200"
+                    : "menu-item-inactive"
+                }`}
+              >
+                <span className="menu-item-icon-size">{nav.icon}</span>
                 <span className="menu-item-text">{nav.name}</span>
-              )}
-              {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
                   className={`ml-auto w-5 h-5 transition-transform ${
-                    openSubmenu?.type === menuType &&
-                    openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
+                    openSubmenu?.index === index &&
+                    openSubmenu?.type === menuType
+                      ? "rotate-180"
                       : ""
                   }`}
                 />
-              )}
-            </button>
+              </button>
+            ) : (
+              <Link
+                to={nav.subItems[0].path}
+                className="menu-item flex justify-center"
+                title={nav.name}
+              >
+                <span className="menu-item-icon-size">{nav.icon}</span>
+              </Link>
+            )
           ) : (
             <Link
               to={nav.path!}
-              className={`menu-item group ${
+              className={`menu-item group flex items-center gap-3 ${
                 isActive(nav.path!)
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
-              } cursor-pointer flex items-center gap-3 ${
+              } ${
                 !isExpanded && !isHovered && !isMobileOpen
                   ? "lg:justify-center"
-                  : "lg:justify-start"
+                  : ""
               }`}
             >
               <span className="menu-item-icon-size">{nav.icon}</span>
@@ -316,29 +278,30 @@ const AppSidebar: React.FC = () => {
 
           {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
             <div
-              ref={(el) => {
-                subMenuRefs.current[`${menuType}-${index}`] = el;
-              }}
+              ref={(el) =>
+                (subMenuRefs.current[`${menuType}-${index}`] = el)
+              }
               className="overflow-hidden transition-all"
               style={{
                 height:
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
+                  openSubmenu?.index === index &&
+                  openSubmenu?.type === menuType
                     ? `${subMenuHeight[`${menuType}-${index}`]}px`
                     : "0px",
               }}
             >
-              <ul className="mt-2 space-y-1 ml-9">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
+              <ul className="mt-2 ml-9 space-y-1">
+                {nav.subItems.map((sub) => (
+                  <li key={sub.name}>
                     <Link
-                      to={subItem.path}
+                      to={sub.path}
                       className={`menu-dropdown-item ${
-                        isActive(subItem.path)
+                        isActive(sub.path)
                           ? "menu-dropdown-item-active dark:menu-dropdown-item-active-dark"
                           : "menu-dropdown-item-inactive dark:menu-dropdown-item-inactive-dark"
                       }`}
                     >
-                      {subItem.name}
+                      {sub.name}
                     </Link>
                   </li>
                 ))}
@@ -359,88 +322,25 @@ const AppSidebar: React.FC = () => {
     ROLE_STUDENT: "/dashboard/student",
     ROLE_PARENT: "/dashboard/parent",
   };
-  const homePath = rolePathMap[currentRole || ""] || "/";
 
   return (
     <aside
-      className={`fixed md:mt-16 m-0 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
-        ${
-          isExpanded || isMobileOpen
-            ? "w-[290px]"
-            : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
-        }
-        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0`}
+      className={`fixed top-0 left-0 z-50 h-screen border-r bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
+        isExpanded || isHovered || isMobileOpen ? "w-[290px]" : "w-[90px]"
+      } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
     >
-      {/* Logo */}
-      <div
-        className={`py-5 flex ${
-          !isExpanded && !isHovered && !isMobileOpen
-            ? "lg:justify-center"
-            : "justify-start"
-        }`}
-      >
-        <Link to={homePath}>
-          {isExpanded || isHovered || isMobileOpen ? (
-            <div className="flex items-center gap-2">
-              <img
-                className="w-[60px] h-[60px] object-contain dark:hidden"
-                src="/images/logoOne.png"
-                alt="Logo"
-              />
-              <img
-                className="w-[60px] h-[60px] object-contain hidden dark:block"
-                src="/images/logoTwo.png"
-                alt="Logo Dark"
-              />
-              <span className="text-[33px] leading-6 font-bold dark:text-gray-200">
-                Sfera{" "}
-                {currentRole === "ROLE_STUDENT"
-                  ? "Student"
-                  : currentRole === "ROLE_ADMIN"
-                  ? "Admin"
-                  : currentRole === "ROLE_PARENT"
-                  ? "Parent"
-                  : currentRole === "ROLE_TEACHER"
-                  ? "Teacher"
-                  : currentRole === "ROLE_SUPER_ADMIN"
-                  ? "Super Admin"
-                  : ""}
-              </span>
-            </div>
-          ) : (
-            <img src="/images/logoOne.png" alt="Logo" width={32} height={32} />
-          )}
+      <div className="py-5 flex justify-center lg:justify-start">
+        <Link to={rolePathMap[currentRole]}>
+          <img src="/images/logoOne.png" className="w-10" />
         </Link>
       </div>
 
-      {/* Menu Items */}
-      <div className="flex flex-col overflow-y-auto ease-linear no-scrollbar dark:scrollbar-dark flex-1">
-        <nav className="mb-6 flex-1">
-          <div className="flex flex-col gap-8">
-            {filteredNavItems.length > 0 && (
-              <div>
-                <h2
-                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 dark:text-gray-500 ${
-                    !isExpanded && !isHovered && !isMobileOpen
-                      ? "lg:justify-center"
-                      : "justify-start"
-                  }`}
-                >
-                  {isExpanded || isHovered || isMobileOpen ? (
-                    t("menu")
-                  ) : (
-                    <HorizontaLDots className="size-6" />
-                  )}
-                </h2>
-                {renderMenuItems(filteredNavItems, "main")}
-              </div>
-            )}
-          </div>
-        </nav>
-      </div>
+      <nav className="flex-1 overflow-y-auto">
+        <h2 className="mb-4 text-xs uppercase text-gray-400">
+          {isExpanded || isHovered || isMobileOpen ? t("menu") : <HorizontaLDots />}
+        </h2>
+        {renderMenuItems(filteredNavItems, "main")}
+      </nav>
     </aside>
   );
 };

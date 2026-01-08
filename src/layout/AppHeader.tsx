@@ -25,7 +25,6 @@ const AppHeader: React.FC = () => {
 
   const handleToggle = () => {
     if (isMessageSidebarOpen) return;
-
     if (window.innerWidth >= 1024) {
       toggleSidebar();
     } else {
