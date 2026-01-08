@@ -39,6 +39,7 @@ import Assessnment from "./pages/Assessnment/Assessnment";
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
+import Admins from "./pages/Admins/Admins";
 
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
@@ -142,6 +143,7 @@ export default function App() {
           <Route path="dashboard/student" element={<Student />} />
           <Route path="dashboard/parent" element={<Parent />} />
           <Route path="teachers" element={<Teachers />} />
+          <Route path="admins" element={<Admins />} />
           <Route path="students" element={<Students />} />
           <Route path="messages" element={<Messages />} />
           <Route path="grades" element={<Grades />} />

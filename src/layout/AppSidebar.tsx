@@ -22,7 +22,7 @@ type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
-  subItems?: { name: string; path: string }[];
+  subItems?: { name: string; path: string; pro: boolean }[];
   roles: string[];
 };
 
@@ -56,6 +56,52 @@ const AppSidebar: React.FC = () => {
         roles: ["ROLE_SUPER_ADMIN"],
       },
       {
+        icon: <UserIcon />,
+        name: t("Foydalanuvchilar"),
+        path: "/dashboard/teacher",
+        roles: ["ROLE_SUPER_ADMIN"],
+        subItems: [
+          {
+            name: t("teachers"),
+            path: "/teachers",
+            pro: false,
+          },
+          {
+            name: t("students"),
+            path: "/students",
+            pro: false,
+          },
+          {
+            name: t("parents"),
+            path: "/parents",
+            pro: false,
+          },
+          {
+            name: t("admins"),
+            path: "/admins",
+            pro: false,
+          },
+        ],
+      },
+      {
+        icon: <BoxCubeIcon />,
+        name: t("Sinflar"),
+        path: "/dashboard/teacher",
+        roles: ["ROLE_SUPER_ADMIN"],
+        subItems: [
+          {
+            name: t("groups"),
+            path: "/groups",
+            pro: false,
+          },
+          {
+            name: t("rooms"),
+            path: "/rooms",
+            pro: false,
+          },
+        ],
+      },
+      {
         icon: <GridIcon />,
         name: t("dashboard_student"),
         path: "/dashboard/student",
@@ -83,13 +129,13 @@ const AppSidebar: React.FC = () => {
         icon: <UserIcon />,
         name: t("teachers"),
         path: "/teachers",
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
+        roles: ["ROLE_ADMIN"],
       },
       {
         icon: <UserCircleIcon />,
         name: t("students"),
         path: "/students",
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
+        roles: ["ROLE_ADMIN", "ROLE_TEACHER"],
       },
       {
         icon: <BoltIcon />,
@@ -113,7 +159,7 @@ const AppSidebar: React.FC = () => {
         icon: <GroupIcon />,
         name: t("parents"),
         path: "/parents",
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
+        roles: ["ROLE_ADMIN"],
       },
       {
         icon: <CheckCircleIcon />,
@@ -125,13 +171,19 @@ const AppSidebar: React.FC = () => {
         icon: <GroupIcon />,
         name: t("groups"),
         path: "/groups",
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
+        roles: ["ROLE_ADMIN"],
+      },
+      {
+        icon: <BoxCubeIcon />,
+        name: t("my-groups"), 
+        path: "/my-groups",
+        roles: ["ROLE_TEACHER"],
       },
       {
         icon: <BoxIcon />,
         name: t("rooms"),
         path: "/rooms",
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
+        roles: ["ROLE_ADMIN"],
       },
       {
         icon: <CalenderIcon />,
@@ -197,14 +249,15 @@ const AppSidebar: React.FC = () => {
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item group cursor-pointer flex items-center gap-3 ${openSubmenu?.type === menuType && openSubmenu?.index === index
+              className={`menu-item group cursor-pointer flex items-center gap-3 ${
+                openSubmenu?.type === menuType && openSubmenu?.index === index
                   ? theme === "dark"
                     ? "bg-green-700 text-white"
                     : "menu-item-active"
                   : theme === "dark"
-                    ? "hover:bg-green-600 text-gray-200"
-                    : "menu-item-inactive"
-                }`}
+                  ? "hover:bg-green-600 text-gray-200"
+                  : "menu-item-inactive"
+              }`}
             >
               <span className="menu-item-icon-size">{nav.icon}</span>
               {(isExpanded || isHovered || isMobileOpen) && (
@@ -212,24 +265,27 @@ const AppSidebar: React.FC = () => {
               )}
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
-                  className={`ml-auto w-5 h-5 transition-transform ${openSubmenu?.type === menuType &&
-                      openSubmenu?.index === index
+                  className={`ml-auto w-5 h-5 transition-transform ${
+                    openSubmenu?.type === menuType &&
+                    openSubmenu?.index === index
                       ? "rotate-180 text-brand-500"
                       : ""
-                    }`}
+                  }`}
                 />
               )}
             </button>
           ) : (
             <Link
               to={nav.path!}
-              className={`menu-item group ${isActive(nav.path!)
+              className={`menu-item group ${
+                isActive(nav.path!)
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
-                } cursor-pointer flex items-center gap-3 ${!isExpanded && !isHovered && !isMobileOpen
+              } cursor-pointer flex items-center gap-3 ${
+                !isExpanded && !isHovered && !isMobileOpen
                   ? "lg:justify-center"
                   : "lg:justify-start"
-                }`}
+              }`}
             >
               <span className="menu-item-icon-size">{nav.icon}</span>
               {(isExpanded || isHovered || isMobileOpen) && (
@@ -256,10 +312,11 @@ const AppSidebar: React.FC = () => {
                   <li key={subItem.name}>
                     <Link
                       to={subItem.path}
-                      className={`menu-dropdown-item ${isActive(subItem.path)
+                      className={`menu-dropdown-item ${
+                        isActive(subItem.path)
                           ? "menu-dropdown-item-active dark:menu-dropdown-item-active-dark"
                           : "menu-dropdown-item-inactive dark:menu-dropdown-item-inactive-dark"
-                        }`}
+                      }`}
                     >
                       {subItem.name}
                     </Link>
@@ -287,9 +344,10 @@ const AppSidebar: React.FC = () => {
   return (
     <aside
       className={`fixed md:mt-16 m-0 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
-        ${isExpanded || isMobileOpen
-          ? "w-[290px]"
-          : isHovered
+        ${
+          isExpanded || isMobileOpen
+            ? "w-[290px]"
+            : isHovered
             ? "w-[290px]"
             : "w-[90px]"
         }
@@ -298,10 +356,11 @@ const AppSidebar: React.FC = () => {
     >
       {/* Logo */}
       <div
-        className={`py-5 flex ${!isExpanded && !isHovered && !isMobileOpen
+        className={`py-5 flex ${
+          !isExpanded && !isHovered && !isMobileOpen
             ? "lg:justify-center"
             : "justify-start"
-          }`}
+        }`}
       >
         <Link to={homePath}>
           {isExpanded || isHovered || isMobileOpen ? (
@@ -321,14 +380,14 @@ const AppSidebar: React.FC = () => {
                 {currentRole === "ROLE_STUDENT"
                   ? "Student"
                   : currentRole === "ROLE_ADMIN"
-                    ? "Admin"
-                    : currentRole === "ROLE_PARENT"
-                      ? "Parent"
-                      : currentRole === "ROLE_TEACHER"
-                        ? "Teacher"
-                        : currentRole === "ROLE_SUPER_ADMIN"
-                          ? "Super Admin"
-                          : ""}
+                  ? "Admin"
+                  : currentRole === "ROLE_PARENT"
+                  ? "Parent"
+                  : currentRole === "ROLE_TEACHER"
+                  ? "Teacher"
+                  : currentRole === "ROLE_SUPER_ADMIN"
+                  ? "Super Admin"
+                  : ""}
               </span>
             </div>
           ) : (
@@ -344,10 +403,11 @@ const AppSidebar: React.FC = () => {
             {filteredNavItems.length > 0 && (
               <div>
                 <h2
-                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 dark:text-gray-500 ${!isExpanded && !isHovered && !isMobileOpen
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 dark:text-gray-500 ${
+                    !isExpanded && !isHovered && !isMobileOpen
                       ? "lg:justify-center"
                       : "justify-start"
-                    }`}
+                  }`}
                 >
                   {isExpanded || isHovered || isMobileOpen ? (
                     t("menu")
