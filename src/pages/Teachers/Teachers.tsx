@@ -186,11 +186,7 @@ const Teachers = () => {
         </div>
 
         <Modal
-          title={
-            editingTeacher
-              ? t("edit_teacher")
-              : t("add_teacher")
-          }
+          title={editingTeacher ? t("edit_teacher") : t("add_teacher")}
           open={isModalVisible}
           onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
@@ -198,15 +194,27 @@ const Teachers = () => {
           cancelText={t("cancel")}
         >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label={t("fullname")} rules={[{ required: true }]}>
+            <Form.Item
+              name="name"
+              label={t("fullname")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item name="subject" label={t("subject")} rules={[{ required: true }]}>
+            <Form.Item
+              name="subject"
+              label={t("subject")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item name="phone" label={t("phone")} rules={[{ required: true }]}>
+            <Form.Item
+              name="phone"
+              label={t("phone")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
@@ -218,11 +226,19 @@ const Teachers = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="groups" label={t("groups")} rules={[{ required: true }]}>
+            <Form.Item
+              name="groups"
+              label={t("groups")}
+              rules={[{ required: true }]}
+            >
               <Input type="number" />
             </Form.Item>
 
-            <Form.Item name="status" label={t("status")} rules={[{ required: true }]}>
+            <Form.Item
+              name="status"
+              label={t("status")}
+              rules={[{ required: true }]}
+            >
               <Select>
                 <Select.Option value="Faol">Faol</Select.Option>
                 <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>

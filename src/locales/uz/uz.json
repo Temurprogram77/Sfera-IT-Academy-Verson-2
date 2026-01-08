@@ -62,8 +62,8 @@
   "customers": "Mijozlar",
   "orders": "Buyurtmalar",
   "monthlyTarget": "Oylik maqsad",
-   "monthlySetTarget": "Har bir oy uchun belgilagan maqsadingiz",
-   "viewMore": "Ko‘proq ko‘rish",
-   "delete": "O‘chirish",
-   "target": "Maqsad"
+  "monthlySetTarget": "Har bir oy uchun belgilagan maqsadingiz",
+  "viewMore": "Ko‘proq ko‘rish",
+  "delete": "O‘chirish",
+  "target": "Maqsad"
 }

@@ -99,7 +99,6 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         activeItem,
         openSubmenu,
 
-        // 🔒
         isLocked,
         lockSidebar,
         unlockSidebar,
