@@ -153,6 +153,13 @@ const Parents = () => {
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
         },
+        components: {
+          Modal: {
+            contentBg: theme === "dark" ? "#111827" : "#ffffff",
+            headerBg: theme === "dark" ? "#111827" : "#ffffff",
+            footerBg: theme === "dark" ? "#111827" : "#ffffff",
+          },
+        },
       }}
     >
       <div className="p-4 bg-white dark:bg-gray-900">
