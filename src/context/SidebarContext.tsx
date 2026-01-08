@@ -6,8 +6,17 @@ type SidebarContextType = {
   isHovered: boolean;
   activeItem: string | null;
   openSubmenu: string | null;
+
+  // 🔒 Notification lock
+  isLocked: boolean;
+  lockSidebar: () => void;
+  unlockSidebar: () => void;
+
   toggleSidebar: () => void;
   toggleMobileSidebar: () => void;
+  closeSidebar: () => void;
+  closeMobileSidebar: () => void;
+
   setIsHovered: (isHovered: boolean) => void;
   setActiveItem: (item: string | null) => void;
   toggleSubmenu: (item: string) => void;
@@ -33,6 +42,9 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
+  // 🔒 Notification sidebar ochiqmi
+  const [isLocked, setIsLocked] = useState(false);
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -44,21 +56,37 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
 
     handleResize();
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🔒 Toggle’larni bloklash
   const toggleSidebar = () => {
+    if (isLocked) return;
     setIsExpanded((prev) => !prev);
   };
 
   const toggleMobileSidebar = () => {
+    if (isLocked) return;
     setIsMobileOpen((prev) => !prev);
   };
 
+  // 🔥 Majburiy yopish
+  const closeSidebar = () => setIsExpanded(false);
+  const closeMobileSidebar = () => setIsMobileOpen(false);
+
+  // 🔒 Lock / Unlock
+  const lockSidebar = () => {
+    setIsLocked(true);
+    setIsExpanded(false);
+    setIsMobileOpen(false);
+  };
+
+  const unlockSidebar = () => {
+    setIsLocked(false);
+  };
+
   const toggleSubmenu = (item: string) => {
+    if (isLocked) return;
     setOpenSubmenu((prev) => (prev === item ? null : item));
   };
 
@@ -70,8 +98,17 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         isHovered,
         activeItem,
         openSubmenu,
+
+        // 🔒
+        isLocked,
+        lockSidebar,
+        unlockSidebar,
+
         toggleSidebar,
         toggleMobileSidebar,
+        closeSidebar,
+        closeMobileSidebar,
+
         setIsHovered,
         setActiveItem,
         toggleSubmenu,
