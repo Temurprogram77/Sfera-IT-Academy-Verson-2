@@ -1,5 +1,3 @@
-// src/services/authService.ts
-
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
 import { tokenManager } from "../utils/tokenManager";
