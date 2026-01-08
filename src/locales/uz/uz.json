@@ -61,5 +61,9 @@
   "errorOccurred": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
   "customers": "Mijozlar",
   "orders": "Buyurtmalar",
-  "monthlyTarget": "Oylik maqsad"
+  "monthlyTarget": "Oylik maqsad",
+   "monthlySetTarget": "Har bir oy uchun belgilagan maqsadingiz",
+   "viewMore": "Ko‘proq ko‘rish",
+   "delete": "O‘chirish",
+   "target": "Maqsad"
 }

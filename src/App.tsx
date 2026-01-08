@@ -39,6 +39,8 @@ import Assessnment from "./pages/Assessnment/Assessnment";
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
+import Admins from "./pages/Admins/Admins";
+
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
   const ROLE_REDIRECTS: Record<string, string> = {
@@ -51,6 +53,35 @@ const getRoleRedirectPath = (role: string | null): string => {
   return role
     ? ROLE_REDIRECTS[role] || "/dashboard/teacher"
     : "/dashboard/teacher";
+};
+
+// RootRedirect komponenti
+
+const RootRedirect: React.FC = () => {
+  const token = localStorage.getItem("auth_token");
+  const role = localStorage.getItem("user_role");
+
+  // Agar login qilmagan bo‘lsa login sahifaga yo'naltir
+  if (!token) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  // Agar login bo'lsa role bo‘yicha dashboardga yo'naltir
+  const getRoleRedirectPath = (role: string | null): string => {
+    const ROLE_REDIRECTS: Record<string, string> = {
+      ROLE_SUPER_ADMIN: "/dashboard/super_admin",
+      ROLE_ADMIN: "/dashboard/admin",
+      ROLE_TEACHER: "/dashboard/teacher",
+      ROLE_STUDENT: "/dashboard/student",
+      ROLE_PARENT: "/dashboard/parent",
+    };
+    return role
+      ? ROLE_REDIRECTS[role] || "/dashboard/teacher"
+      : "/dashboard/teacher";
+  };
+
+  const redirectPath = getRoleRedirectPath(role);
+  return <Navigate to={redirectPath} replace />;
 };
 
 // Protected Route - login bo'lmaganlarni sign in ga yo'naltiradi
@@ -105,13 +136,14 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          {/* <Route index element={<Home />} /> */}
+          <Route path="/" element={<RootRedirect />} />
           <Route path="dashboard/admin" element={<Admin />} />
           <Route path="dashboard/super_admin" element={<SuperAdmin />} />
           <Route path="dashboard/teacher" element={<Teacher />} />
           <Route path="dashboard/student" element={<Student />} />
           <Route path="dashboard/parent" element={<Parent />} />
           <Route path="teachers" element={<Teachers />} />
+          <Route path="admins" element={<Admins />} />
           <Route path="students" element={<Students />} />
           <Route path="messages" element={<Messages />} />
           <Route path="grades" element={<Grades />} />

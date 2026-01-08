@@ -60,5 +60,9 @@
   "errorOccurred": "Хатолик юз берди. Қайтадан уриниб кўринг.",
   "customers": "Мижозлар",
   "orders": "Буюртмалар",
-  "monthlyTarget": "Ойлик мақсад"
+  "monthlyTarget": "Ойлик мақсад",
+  "monthlySetTarget": "Ҳар бир ой учун белгилаган мақсадингиз",
+  "viewMore": "Кўпроқ кўриш",
+  "delete": "Ўчириш",
+  "target": "Мақсад"
 }
