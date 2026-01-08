@@ -28,7 +28,7 @@ type NavItem = {
 
 const AppSidebar: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { isExpanded, isMobileOpen, isHovered } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, handleMouseEnter, handleMouseLeave } = useSidebar();
   const location = useLocation();
   const { theme } = useTheme();
 
@@ -325,6 +325,8 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
+     onMouseEnter={handleMouseEnter}  // hover qilinsa sidebar ochiladi
+  onMouseLeave={handleMouseLeave}
       className={`fixed top-0 left-0 z-50 h-screen border-r bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
         isExpanded || isHovered || isMobileOpen ? "w-[290px]" : "w-[90px]"
       } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
