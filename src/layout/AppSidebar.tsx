@@ -138,6 +138,7 @@ const AppSidebar: React.FC = () => {
       {
         icon: <BoltIcon />,
         name: t("grades"),
+        path: "/grades",
         roles: ["ROLE_TEACHER", "ROLE_STUDENT", "ROLE_PARENT"],
       },
       {
