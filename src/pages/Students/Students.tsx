@@ -155,6 +155,13 @@ const Students = () => {
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
         },
+        components: {
+          Modal: {
+            contentBg: theme === "dark" ? "#111827" : "#ffffff",
+            headerBg: theme === "dark" ? "#111827" : "#ffffff",
+            footerBg: theme === "dark" ? "#111827" : "#ffffff",
+          },
+        },
       }}
     >
       <div className="p-4 bg-white dark:bg-gray-900">
@@ -187,7 +194,11 @@ const Students = () => {
           cancelText="Bekor qilish"
         >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Ism familiya" rules={[{ required: true }]}>
+            <Form.Item
+              name="name"
+              label="Ism familiya"
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
@@ -199,7 +210,11 @@ const Students = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="phone" label="Telefon" rules={[{ required: true }]}>
+            <Form.Item
+              name="phone"
+              label="Telefon"
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
@@ -211,7 +226,11 @@ const Students = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
+            <Form.Item
+              name="status"
+              label="Holati"
+              rules={[{ required: true }]}
+            >
               <Select>
                 <Select.Option value="Faol">Faol</Select.Option>
                 <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>

@@ -58,17 +58,16 @@ const AppSidebar: React.FC = () => {
       {
         icon: <UserIcon />,
         name: t("Foydalanuvchilar"),
-        path: "/dashboard/teacher",
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
           {
-            name: t("teachers"),
-            path: "/teachers",
+            name: t("Adminlar"),
+            path: "/admins",
             pro: false,
           },
           {
-            name: t("students"),
-            path: "/students",
+            name: t("teachers"),
+            path: "/teachers",
             pro: false,
           },
           {
@@ -77,8 +76,8 @@ const AppSidebar: React.FC = () => {
             pro: false,
           },
           {
-            name: t("admins"),
-            path: "/admins",
+            name: t("students"),
+            path: "/students",
             pro: false,
           },
         ],
@@ -86,7 +85,6 @@ const AppSidebar: React.FC = () => {
       {
         icon: <BoxCubeIcon />,
         name: t("Sinflar"),
-        path: "/dashboard/teacher",
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
           {
@@ -140,13 +138,23 @@ const AppSidebar: React.FC = () => {
       {
         icon: <BoltIcon />,
         name: t("grades"),
-        path: "/grades",
-        roles: [
-          "ROLE_SUPER_ADMIN",
-          "ROLE_ADMIN",
-          "ROLE_TEACHER",
-          "ROLE_STUDENT",
-          "ROLE_PARENT",
+        roles: ["ROLE_TEACHER", "ROLE_STUDENT", "ROLE_PARENT"],
+      },
+      {
+        icon: <BoltIcon />,
+        name: t("grades"),
+        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
+        subItems: [
+          {
+            name: t("grades"),
+            path: "/grades",
+            pro: false,
+          },
+          {
+            name: t("assessment"),
+            path: "/assessment",
+            pro: false,
+          },
         ],
       },
       {
@@ -164,8 +172,19 @@ const AppSidebar: React.FC = () => {
       {
         icon: <CheckCircleIcon />,
         name: t("attendance"),
-        path: "/attendance",
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
+        subItems: [
+          {
+            name: t("attendance"),
+            path: "/attendance",
+            pro: false,
+          },
+          {
+            name: t("Davomat Tarix"),
+            path: "/history-attendance",
+            pro: false,
+          },
+        ],
       },
       {
         icon: <GroupIcon />,
@@ -175,7 +194,7 @@ const AppSidebar: React.FC = () => {
       },
       {
         icon: <BoxCubeIcon />,
-        name: t("my-groups"), 
+        name: t("my-groups"),
         path: "/my-groups",
         roles: ["ROLE_TEACHER"],
       },

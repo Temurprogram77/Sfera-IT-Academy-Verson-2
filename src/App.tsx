@@ -40,6 +40,7 @@ import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
 import Admins from "./pages/Admins/Admins";
+import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
 
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
@@ -150,6 +151,7 @@ export default function App() {
           <Route path="assessment" element={<Assessnment />} />
           <Route path="parents" element={<Parents />} />
           <Route path="attendance" element={<Attendance />} />
+          <Route path="history-attendance" element={<AttendanceHistory />} />
           <Route path="groups" element={<Groups />} />
           <Route path="rooms" element={<Rooms />} />
 
