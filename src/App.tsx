@@ -37,7 +37,6 @@ import Grades from "./pages/Grades/Grades";
 import "./i18n";
 import Assessnment from "./pages/Assessnment/Assessnment";
 import { Toaster } from "sonner";
-import { theme } from "antd";
 import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
 // Role'ga qarab redirect path

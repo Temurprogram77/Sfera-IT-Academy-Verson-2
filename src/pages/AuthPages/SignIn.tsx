@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="Sfera IT Academy SignIn Dashboard"
-        description="This is Sfera IT Academy SignIn page"
+        title="Sfera IT Academy – Tizimga kirish"
+        description="Sfera IT Academy platformasiga kirish uchun foydalanuvchi nomi va parolingizni kiriting"
       />
       <AuthLayout>
         <SignInForm />
