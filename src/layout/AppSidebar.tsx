@@ -17,7 +17,8 @@ import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
-
+import { Dropdown } from "antd";
+import type { MenuProps } from "antd";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -28,16 +29,29 @@ type NavItem = {
 
 const AppSidebar: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { isExpanded, isMobileOpen, isHovered, handleMouseEnter, handleMouseLeave } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered } = useSidebar();
   const location = useLocation();
   const { theme } = useTheme();
-
+  const isCollapsed = !isExpanded && !isHovered && !isMobileOpen;
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
     index: number;
   } | null>(null);
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
+  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
+    {}
+  );
+
+  const getDropdownMenu = (nav: NavItem): MenuProps => ({
+    items: nav.subItems!.map((sub) => ({
+      key: sub.path,
+      label: (
+        <Link to={sub.path} className="block px-3 py-1">
+          {sub.name}
+        </Link>
+      ),
+    })),
+  });
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -222,10 +236,26 @@ const AppSidebar: React.FC = () => {
       {items.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
-            isExpanded || isHovered || isMobileOpen ? (
+            isCollapsed ? (
+              <Dropdown
+                menu={getDropdownMenu(nav)}
+                trigger={["hover"]}
+                placement="rightTop"
+              >
+                <div
+                  className={`menu-item group flex justify-center cursor-pointer ${
+                    theme === "dark"
+                      ? "hover:bg-green-600 text-gray-200"
+                      : "menu-item-inactive"
+                  }`}
+                  title={nav.name}
+                >
+                  <span className="menu-item-icon-size">{nav.icon}</span>
+                </div>
+              </Dropdown>
+            ) : (
               <button
                 onClick={() => handleSubmenuToggle(index, menuType)}
-                onMouseOver={()=>handleSubmenuToggle(index, menuType)}
                 className={`menu-item group flex items-center gap-3 ${
                   openSubmenu?.index === index && openSubmenu?.type === menuType
                     ? theme === "dark"
@@ -247,14 +277,6 @@ const AppSidebar: React.FC = () => {
                   }`}
                 />
               </button>
-            ) : (
-              <Link
-                to={nav.subItems[0].path}
-                className="menu-item flex justify-center"
-                title={nav.name}
-              >
-                <span className="menu-item-icon-size">{nav.icon}</span>
-              </Link>
             )
           ) : (
             <Link
@@ -263,14 +285,10 @@ const AppSidebar: React.FC = () => {
                 isActive(nav.path!)
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
-              } ${
-                !isExpanded && !isHovered && !isMobileOpen
-                  ? "lg:justify-center"
-                  : ""
-              }`}
+              } ${isCollapsed ? "justify-center" : ""}`}
             >
               <span className="menu-item-icon-size">{nav.icon}</span>
-              {(isExpanded || isHovered || isMobileOpen) && (
+              {!isCollapsed && (
                 <span className="menu-item-text">{nav.name}</span>
               )}
             </Link>
@@ -278,14 +296,11 @@ const AppSidebar: React.FC = () => {
 
           {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
             <div
-              ref={(el) =>
-                (subMenuRefs.current[`${menuType}-${index}`] = el)
-              }
+              ref={(el) => (subMenuRefs.current[`${menuType}-${index}`] = el)}
               className="overflow-hidden transition-all"
               style={{
                 height:
-                  openSubmenu?.index === index &&
-                  openSubmenu?.type === menuType
+                  openSubmenu?.index === index && openSubmenu?.type === menuType
                     ? `${subMenuHeight[`${menuType}-${index}`]}px`
                     : "0px",
               }}
@@ -322,24 +337,43 @@ const AppSidebar: React.FC = () => {
     ROLE_STUDENT: "/dashboard/student",
     ROLE_PARENT: "/dashboard/parent",
   };
-
+  const roleTitleMap: Record<string, string> = {
+    ROLE_SUPER_ADMIN: "Sfera Super Admin",
+    ROLE_ADMIN: "Sfera Admin",
+    ROLE_TEACHER: "Sfera Teacher",
+    ROLE_STUDENT: "Sfera Student",
+    ROLE_PARENT: "Sfera Parent",
+  };
   return (
     <aside
-     onMouseEnter={handleMouseEnter}  // hover qilinsa sidebar ochiladi
-  onMouseLeave={handleMouseLeave}
       className={`fixed top-0 left-0 z-50 h-screen border-r bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
         isExpanded || isHovered || isMobileOpen ? "w-[290px]" : "w-[90px]"
-      } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+      } ${
+        isMobileOpen ? "translate-x-0" : "-translate-x-full"
+      } lg:translate-x-0`}
     >
       <div className="py-5 flex justify-center lg:justify-start">
         <Link to={rolePathMap[currentRole]}>
           <img src="/images/logoOne.png" className="w-10" />
         </Link>
+        <h1
+          className={`ml-2 text-lg mt-1 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
+            isExpanded || isHovered || isMobileOpen
+              ? "opacity-100 w-auto"
+              : "opacity-0 w-0 overflow-hidden"
+          }`}
+        >
+          {roleTitleMap[currentRole]}
+        </h1>
       </div>
 
       <nav className="flex-1 overflow-y-auto">
         <h2 className="mb-4 text-xs uppercase text-gray-400">
-          {isExpanded || isHovered || isMobileOpen ? t("menu") : <HorizontaLDots />}
+          {isExpanded || isHovered || isMobileOpen ? (
+            t("menu")
+          ) : (
+            <HorizontaLDots />
+          )}
         </h2>
         {renderMenuItems(filteredNavItems, "main")}
       </nav>

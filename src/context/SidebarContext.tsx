@@ -6,6 +6,7 @@ type SidebarContextType = {
   isHovered: boolean;
   activeItem: string | null;
   openSubmenu: string | null;
+  isOpen: boolean;
 
   // 🔒 Notification lock
   isLocked: boolean;
@@ -43,7 +44,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-
+  const [isOpen, setIsOpen] = useState(false);
   // 🔒 Notification sidebar ochiqmi
   const [isLocked, setIsLocked] = useState(false);
   useEffect(() => {
@@ -74,8 +75,8 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   // 🔥 Majburiy yopish
   const closeSidebar = () => setIsExpanded(false);
   const closeMobileSidebar = () => setIsMobileOpen(false);
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseEnter = () => setIsOpen(true);
+  const handleMouseLeave = () => setIsOpen(false);
   // 🔒 Lock / Unlock
   const lockSidebar = () => {
     setIsLocked(true);
@@ -100,7 +101,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         isHovered,
         activeItem,
         openSubmenu,
-
+        isOpen,
         isLocked,
         lockSidebar,
         unlockSidebar,
