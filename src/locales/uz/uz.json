@@ -65,5 +65,10 @@
   "monthlySetTarget": "Har bir oy uchun belgilagan maqsadingiz",
   "viewMore": "Ko‘proq ko‘rish",
   "delete": "O‘chirish",
-  "target": "Maqsad"
+  "target": "Maqsad",
+  "users": "Foydalanuvchilar",
+  "admins": "Adminlar",
+  "classes": "Sinflar",
+  "attendanceHistory": "Davomat tarixi"
 }
+ 

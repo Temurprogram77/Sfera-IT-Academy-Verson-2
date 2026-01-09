@@ -68,10 +68,10 @@ const AppSidebar: React.FC = () => {
       },
       {
         icon: <UserIcon />,
-        name: t("Foydalanuvchilar"),
+        name: t("users"),
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
-          { name: t("Adminlar"), path: "/admins", pro: false },
+          { name: t("admins"), path: "/admins", pro: false },
           { name: t("teachers"), path: "/teachers", pro: false },
           { name: t("parents"), path: "/parents", pro: false },
           { name: t("students"), path: "/students", pro: false },
@@ -79,7 +79,7 @@ const AppSidebar: React.FC = () => {
       },
       {
         icon: <BoxCubeIcon />,
-        name: t("Sinflar"),
+        name: t("classes"),
         roles: ["ROLE_SUPER_ADMIN"],
         subItems: [
           { name: t("groups"), path: "/groups", pro: false },
@@ -155,7 +155,7 @@ const AppSidebar: React.FC = () => {
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
         subItems: [
           { name: t("attendance"), path: "/attendance", pro: false },
-          { name: t("Davomat Tarix"), path: "/history-attendance", pro: false },
+          { name: t("attendanceHistory"), path: "/history-attendance", pro: false },
         ],
       },
       {

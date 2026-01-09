@@ -7,7 +7,7 @@
   "dashboard_parent": "Бошқарув панели",
   "teachers": "Ўқитувчилар",
   "students": "Ўқувчилар",
-  "grades": "Баҳолар",
+  "grades": "Баҳолар", 
   "parents": "Ота-оналар",
   "attendance": "Давомат",
   "groups": "Гуруҳлар",
@@ -64,5 +64,10 @@
   "monthlySetTarget": "Ҳар бир ой учун белгилаган мақсадингиз",
   "viewMore": "Кўпроқ кўриш",
   "delete": "Ўчириш",
-  "target": "Мақсад"
+  "target": "Мақсад",
+  "users": "Фойдаланувчилар",
+  "admins": "Админлар",
+  "classes": "Синфлар",
+  "assessment": "Баҳолаш",
+  "attendanceHistory": "Давомат тарихи"
 }
