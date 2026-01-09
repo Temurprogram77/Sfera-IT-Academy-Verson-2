@@ -243,7 +243,7 @@ const AppSidebar: React.FC = () => {
                 placement="rightTop"
               >
                 <div
-                  className={`menu-item group flex justify-center cursor-pointer ${
+                  className={`menu-item group flex justify-center dark:border-gray-800 dark:hover:bg-white/5 cursor-pointer ${
                     theme === "dark"
                       ? "hover:bg-green-600 text-gray-200"
                       : "menu-item-inactive"
@@ -281,7 +281,7 @@ const AppSidebar: React.FC = () => {
           ) : (
             <Link
               to={nav.path!}
-              className={`menu-item group flex items-center gap-3 ${
+              className={`menu-item  group flex items-center gap-3 ${
                 isActive(nav.path!)
                   ? "menu-item-active dark:menu-item-active-dark"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
@@ -310,7 +310,7 @@ const AppSidebar: React.FC = () => {
                   <li key={sub.name}>
                     <Link
                       to={sub.path}
-                      className={`menu-dropdown-item ${
+                      className={`menu-dropdown-item  ${
                         isActive(sub.path)
                           ? "menu-dropdown-item-active dark:menu-dropdown-item-active-dark"
                           : "menu-dropdown-item-inactive dark:menu-dropdown-item-inactive-dark"
