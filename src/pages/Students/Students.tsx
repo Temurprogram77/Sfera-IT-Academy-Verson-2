@@ -1,20 +1,20 @@
 import { useState } from "react";
 import {
   Table,
-  Modal,
   Form,
   Input,
   Select,
   Popconfirm,
-  message,
   ConfigProvider,
   theme as antdTheme,
 } from "antd";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { useTheme } from "../../context/ThemeContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import TableComponent from "../../components/TableComponent/TableComponent";
 
 // Mock data
 const initialStudents = [
@@ -50,11 +50,12 @@ const initialStudents = [
 const Students = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+  const { t } = useTranslation();
 
   const [students, setStudents] = useState(initialStudents);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingStudent, setEditingStudent] = useState(null);
+  const [editingStudent, setEditingStudent] = useState<any>(null);
   const [form] = Form.useForm();
 
   const filteredStudents = students.filter(
@@ -64,39 +65,38 @@ const Students = () => {
       s.phone.includes(searchTerm)
   );
 
-  const showModal = (student = null) => {
+  const showModal = (student: any = null) => {
     setEditingStudent(student);
     student ? form.setFieldsValue(student) : form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
-      if (editingStudent) {
-        setStudents((prev) =>
-          prev.map((s) =>
-            s.id === editingStudent.id ? { ...s, ...values } : s
-          )
-        );
-        toast.success("Talaba yangilandi");
-      } else {
-        setStudents((prev) => [...prev, { id: Date.now(), ...values }]);
-        toast.success("Talaba qo‘shildi");
-      }
-      setIsModalVisible(false);
-    });
+  const handleOk = async () => {
+    const values = await form.validateFields();
+
+    if (editingStudent) {
+      setStudents((prev) =>
+        prev.map((s) => (s.id === editingStudent.id ? { ...s, ...values } : s))
+      );
+      toast.success(t("studentUpdated"));
+    } else {
+      setStudents((prev) => [...prev, { id: Date.now(), ...values }]);
+      toast.success(t("studentAdded"));
+    }
+
+    setIsModalVisible(false);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     setStudents((prev) => prev.filter((s) => s.id !== id));
-    toast.success("Talaba o‘chirildi");
+    toast.success(t("studentDeleted"));
   };
-  const { t } = useTranslation();
+
   const columns = [
     {
       title: t("student"),
       dataIndex: "name",
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
             <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
@@ -114,7 +114,7 @@ const Students = () => {
     {
       title: t("status"),
       dataIndex: "status",
-      render: (text) => (
+      render: (text: string) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
             text === "Faol"
@@ -128,7 +128,7 @@ const Students = () => {
     },
     {
       title: t("actions"),
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <div className="flex justify-end gap-3">
           <button onClick={() => showModal(record)}>
             <PencilIcon className="w-5 h-5 text-blue-600" />
@@ -177,19 +177,95 @@ const Students = () => {
           onButtonClick={() => showModal()}
         />
 
-        <div className="overflow-x-auto mt-4">
-          <Table
-            columns={columns}
-            dataSource={filteredStudents}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-            scroll={{ x: 800 }}
-          />
-        </div>
+        <TableComponent
+          data={initialStudents}
+          title="Talabalar"
+          itemName="Talaba"
+          searchKeys={["name", "course", "phone"]}
+          columnsConfig={[
+            {
+              title: t("student"),
+              dataIndex: "name",
+              render: (_: any, record: any) => (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    {/* Icon */}
+                  </div>
+                  <div>
+                    <div className="font-medium">{record.name}</div>
+                    <div className="text-xs text-gray-500">{record.email}</div>
+                  </div>
+                </div>
+              ),
+            },
+            { title: t("course"), dataIndex: "course" },
+            { title: t("group"), dataIndex: "group" },
+            { title: t("phone"), dataIndex: "phone" },
+            {
+              title: t("status"),
+              dataIndex: "status",
+              render: (text: string) => (
+                <span
+                  className={`px-3 py-1 text-xs rounded-full ${
+                    text === "Faol"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {text}
+                </span>
+              ),
+            },
+          ]}
+          modalFields={[
+            {
+              name: "name",
+              label: t("full_name"),
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "course",
+              label: t("course"),
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "group",
+              label: t("group"),
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "phone",
+              label: t("phone"),
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "email",
+              label: t("email"),
+              component: <Input />,
+              rules: [{ required: true, type: "email" }],
+            },
+            {
+              name: "status",
+              label: t("status"),
+              component: (
+                <Select>
+                  <Select.Option value="Faol">Faol</Select.Option>
+                  <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+                </Select>
+              ),
+              rules: [{ required: true }],
+            },
+          ]}
+        />
 
-        <Modal
-          title={editingStudent ? t("editStudent") : t("addStudent")}
+        {/* 🔥 UNIVERSAL MODAL */}
+        <ModalComponent
           open={isModalVisible}
+          title={editingStudent ? t("editStudent") : t("addStudent")}
           onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
           okText={t("save")}
@@ -204,11 +280,19 @@ const Students = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="course" label={t("course")} rules={[{ required: true }]}>
+            <Form.Item
+              name="course"
+              label={t("course")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item name="group" label={t("group")} rules={[{ required: true }]}>
+            <Form.Item
+              name="group"
+              label={t("group")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
@@ -239,7 +323,7 @@ const Students = () => {
               </Select>
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalComponent>
       </div>
     </ConfigProvider>
   );

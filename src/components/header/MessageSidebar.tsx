@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { XOutlined } from "@ant-design/icons";
 
 type MessageSidebarProps = {
   isOpen: boolean;

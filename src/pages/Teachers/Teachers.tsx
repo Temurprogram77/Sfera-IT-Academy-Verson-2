@@ -15,6 +15,8 @@ import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import TableComponent from "../../components/TableComponent/TableComponent";
 
 // Mock data
 const initialTeachers = [
@@ -88,70 +90,6 @@ const Teachers = () => {
     });
   };
 
-  const handleDelete = (id) => {
-    setTeachers((prev) => prev.filter((t) => t.id !== id));
-    message.success(t("teacher_deleted"));
-  };
-
-  const columns = [
-    {
-      title: t("teacher"),
-      dataIndex: "name",
-      render: (_, record) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </div>
-          <div>
-            <div className="font-medium">{record.name}</div>
-            <div className="text-xs text-gray-500">{record.email}</div>
-          </div>
-        </div>
-      ),
-    },
-    { title: t("subject"), dataIndex: "subject" },
-    { title: t("phone"), dataIndex: "phone" },
-    {
-      title: t("groups"),
-      dataIndex: "groups",
-      render: (v) => `${v} ta`,
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      render: (text) => (
-        <span
-          className={`px-3 py-1 text-xs rounded-full ${
-            text === "Faol"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-          }`}
-        >
-          {text}
-        </span>
-      ),
-    },
-    {
-      title: t("actions"),
-      render: (_, record) => (
-        <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)}>
-            <PencilIcon className="w-5 h-5 text-blue-600" />
-          </button>
-          <Popconfirm
-            title={t("confirm_delete")}
-            onConfirm={() => handleDelete(record.id)}
-            okText={t("yes")}
-            cancelText={t("no")}
-          >
-            <button>
-              <TrashBinIcon className="w-5 h-5 text-red-600" />
-            </button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
 
   return (
     <ConfigProvider
@@ -184,18 +122,101 @@ const Teachers = () => {
         />
 
         <div className="overflow-x-auto mt-4">
-          <Table
-            columns={columns}
-            dataSource={filteredTeachers}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-            scroll={{ x: 900 }}
+          <TableComponent
+            data={initialTeachers}
+            title="O‘qituvchilar"
+            itemName="O‘qituvchi"
+            searchKeys={["name", "subject", "phone"]}
+            columnsConfig={[
+              {
+                title: t("teacher"),
+                dataIndex: "name",
+                render: (_: any, record: any) => (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      {/* Icon */}
+                    </div>
+                    <div>
+                      <div className="font-medium">{record.name}</div>
+                      <div className="text-xs text-gray-500">
+                        {record.email}
+                      </div>
+                    </div>
+                  </div>
+                ),
+              },
+              { title: t("subject"), dataIndex: "subject" },
+              { title: t("phone"), dataIndex: "phone" },
+              {
+                title: t("groups"),
+                dataIndex: "groups",
+                render: (v) => `${v} ta`,
+              },
+              {
+                title: t("status"),
+                dataIndex: "status",
+                render: (text: string) => (
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full ${
+                      text === "Faol"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {text}
+                  </span>
+                ),
+              },
+            ]}
+            modalFields={[
+              {
+                name: "name",
+                label: t("fullname"),
+                component: <Input />,
+                rules: [{ required: true }],
+              },
+              {
+                name: "subject",
+                label: t("subject"),
+                component: <Input />,
+                rules: [{ required: true }],
+              },
+              {
+                name: "phone",
+                label: t("phone"),
+                component: <Input />,
+                rules: [{ required: true }],
+              },
+              {
+                name: "email",
+                label: t("email"),
+                component: <Input />,
+                rules: [{ required: true, type: "email" }],
+              },
+              {
+                name: "groups",
+                label: t("groups"),
+                component: <Input type="number" />,
+                rules: [{ required: true }],
+              },
+              {
+                name: "status",
+                label: t("status"),
+                component: (
+                  <Select>
+                    <Select.Option value="Faol">Faol</Select.Option>
+                    <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+                  </Select>
+                ),
+                rules: [{ required: true }],
+              },
+            ]}
           />
         </div>
 
-        <Modal
-          title={editingTeacher ? t("edit_teacher") : t("add_teacher")}
+        <ModalComponent
           open={isModalVisible}
+          title={editingTeacher ? t("edit_teacher") : t("add_teacher")}
           onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
           okText={t("save")}
@@ -253,7 +274,7 @@ const Teachers = () => {
               </Select>
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalComponent>
       </div>
     </ConfigProvider>
   );

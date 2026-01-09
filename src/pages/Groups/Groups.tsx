@@ -1,22 +1,30 @@
 import { useState } from "react";
 import {
-  Table,
-  Modal,
   Form,
-  Input,
   Select,
-  Popconfirm,
   message,
   ConfigProvider,
   theme as antdTheme,
 } from "antd";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import InputComponent from "../../components/InputComponent/InputComponent";
+import TableComponent from "../../components/TableComponent/TableComponent";
+
+// Types
+type Group = {
+  id: number;
+  name: string;
+  course: string;
+  teacher: string;
+  students: number;
+  status: "Faol" | "Ta'tilda";
+};
 
 // Mock data
-const initialGroups = [
+const initialGroups: Group[] = [
   {
     id: 1,
     name: "FE-01",
@@ -46,12 +54,13 @@ const initialGroups = [
 const Groups = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
-  const [groups, setGroups] = useState(initialGroups);
+  const [groups, setGroups] = useState<Group[]>(initialGroups);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingGroup, setEditingGroup] = useState(null);
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
   const [form] = Form.useForm();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+
   const filteredGroups = groups.filter(
     (g) =>
       g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,14 +68,14 @@ const Groups = () => {
       g.teacher.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const showModal = (group = null) => {
+  const showModal = (group: Group | null = null) => {
     setEditingGroup(group);
     group ? form.setFieldsValue(group) : form.resetFields();
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then((values: Omit<Group, "id">) => {
       if (editingGroup) {
         setGroups((prev) =>
           prev.map((g) =>
@@ -82,69 +91,80 @@ const Groups = () => {
     });
   };
 
-  const handleDelete = (id) => {
-    setGroups((prev) => prev.filter((g) => g.id !== id));
-    message.success("Guruh o‘chirildi");
-  };
-  const columns = [
+  const columnsConfig = [
     {
+      key: "name",
       title: t("group"),
-      dataIndex: "name",
-      render: (_, record) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </div>
-          <div>
-            <div className="font-medium">{record.name}</div>
-            <div className="text-xs text-gray-500">{record.course}</div>
-          </div>
-        </div>
-      ),
+      render: (group: Group) => group.name,
     },
-    { title: t("course"), dataIndex: "course" },
-    { title: t("teacher"), dataIndex: "teacher" },
+    { key: "course", title: t("course"), render: (group: Group) => group.course },
     {
+      key: "teacher",
+      title: t("teacher"),
+      render: (group: Group) => group.teacher,
+    },
+    {
+      key: "students",
       title: t("students"),
-      dataIndex: "students",
-      render: (count) => `${count} ta`,
+      render: (group: Group) => `${group.students} ta`,
     },
     {
+      key: "status",
       title: t("status"),
-      dataIndex: "status",
-      render: (text) => (
+      render: (group: Group) => (
         <span
           className={`px-3 py-1 text-xs rounded-full ${
-            text === "Faol"
+            group.status === "Faol"
               ? "bg-green-100 text-green-800"
               : "bg-yellow-100 text-yellow-800"
           }`}
         >
-          {text}
+          {group.status}
         </span>
       ),
     },
+  ];
+
+  const modalFields = [
     {
-      title: t("actions"),
-      render: (_, record) => (
-        <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)}>
-            <PencilIcon className="w-5 h-5 text-blue-600" />
-          </button>
-          <Popconfirm
-            title={t("confirmDelete")}
-            onConfirm={() => handleDelete(record.id)}
-            okText={t("yes")}
-            cancelText={t("no")}
-          >
-            <button>
-              <TrashBinIcon className="w-5 h-5 text-red-600" />
-            </button>
-          </Popconfirm>
-        </div>
+      name: "name",
+      label: t("groupName"),
+      component: <InputComponent />,
+      rules: [{ required: true }],
+    },
+    {
+      name: "course",
+      label: t("course"),
+      component: <InputComponent />,
+      rules: [{ required: true }],
+    },
+    {
+      name: "teacher",
+      label: t("teacher"),
+      component: <InputComponent />,
+      rules: [{ required: true }],
+    },
+    {
+      name: "students",
+      label: t("studentsCount"),
+      component: <InputComponent type="number" />,
+      rules: [{ required: true }],
+    },
+    {
+      name: "status",
+      label: t("status"),
+      component: (
+        <Select>
+          <Select.Option value="Faol">Faol</Select.Option>
+          <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+        </Select>
       ),
+      rules: [{ required: true }],
     },
   ];
+
+  const searchKeys: (keyof Group)[] = ["name", "course", "teacher"];
+
   return (
     <ConfigProvider
       theme={{
@@ -153,6 +173,13 @@ const Groups = () => {
           colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+        components: {
+          Modal: {
+            contentBg: theme === "dark" ? "#111827" : "#ffffff",
+            headerBg: theme === "dark" ? "#111827" : "#ffffff",
+            footerBg: theme === "dark" ? "#111827" : "#ffffff",
+          },
         },
       }}
     >
@@ -166,58 +193,58 @@ const Groups = () => {
           buttonText={t("addGroup")}
           onButtonClick={() => showModal()}
         />
-
         <div className="overflow-x-auto mt-4">
-          <Table
-            columns={columns}
-            dataSource={filteredGroups}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-            scroll={{ x: 900 }}
+          <TableComponent
+            data={groups}
+            columnsConfig={columnsConfig}
+            modalFields={modalFields}
+            searchKeys={searchKeys}
+            title={t("groupsCount")}
+            itemName="Guruh"
           />
         </div>
-
-        <Modal
-          title={editingGroup ? t("editGroup") : t("addGroup")}
+        <ModalComponent
           open={isModalVisible}
-          onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
+          onOk={handleOk}
+          title={editingGroup ? t("editGroup") : t("addGroup")}
           okText={t("save")}
           cancelText={t("cancel")}
         >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label={t("groupName")} rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="course" label={t("course")} rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-
-            <Form.Item
+            <InputComponent
+              name="name"
+              label={t("groupName")}
+              rules={[{ required: true }]}
+            />
+            <InputComponent
+              name="course"
+              label={t("course")}
+              rules={[{ required: true }]}
+            />
+            <InputComponent
               name="teacher"
               label={t("teacher")}
               rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
+            />
+            <InputComponent
               name="students"
               label={t("studentsCount")}
+              type="number"
+              rules={[{ required: true }]}
+            />
+            <Form.Item
+              name="status"
+              label="Holati"
               rules={[{ required: true }]}
             >
-              <Input type="number" min={0} />
-            </Form.Item>
-
-            <Form.Item name="status" label="Holati" rules={[{ required: true }]}>
               <Select>
                 <Select.Option value="Faol">Faol</Select.Option>
                 <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
               </Select>
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalComponent>
       </div>
     </ConfigProvider>
   );

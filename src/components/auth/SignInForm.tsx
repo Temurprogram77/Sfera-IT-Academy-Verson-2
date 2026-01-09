@@ -72,6 +72,7 @@ export default function SignInForm() {
         "/dashboard/teacher";
 
       toast.success(t("welcome"));
+      
       navigate(redirectPath, { replace: true });
     } catch (error: any) {
       toast.error(

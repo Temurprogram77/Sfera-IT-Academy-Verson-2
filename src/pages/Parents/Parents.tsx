@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   Modal,
@@ -9,14 +9,26 @@ import {
   message,
   ConfigProvider,
   theme as antdTheme,
+  Grid,
 } from "antd";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
+import TableComponent from "../../components/TableComponent/TableComponent";
 
-// Mock data
-const initialParents = [
+const { useBreakpoint } = Grid;
+
+interface Parent {
+  id: number;
+  name: string;
+  student: string;
+  phone: string;
+  email: string;
+  status: "active" | "on_leave";
+}
+
+const initialParents: Parent[] = [
   {
     id: 1,
     name: "Karimov Anvar",
@@ -47,102 +59,44 @@ const Parents = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+  const screens = useBreakpoint();
 
-  const [parents, setParents] = useState(initialParents);
+  const [parents, setParents] = useState<Parent[]>(initialParents);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingParent, setEditingParent] = useState(null);
+  const [editingParent, setEditingParent] = useState<Parent | null>(null);
   const [form] = Form.useForm();
 
-  const filteredParents = parents.filter(
-    (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.phone.includes(searchTerm)
-  );
+  const filteredParents = useMemo(() => {
+    return parents.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.phone.includes(searchTerm)
+    );
+  }, [parents, searchTerm]);
 
-  const showModal = (parent = null) => {
+  const showModal = (parent: Parent | null = null) => {
     setEditingParent(parent);
     parent ? form.setFieldsValue(parent) : form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
-      if (editingParent) {
-        setParents((prev) =>
-          prev.map((p) =>
-            p.id === editingParent.id ? { ...p, ...values } : p
-          )
-        );
-        message.success(t("parent_updated"));
-      } else {
-        setParents((prev) => [...prev, { id: Date.now(), ...values }]);
-        message.success(t("parent_added"));
-      }
-      setIsModalVisible(false);
-    });
-  };
+  const handleOk = async () => {
+    const values = await form.validateFields();
 
-  const handleDelete = (id) => {
-    setParents((prev) => prev.filter((p) => p.id !== id));
-    message.success(t("parent_deleted"));
-  };
+    if (editingParent) {
+      setParents((prev) =>
+        prev.map((p) => (p.id === editingParent.id ? { ...p, ...values } : p))
+      );
+      message.success(t("parent_updated"));
+    } else {
+      setParents((prev) => [...prev, { id: Date.now(), ...values }]);
+      message.success(t("parent_added"));
+    }
 
-  const columns = [
-    {
-      title: t("parent"),
-      dataIndex: "name",
-      render: (_, record) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </div>
-          <div>
-            <div className="font-medium">{record.name}</div>
-            <div className="text-xs text-gray-500">{record.email}</div>
-          </div>
-        </div>
-      ),
-    },
-    { title: t("child"), dataIndex: "student" },
-    { title: t("phone"), dataIndex: "phone" },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      render: (text) => (
-        <span
-          className={`px-3 py-1 text-xs rounded-full ${
-            text === "active"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-          }`}
-        >
-          {text === "active" ? t("active") : t("on_leave")}
-        </span>
-      ),
-    },
-    {
-      title: t("actions"),
-      render: (_, record) => (
-        <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)}>
-            <PencilIcon className="w-5 h-5 text-blue-600" />
-          </button>
-          <Popconfirm
-            title={t("confirm_delete")}
-            onConfirm={() => handleDelete(record.id)}
-            okText={t("yes")}
-            cancelText={t("no")}
-          >
-            <button>
-              <TrashBinIcon className="w-5 h-5 text-red-600" />
-            </button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+    setIsModalVisible(false);
+  };
 
   return (
     <ConfigProvider
@@ -162,7 +116,7 @@ const Parents = () => {
         },
       }}
     >
-      <div className="p-4 bg-white dark:bg-gray-900">
+      <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
         <ListHeader
           title={t("total_parents")}
           count={filteredParents.length}
@@ -173,15 +127,89 @@ const Parents = () => {
           onButtonClick={() => showModal()}
         />
 
-        <div className="overflow-x-auto mt-4">
-          <Table
-            columns={columns}
-            dataSource={filteredParents}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-            scroll={{ x: 800 }}
-          />
-        </div>
+        <TableComponent<Parent>
+          data={initialParents}
+          title="Ota-onalar"
+          itemName="Ota-ona"
+          searchKeys={["name", "student", "phone"]}
+          columnsConfig={[
+            {
+              title: "Ota-ona",
+              dataIndex: "name",
+              render: (_: any, record: Parent) => (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    {/* Icon */}
+                  </div>
+                  <div>
+                    <div className="font-medium">{record.name}</div>
+                    <div className="text-xs text-gray-500">{record.email}</div>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              title: "Farzand",
+              dataIndex: "student",
+            },
+            {
+              title: "Telefon",
+              dataIndex: "phone",
+            },
+            {
+              title: "Status",
+              dataIndex: "status",
+              render: (status: string) => (
+                <span
+                  className={`px-3 py-1 text-xs rounded-full ${
+                    status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {status === "active" ? "Faol" : "Ta’til"}
+                </span>
+              ),
+            },
+          ]}
+          modalFields={[
+            {
+              name: "name",
+              label: "To‘liq ism",
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "student",
+              label: "Farzand",
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "phone",
+              label: "Telefon",
+              component: <Input />,
+              rules: [{ required: true }],
+            },
+            {
+              name: "email",
+              label: "Email",
+              component: <Input />,
+              rules: [{ required: true, type: "email" }],
+            },
+            {
+              name: "status",
+              label: "Status",
+              component: (
+                <Select>
+                  <Select.Option value="active">Faol</Select.Option>
+                  <Select.Option value="on_leave">Ta’til</Select.Option>
+                </Select>
+              ),
+              rules: [{ required: true }],
+            },
+          ]}
+        />
 
         <Modal
           title={editingParent ? t("edit_parent") : t("add_parent")}
@@ -192,15 +220,27 @@ const Parents = () => {
           cancelText={t("cancel")}
         >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label={t("full_name")} rules={[{ required: true }]}>
+            <Form.Item
+              name="name"
+              label={t("full_name")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item name="student" label={t("child")} rules={[{ required: true }]}>
+            <Form.Item
+              name="student"
+              label={t("child")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item name="phone" label={t("phone")} rules={[{ required: true }]}>
+            <Form.Item
+              name="phone"
+              label={t("phone")}
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
 
@@ -212,7 +252,11 @@ const Parents = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item name="status" label={t("status")} rules={[{ required: true }]}>
+            <Form.Item
+              name="status"
+              label={t("status")}
+              rules={[{ required: true }]}
+            >
               <Select>
                 <Select.Option value="active">{t("active")}</Select.Option>
                 <Select.Option value="on_leave">{t("on_leave")}</Select.Option>

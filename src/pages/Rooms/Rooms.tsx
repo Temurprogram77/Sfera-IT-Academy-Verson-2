@@ -3,17 +3,17 @@ import {
   Card,
   Row,
   Col,
-  Button,
   Tag,
-  Modal,
-  List,
-  Avatar,
   ConfigProvider,
   theme as antdTheme,
+  Button,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import IconButton from "../../components/IconButton/IconButton";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
+
 const rooms = [
   {
     id: 1,
@@ -46,15 +46,22 @@ const rooms = [
     groups: ["Design-1", "Design-2"],
   },
 ];
-
+interface Room {
+  id: number;
+  name: string;
+  status: string;
+  img: { light: string; dark: string };
+  groups: string[];
+}
 const Rooms = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+  const { t } = useTranslation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
-  const showModal = (room) => {
+  const showModal = (room: Room | null = null) => {
     setSelectedRoom(room);
     setIsModalVisible(true);
   };
@@ -63,7 +70,7 @@ const Rooms = () => {
     setIsModalVisible(false);
     setSelectedRoom(null);
   };
-  const {t}=useTranslation()
+
   return (
     <ConfigProvider
       theme={{
@@ -78,10 +85,15 @@ const Rooms = () => {
       <div className="p-4 bg-white dark:bg-gray-900">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold dark:text-gray-200">{t("rooms")}</h2>
-          <Button type="primary" icon={<PlusOutlined />}>
-            {t("addRoom")}
-          </Button>
+          <h2 className="text-lg font-semibold dark:text-gray-200">
+            {t("rooms")}
+          </h2>
+          <IconButton
+            icon={<PlusOutlined />}
+            text={t("addRoom")}
+            onClick={() => showModal()}
+            type="primary"
+          />
         </div>
 
         {/* Rooms list */}
@@ -117,51 +129,30 @@ const Rooms = () => {
         </Row>
 
         {/* Modal */}
-        {selectedRoom && (
-          <Modal
-            title={
-              <div className="flex items-center gap-3">
-                <img
-                  src={
-                    theme === "dark"
-                      ? selectedRoom.img.dark
-                      : selectedRoom.img.light
-                  }
-                  alt={selectedRoom.name}
-                  className="w-8 h-8 object-contain"
-                />
-                <span>{selectedRoom.name}</span>
-              </div>
-            }
-            open={isModalVisible}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="close" onClick={handleCancel}>
-                {t("close")}
-              </Button>,
-            ]}
-          >
-            <div className="mb-4">
-              <Tag color={selectedRoom.status === "active" ? "green" : "red"}>
-                {selectedRoom.status === "active" ? "Faol" : "Faol emas"}
-              </Tag>
-            </div>
-
-            <h4 className="mb-2 font-medium">{t("groups")}:</h4>
-            <List
-              bordered
-              dataSource={selectedRoom.groups}
-              renderItem={(group) => (
-                <List.Item>
-                  <Avatar style={{ backgroundColor: "#18A752" }} size="small">
-                    {group[0]}
-                  </Avatar>
-                  <span className="ml-2">{group}</span>
-                </List.Item>
-              )}
+        <ModalComponent
+          open={isModalVisible}
+          onCancel={handleCancel}
+          title={"" + (selectedRoom ? t("editRoom") : t("addRoom"))}
+          footer={[
+            <Button key="close" onClick={handleCancel}>
+              {t("close")}
+            </Button>,
+            <IconButton
+              text={t("save")}
+              key="save"
+              onClick={handleCancel}
+            ></IconButton>,
+          ]}
+        >
+          <div>
+            <p className="text-gray-500">{t("Xona qo'shish ")}</p>
+            <input
+              type="text"
+              placeholder={t("roomName")}
+              className="w-full border px-3 py-2 rounded-lg mt-2"
             />
-          </Modal>
-        )}
+          </div>
+        </ModalComponent>
       </div>
     </ConfigProvider>
   );
