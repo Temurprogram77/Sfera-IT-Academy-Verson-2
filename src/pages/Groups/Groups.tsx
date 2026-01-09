@@ -70,7 +70,13 @@ const Groups = () => {
 
   const showModal = (group: Group | null = null) => {
     setEditingGroup(group);
-    group ? form.setFieldsValue(group) : form.resetFields();
+
+    if (group) {
+      form.setFieldsValue(group);
+    } else {
+      form.resetFields();
+    }
+
     setIsModalVisible(true);
   };
 
@@ -78,9 +84,7 @@ const Groups = () => {
     form.validateFields().then((values: Omit<Group, "id">) => {
       if (editingGroup) {
         setGroups((prev) =>
-          prev.map((g) =>
-            g.id === editingGroup.id ? { ...g, ...values } : g
-          )
+          prev.map((g) => (g.id === editingGroup.id ? { ...g, ...values } : g))
         );
         message.success("Guruh yangilandi");
       } else {
@@ -97,7 +101,11 @@ const Groups = () => {
       title: t("group"),
       render: (group: Group) => group.name,
     },
-    { key: "course", title: t("course"), render: (group: Group) => group.course },
+    {
+      key: "course",
+      title: t("course"),
+      render: (group: Group) => group.course,
+    },
     {
       key: "teacher",
       title: t("teacher"),
