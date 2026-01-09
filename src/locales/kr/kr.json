@@ -86,5 +86,14 @@
   "studentsCount": "Талабалар сони",
   "searchStudent": "Талабани қидириш...",
   "addStudent": "Талаба қўшиш",
-  "editStudent": "Талабани таҳрирлаш"
+  "editStudent": "Талабани таҳрирлаш",
+  "groupsCount": "Гуруҳлар сони",
+  "searchGroup": "Гуруҳни қидириш...",
+  "addGroup": "Гуруҳ қўшиш",
+  "editGroup": "Гуруҳни таҳрирлаш",
+  "addNewGroup": "Янги гуруҳ қўшиш",
+  "groupName": "Гуруҳ номи",
+  "addRoom": "Хона қўшиш",
+  "clickToViewDetails": "Батафсил кўриш учун босинг",
+  "close": "Ёпиш"
 }

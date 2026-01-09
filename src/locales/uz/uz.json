@@ -86,6 +86,15 @@
   "studentsCount": "Talabalar soni",
   "searchStudent": "Talabani qidirish...",
   "addStudent": "Talaba qo‘shish",
-  "editStudent": "Talabani tahrirlash"
+  "editStudent": "Talabani tahrirlash",
+  "groupsCount": "Guruhlar soni",
+  "searchGroup": "Guruhni qidirish...",
+  "addGroup": "Guruh qo‘shish",
+  "editGroup": "Guruhni tahrirlash",
+  "addNewGroup": "Yangi guruh qo‘shish",
+  "groupName": "Guruh nomi",
+  "addRoom": "Xona qo‘shish",
+  "clickToViewDetails": "Batafsil ko‘rish uchun bosing",
+  "close": "Yopish"
 }
  

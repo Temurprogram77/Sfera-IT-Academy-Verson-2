@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTheme } from "../../context/ThemeContext";
+import { useTranslation } from "react-i18next";
 const rooms = [
   {
     id: 1,
@@ -62,7 +63,7 @@ const Rooms = () => {
     setIsModalVisible(false);
     setSelectedRoom(null);
   };
-
+  const {t}=useTranslation()
   return (
     <ConfigProvider
       theme={{
@@ -77,9 +78,9 @@ const Rooms = () => {
       <div className="p-4 bg-white dark:bg-gray-900">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold dark:text-gray-200">Xonalar</h2>
+          <h2 className="text-lg font-semibold dark:text-gray-200">{t("rooms")}</h2>
           <Button type="primary" icon={<PlusOutlined />}>
-            Xona qo‘shish
+            {t("addRoom")}
           </Button>
         </div>
 
@@ -108,7 +109,7 @@ const Rooms = () => {
                 }
               >
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Batafsil ko‘rish uchun bosing
+                  {t("clickToViewDetails")}
                 </p>
               </Card>
             </Col>
@@ -136,7 +137,7 @@ const Rooms = () => {
             onCancel={handleCancel}
             footer={[
               <Button key="close" onClick={handleCancel}>
-                Yopish
+                {t("close")}
               </Button>,
             ]}
           >
@@ -146,7 +147,7 @@ const Rooms = () => {
               </Tag>
             </div>
 
-            <h4 className="mb-2 font-medium">Guruhlar:</h4>
+            <h4 className="mb-2 font-medium">{t("groups")}:</h4>
             <List
               bordered
               dataSource={selectedRoom.groups}
