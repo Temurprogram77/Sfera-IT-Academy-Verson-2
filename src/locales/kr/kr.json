@@ -69,5 +69,10 @@
   "admins": "Админлар",
   "classes": "Синфлар",
   "assessment": "Баҳолаш",
-  "attendanceHistory": "Давомат тарихи"
+  "attendanceHistory": "Давомат тарихи",
+  "searchAdmin": "Админ қидириш",
+  "addAdmin": "Админ қўшиш",
+  "admin": "Админ",
+  "role": "Роли",
+  "confirmDeleteAdmin": "Админни ўчирмоқчимисиз?"
 }

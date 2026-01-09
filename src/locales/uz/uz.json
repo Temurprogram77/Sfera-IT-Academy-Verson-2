@@ -69,6 +69,11 @@
   "users": "Foydalanuvchilar",
   "admins": "Adminlar",
   "classes": "Sinflar",
-  "attendanceHistory": "Davomat tarixi"
+  "attendanceHistory": "Davomat tarixi",
+  "searchAdmin": "Admin qidirish",
+  "addAdmin": "Admin qo‘shish",
+  "admin": "Admin",
+  "role": "Roli",
+  "confirmDeleteAdmin": "Adminni o‘chirmoqchimisiz?"
 }
  

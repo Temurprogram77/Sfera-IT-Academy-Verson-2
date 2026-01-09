@@ -9,6 +9,7 @@ import {
 import { useTheme } from "../../context/ThemeContext";
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
+import { useTranslation } from "react-i18next";
 
 interface Admin {
   id: number;
@@ -49,6 +50,7 @@ const initialAdmins: Admin[] = [
 const Admins = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+  const {t}=useTranslation()
 
   const [admins, setAdmins] = useState(initialAdmins);
   const [search, setSearch] = useState("");
@@ -68,7 +70,7 @@ const Admins = () => {
 
   const columns = [
     {
-      title: "Admin",
+      title: t("admin"),
       dataIndex: "name",
       render: (_: any, record: Admin) => (
         <div className="flex items-center gap-3">
@@ -83,18 +85,18 @@ const Admins = () => {
       ),
     },
     {
-      title: "Telefon",
+      title: t("phone"),
       dataIndex: "phone",
     },
     {
-      title: "Roli",
+      title: t("role"),
       dataIndex: "role",
       render: (role: string) => (
         <Tag color={role === "Super Admin" ? "purple" : "blue"}>{role}</Tag>
       ),
     },
     {
-      title: "Holati",
+      title: t("status"),
       dataIndex: "status",
       render: (status: string) => (
         <span
@@ -109,16 +111,16 @@ const Admins = () => {
       ),
     },
     {
-      title: "Amallar",
+      title: t("actions"),
       render: (_: any, record: Admin) => (
         <div className="flex justify-end gap-3">
           <button>
             <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title="Adminni o‘chirmoqchimisiz?"
-            okText="Ha"
-            cancelText="Yo‘q"
+            title={t("confirmDeleteAdmin")}
+            okText={t("yes")}
+            cancelText={t("no")}
             onConfirm={() => handleDelete(record.id)}
           >
             <button>
@@ -143,12 +145,12 @@ const Admins = () => {
     >
       <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
         <ListHeader
-          title="Admins"
+          title={t("admins")}
           count={filteredAdmins.length}
           searchValue={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Admin qidirish"
-          buttonText="Admin qo‘shish"
+          searchPlaceholder={t("searchAdmin")}
+          buttonText={t("addAdmin")}
           onButtonClick={() => {}}
         />
 
@@ -163,5 +165,5 @@ const Admins = () => {
     </ConfigProvider>
   );
 };
-
+  
 export default Admins;
