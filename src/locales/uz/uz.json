@@ -74,6 +74,18 @@
   "addAdmin": "Admin qo‘shish",
   "admin": "Admin",
   "role": "Roli",
-  "confirmDeleteAdmin": "Adminni o‘chirmoqchimisiz?"
+  "confirmDeleteAdmin": "Adminni o‘chirmoqchimisiz?",
+  "subject": "Fan",
+  "teacher": "O‘qituvchi",
+  "fullname": "To‘liq ism",
+  "email": "Elektron pochta",
+  "student": "Talaba",
+  "course": "Kurs",
+  "group": "Guruh",
+  "confirmDelete": "O‘chirmoqchimisiz?",
+  "studentsCount": "Talabalar soni",
+  "searchStudent": "Talabani qidirish...",
+  "addStudent": "Talaba qo‘shish",
+  "editStudent": "Talabani tahrirlash"
 }
  

@@ -13,6 +13,8 @@ import {
 import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTheme } from "../../context/ThemeContext";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 // Mock data
 const initialStudents = [
@@ -76,10 +78,10 @@ const Students = () => {
             s.id === editingStudent.id ? { ...s, ...values } : s
           )
         );
-        message.success("Talaba yangilandi");
+        toast.success("Talaba yangilandi");
       } else {
         setStudents((prev) => [...prev, { id: Date.now(), ...values }]);
-        message.success("Talaba qo‘shildi");
+        toast.success("Talaba qo‘shildi");
       }
       setIsModalVisible(false);
     });
@@ -87,12 +89,12 @@ const Students = () => {
 
   const handleDelete = (id) => {
     setStudents((prev) => prev.filter((s) => s.id !== id));
-    message.success("Talaba o‘chirildi");
+    toast.success("Talaba o‘chirildi");
   };
-
+  const { t } = useTranslation();
   const columns = [
     {
-      title: "Talaba",
+      title: t("student"),
       dataIndex: "name",
       render: (_, record) => (
         <div className="flex items-center gap-3">
@@ -106,11 +108,11 @@ const Students = () => {
         </div>
       ),
     },
-    { title: "Kurs", dataIndex: "course" },
-    { title: "Guruh", dataIndex: "group" },
-    { title: "Telefon", dataIndex: "phone" },
+    { title: t("course"), dataIndex: "course" },
+    { title: t("group"), dataIndex: "group" },
+    { title: t("phone"), dataIndex: "phone" },
     {
-      title: "Holati",
+      title: t("status"),
       dataIndex: "status",
       render: (text) => (
         <span
@@ -125,17 +127,17 @@ const Students = () => {
       ),
     },
     {
-      title: "Amallar",
+      title: t("actions"),
       render: (_, record) => (
         <div className="flex justify-end gap-3">
           <button onClick={() => showModal(record)}>
             <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title="O‘chirmoqchimisiz?"
+            title={t("confirmDelete")}
             onConfirm={() => handleDelete(record.id)}
-            okText="Ha"
-            cancelText="Yo‘q"
+            okText={t("yes")}
+            cancelText={t("no")}
           >
             <button>
               <TrashBinIcon className="w-5 h-5 text-red-600" />
@@ -166,12 +168,12 @@ const Students = () => {
     >
       <div className="p-4 bg-white dark:bg-gray-900">
         <ListHeader
-          title="Talabalar soni"
+          title={t("studentsCount")}
           count={filteredStudents.length}
           searchValue={searchTerm}
           onSearchChange={setSearchTerm}
-          searchPlaceholder="Talabani qidirish..."
-          buttonText="Talaba qo‘shish"
+          searchPlaceholder={t("searchStudent")}
+          buttonText={t("addStudent")}
           onButtonClick={() => showModal()}
         />
 
@@ -186,33 +188,33 @@ const Students = () => {
         </div>
 
         <Modal
-          title={editingStudent ? "Talabani tahrirlash" : "Talaba qo‘shish"}
+          title={editingStudent ? t("editStudent") : t("addStudent")}
           open={isModalVisible}
           onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
-          okText="Saqlash"
-          cancelText="Bekor qilish"
+          okText={t("save")}
+          cancelText={t("cancel")}
         >
           <Form form={form} layout="vertical">
             <Form.Item
               name="name"
-              label="Ism familiya"
+              label={t("full_name")}
               rules={[{ required: true }]}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item name="course" label="Kurs" rules={[{ required: true }]}>
+            <Form.Item name="course" label={t("course")} rules={[{ required: true }]}>
               <Input />
             </Form.Item>
 
-            <Form.Item name="group" label="Guruh" rules={[{ required: true }]}>
+            <Form.Item name="group" label={t("group")} rules={[{ required: true }]}>
               <Input />
             </Form.Item>
 
             <Form.Item
               name="phone"
-              label="Telefon"
+              label={t("phone")}
               rules={[{ required: true }]}
             >
               <Input />
@@ -220,7 +222,7 @@ const Students = () => {
 
             <Form.Item
               name="email"
-              label="Email"
+              label={t("email")}
               rules={[{ required: true, type: "email" }]}
             >
               <Input />
@@ -228,7 +230,7 @@ const Students = () => {
 
             <Form.Item
               name="status"
-              label="Holati"
+              label={t("status")}
               rules={[{ required: true }]}
             >
               <Select>

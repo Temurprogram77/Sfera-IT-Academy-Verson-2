@@ -18,7 +18,7 @@
   "child": "Фарзанди",
   "phone": "Телефон",
   "status": "Ҳолати",
-  "actions": "Аммаллар",
+  "actions": "Амаллар",
   "active": "Фаол",
   "on_leave": "Таътилда",
   "total_parents": "Ота-оналар сони",
@@ -74,5 +74,17 @@
   "addAdmin": "Админ қўшиш",
   "admin": "Админ",
   "role": "Роли",
-  "confirmDeleteAdmin": "Админни ўчирмоқчимисиз?"
+  "confirmDeleteAdmin": "Админни ўчирмоқчимисиз?",
+  "subject": "Фан",
+  "teacher": "Ўқитувчи",
+  "fullname": "Тўлиқ исм",
+  "email": "Электрон почта",
+  "student": "Талаба",
+  "course": "Курс",
+  "group": "Гуруҳ",
+  "confirmDelete": "Ўчирмоқчимисиз?",
+  "studentsCount": "Талабалар сони",
+  "searchStudent": "Талабани қидириш...",
+  "addStudent": "Талаба қўшиш",
+  "editStudent": "Талабани таҳрирлаш"
 }
