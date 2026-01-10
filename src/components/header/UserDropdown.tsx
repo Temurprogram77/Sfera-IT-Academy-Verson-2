@@ -4,9 +4,11 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { authService } from "../../services/authService ";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -23,7 +25,7 @@ export default function UserDropdown() {
 
     closeDropdown();
   }
-  const {t}=useTranslation()
+  const { t } = useTranslation();
   return (
     <div className="relative">
       <button
@@ -32,15 +34,15 @@ export default function UserDropdown() {
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
           <img
-                className="object-contain dark:hidden"
-                src="/images/logoOne.png"
-                alt="Logo"
-              />
-              <img
-                className=" object-contain hidden dark:block"
-                src="/images/logoTwo.png"
-                alt="Logo Dark"
-              />
+            className="object-contain dark:hidden"
+            src="/images/logoOne.png"
+            alt="Logo"
+          />
+          <img
+            className=" object-contain hidden dark:block"
+            src="/images/logoTwo.png"
+            alt="Logo Dark"
+          />
         </span>
         <span className="block mr-1 font-medium text-theme-sm">Role</span>
         <svg
@@ -81,17 +83,32 @@ export default function UserDropdown() {
         {/* Dropdown Items */}
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
-            <DropdownItem onItemClick={closeDropdown} className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" tag="a" to="/profile">
+            <DropdownItem
+              onItemClick={closeDropdown}
+              className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              tag="a"
+              to="/profile"
+            >
               {t("edit_profile")}
             </DropdownItem>
           </li>
           <li>
-            <DropdownItem className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" onItemClick={closeDropdown} tag="a" to="/profile">
+            <DropdownItem
+              className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              onItemClick={closeDropdown}
+              tag="a"
+              to="/profile"
+            >
               {t("account_settings")}
             </DropdownItem>
           </li>
           <li>
-            <DropdownItem className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300" onItemClick={closeDropdown} tag="a" to="/profile">
+            <DropdownItem
+              className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              onItemClick={closeDropdown}
+              tag="a"
+              to="/profile"
+            >
               {t("support")}
             </DropdownItem>
           </li>

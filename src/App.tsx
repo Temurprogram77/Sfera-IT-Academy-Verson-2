@@ -41,6 +41,7 @@ import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
 import Admins from "./pages/Admins/Admins";
 import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
+import { useEffect } from "react";
 
 // Role'ga qarab redirect path
 const getRoleRedirectPath = (role: string | null): string => {
@@ -114,6 +115,15 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 export default function App() {
   const { theme } = useTheme();
 
+  useEffect(() => {
+    window.history.pushState(null, " ", window.location.href);
+    window.onpopstate = function () {
+      window.history.go(1);
+    };
+    return () => {
+      window.onpopstate = null;
+    };
+  }, []);
   return (
     <Router>
       <ScrollToTop />
