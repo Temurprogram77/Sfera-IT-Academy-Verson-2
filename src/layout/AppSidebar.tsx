@@ -346,13 +346,13 @@ const AppSidebar: React.FC = () => {
   };
   return (
     <aside
-      className={`fixed top-0 left-0 z-50 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
+      className={`fixed top-0 left-0 z-60 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
         isExpanded || isHovered || isMobileOpen ? "w-72.5" : "w-22.5"
       } ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full"
       } lg:translate-x-0`}
     >
-      <div className="py-5 flex justify-center lg:justify-start">
+      <div className="py-5 flex justify-start">
         <Link to={rolePathMap[currentRole]}>
           <img
             className="object-contain w-10 dark:hidden"
@@ -368,8 +368,8 @@ const AppSidebar: React.FC = () => {
         <h1
           className={`ml-2 text-lg mt-1.5 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
             isExpanded || isHovered || isMobileOpen
-              ? "opacity-100 w-auto"
-              : "opacity-0 w-0 overflow-hidden"
+              ? "opacity-100 w-auto block"
+              : "hidden"
           }`}
         >
           {roleTitleMap[currentRole]}
