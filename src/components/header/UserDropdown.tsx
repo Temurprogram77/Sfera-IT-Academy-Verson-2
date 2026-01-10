@@ -4,12 +4,9 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { authService } from "../../services/authService ";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
-
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
