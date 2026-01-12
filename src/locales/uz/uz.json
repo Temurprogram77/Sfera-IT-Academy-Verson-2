@@ -95,6 +95,10 @@
   "groupName": "Guruh nomi",
   "addRoom": "Xona qo‘shish",
   "clickToViewDetails": "Batafsil ko‘rish uchun bosing",
-  "close": "Yopish"
+  "close": "Yopish",
+  "editTeacher": "O‘qituvchini tahrirlash",
+  "edit": "ni tahrirlash",
+  "new": "Yangi",
+  "add": "qo‘shish",
+  "confirmDeleteSuffix": "ni o‘chirmoqchimisiz?"
 }
- 

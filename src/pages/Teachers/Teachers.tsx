@@ -120,7 +120,7 @@ const Teachers = () => {
           <TableComponent
             data={initialTeachers}
             title="O‘qituvchilar"
-            itemName="O‘qituvchi"
+            itemName={t("teacher")}
             searchKeys={["name", "subject", "phone"]}
             columnsConfig={[
               {
@@ -154,8 +154,8 @@ const Teachers = () => {
                   <span
                     className={`px-3 py-1 text-xs rounded-full ${
                       text === "Faol"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
+                        ? "bg-[#03906d] text-white"
+                        : "text-white bg-yellow-500"
                     }`}
                   >
                     {text}
@@ -211,7 +211,7 @@ const Teachers = () => {
 
         <ModalComponent
           open={isModalVisible}
-          title={editingTeacher ? t("edit_teacher") : t("add_teacher")}
+          title={editingTeacher ? t("editTeacher") : t("add_teacher")}
           onOk={handleOk}
           onCancel={() => setIsModalVisible(false)}
           okText={t("save")}

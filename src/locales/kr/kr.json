@@ -7,7 +7,7 @@
   "dashboard_parent": "Бошқарув панели",
   "teachers": "Ўқитувчилар",
   "students": "Ўқувчилар",
-  "grades": "Баҳолар", 
+  "grades": "Баҳолар",
   "parents": "Ота-оналар",
   "attendance": "Давомат",
   "groups": "Гуруҳлар",
@@ -95,5 +95,10 @@
   "groupName": "Гуруҳ номи",
   "addRoom": "Хона қўшиш",
   "clickToViewDetails": "Батафсил кўриш учун босинг",
-  "close": "Ёпиш"
+  "close": "Ёпиш",
+  "editTeacher": "Ўқитувчини таҳрирлаш",
+  "edit": "ни таҳрирлаш",
+  "new": "Янги",
+  "add": "қўшиш",
+  "confirmDeleteSuffix": "ни ўчирмоқчимисиз?"
 }

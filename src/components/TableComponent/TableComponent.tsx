@@ -10,6 +10,7 @@ import { PencilIcon, TrashBinIcon } from "../../icons";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { useTheme } from "../../context/ThemeContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 // Tiplar
 export type ColumnConfig<T> = {
@@ -49,6 +50,7 @@ const TableComponent = <T extends { id: number }>({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
   const [form] = Form.useForm();
+  const {t}=useTranslation()
   useEffect(() => {
     setSearchTerm(""); // agar kerak bo‘lsa
   }, []);
@@ -104,17 +106,17 @@ const TableComponent = <T extends { id: number }>({
         : (record: T) => String(record[col.key as keyof T]),
     })),
     {
-      title: "Amallar",
+      title: t("actions"),
       render: (_: unknown, record: T) => (
         <div className="flex justify-end gap-3">
           <button onClick={() => showModal(record)}>
             <PencilIcon className="w-5 h-5 text-blue-600" />
           </button>
           <Popconfirm
-            title={`${itemName}ni o‘chirmoqchimisiz?`}
+            title={`${itemName}${t("confirmDeleteSuffix")}`}
             onConfirm={() => handleDelete(record.id)}
-            okText="Ha"
-            cancelText="Yo‘q"
+            okText={t("yes")}
+            cancelText={t("no")}
           >
             <button>
               <TrashBinIcon className="w-5 h-5 text-red-600" />
@@ -158,13 +160,13 @@ const TableComponent = <T extends { id: number }>({
           open={isModalVisible}
           title={
             editingItem
-              ? `${itemName}ni tahrirlash`
-              : `Yangi ${itemName} qo‘shish`
+              ? `${itemName}${t("edit")}`
+              : `${t("new")} ${itemName} ${t("add")}`
           }
           onOk={handleSave}
           onCancel={() => setIsModalVisible(false)}
-          okText="Saqlash"
-          cancelText="Bekor qilish"
+          okText={t("save")}
+          cancelText={t("close")}
         >
           <Form form={form} layout="vertical">
             {modalFields.map((field) => (

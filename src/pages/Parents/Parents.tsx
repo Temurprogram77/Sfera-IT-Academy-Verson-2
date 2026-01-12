@@ -124,11 +124,11 @@ const Parents = () => {
         <TableComponent<Parent>
           data={initialParents}
           title="Ota-onalar"
-          itemName="Ota-ona"
+          itemName={t("parent")}
           searchKeys={["name", "student", "phone"]}
           columnsConfig={[
             {
-              title: "Ota-ona",
+              title: t("parent"),
               dataIndex: "name",
               render: (_: any, record: Parent) => (
                 <div className="flex items-center gap-3">
@@ -143,22 +143,22 @@ const Parents = () => {
               ),
             },
             {
-              title: "Farzand",
+              title: t("child"),
               dataIndex: "student",
             },
             {
-              title: "Telefon",
+              title: t("phone"),
               dataIndex: "phone",
             },
             {
-              title: "Status",
+              title: t("status"),
               dataIndex: "status",
               render: (status: string) => (
                 <span
                   className={`px-3 py-1 text-xs rounded-full ${
                     status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
+                      ? "bg-[#03906d] text-white"
+                      : "text-white bg-yellow-500"
                   }`}
                 >
                   {status === "active" ? "Faol" : "Ta’til"}
@@ -169,31 +169,31 @@ const Parents = () => {
           modalFields={[
             {
               name: "name",
-              label: "To‘liq ism",
+              label: t("full_name"),
               component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "student",
-              label: "Farzand",
+              label: t("child"),
               component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "phone",
-              label: "Telefon",
+              label: t("phone"),
               component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "email",
-              label: "Email",
+              label: t("email"),
               component: <InputComponent />,
               rules: [{ required: true, type: "email" }],
             },
             {
               name: "status",
-              label: "Status",
+              label: t("status"),
               component: (
                 <Select>
                   <Select.Option value="active">Faol</Select.Option>
