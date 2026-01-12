@@ -1,24 +1,17 @@
 import { useState, useMemo } from "react";
 import {
-  Table,
-  Tag,
-  Popconfirm,
   Form,
   Input,
   Select,
   ConfigProvider,
   theme as antdTheme,
-  Grid,
 } from "antd";
 import { useTheme } from "../../context/ThemeContext";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import TableComponent from "../../components/TableComponent/TableComponent";
-
-const { useBreakpoint } = Grid;
 
 interface Admin {
   id: number;
@@ -60,7 +53,6 @@ const Admins = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
   const { t } = useTranslation();
-  const screens = useBreakpoint();
 
   const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
   const [search, setSearch] = useState("");

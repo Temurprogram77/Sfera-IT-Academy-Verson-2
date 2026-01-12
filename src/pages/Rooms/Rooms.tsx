@@ -13,6 +13,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../components/IconButton/IconButton";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import InputComponent from "../../components/InputComponent/InputComponent";
 
 const rooms = [
   {
@@ -46,6 +47,7 @@ const rooms = [
     groups: ["Design-1", "Design-2"],
   },
 ];
+
 interface Room {
   id: number;
   name: string;
@@ -53,6 +55,7 @@ interface Room {
   img: { light: string; dark: string };
   groups: string[];
 }
+
 const Rooms = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
@@ -76,7 +79,7 @@ const Rooms = () => {
       theme={{
         algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
         token: {
-          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorBgContainer: theme === "dark" ? "#101828" : "#ffffff", // shu yer
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
         },
@@ -132,25 +135,17 @@ const Rooms = () => {
         <ModalComponent
           open={isModalVisible}
           onCancel={handleCancel}
-          title={"" + (selectedRoom ? t("editRoom") : t("addRoom"))}
+          title={selectedRoom ? t("editRoom") : t("addRoom")}
           footer={[
             <Button key="close" onClick={handleCancel}>
               {t("close")}
             </Button>,
-            <IconButton
-              text={t("save")}
-              key="save"
-              onClick={handleCancel}
-            ></IconButton>,
+            <IconButton text={t("save")} key="save" onClick={handleCancel} />,
           ]}
         >
           <div>
-            <p className="text-gray-500">{t("Xona qo'shish ")}</p>
-            <input
-              type="text"
-              placeholder={t("roomName")}
-              className="w-full border px-3 py-2 rounded-lg mt-2"
-            />
+            <p className="text-gray-500">{t("Xona qo'shish")}</p>
+            <InputComponent placeholder="Xona nomini Kiriting" className=""/>
           </div>
         </ModalComponent>
       </div>

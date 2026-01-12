@@ -1,23 +1,18 @@
 import { useState, useMemo } from "react";
 import {
-  Table,
-  Modal,
   Form,
-  Input,
   Select,
-  Popconfirm,
   message,
   ConfigProvider,
   theme as antdTheme,
-  Grid,
 } from "antd";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import TableComponent from "../../components/TableComponent/TableComponent";
-
-const { useBreakpoint } = Grid;
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import InputComponent from "../../components/InputComponent/InputComponent";
+import SelectComponent from "../../components/SelectComponent/SelectComponent";
 
 interface Parent {
   id: number;
@@ -59,7 +54,6 @@ const Parents = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
-  const screens = useBreakpoint();
 
   const [parents, setParents] = useState<Parent[]>(initialParents);
   const [searchTerm, setSearchTerm] = useState("");
@@ -176,25 +170,25 @@ const Parents = () => {
             {
               name: "name",
               label: "To‘liq ism",
-              component: <Input />,
+              component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "student",
               label: "Farzand",
-              component: <Input />,
+              component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "phone",
               label: "Telefon",
-              component: <Input />,
+              component: <InputComponent />,
               rules: [{ required: true }],
             },
             {
               name: "email",
               label: "Email",
-              component: <Input />,
+              component: <InputComponent />,
               rules: [{ required: true, type: "email" }],
             },
             {
@@ -211,7 +205,7 @@ const Parents = () => {
           ]}
         />
 
-        <Modal
+        <ModalComponent
           title={editingParent ? t("edit_parent") : t("add_parent")}
           open={isModalVisible}
           onOk={handleOk}
@@ -225,7 +219,7 @@ const Parents = () => {
               label={t("full_name")}
               rules={[{ required: true }]}
             >
-              <Input />
+              <InputComponent />
             </Form.Item>
 
             <Form.Item
@@ -233,7 +227,7 @@ const Parents = () => {
               label={t("child")}
               rules={[{ required: true }]}
             >
-              <Input />
+              <InputComponent />
             </Form.Item>
 
             <Form.Item
@@ -241,7 +235,7 @@ const Parents = () => {
               label={t("phone")}
               rules={[{ required: true }]}
             >
-              <Input />
+              <InputComponent />
             </Form.Item>
 
             <Form.Item
@@ -249,7 +243,7 @@ const Parents = () => {
               label={t("email")}
               rules={[{ required: true, type: "email" }]}
             >
-              <Input />
+              <InputComponent />
             </Form.Item>
 
             <Form.Item
@@ -257,13 +251,17 @@ const Parents = () => {
               label={t("status")}
               rules={[{ required: true }]}
             >
-              <Select>
-                <Select.Option value="active">{t("active")}</Select.Option>
-                <Select.Option value="on_leave">{t("on_leave")}</Select.Option>
-              </Select>
+              <SelectComponent
+                value={status}
+                onChange={(val) => setStatus(val)}
+                options={[
+                  { label: t("active"), value: "active" },
+                  { label: t("on_leave"), value: "on_leave" },
+                ]}
+              />
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalComponent>
       </div>
     </ConfigProvider>
   );

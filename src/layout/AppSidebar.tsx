@@ -3,12 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import {
   BoltIcon,
   BoxCubeIcon,
-  BoxIcon,
   CalenderIcon,
   CheckCircleIcon,
   ChevronDownIcon,
   GridIcon,
-  GroupIcon,
   HorizontaLDots,
   UserCircleIcon,
   UserIcon,
@@ -17,7 +15,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
-import { Dropdown } from "antd";
+import { ConfigProvider, Dropdown, theme as antdTheme } from "antd";
 import type { MenuProps } from "antd";
 type NavItem = {
   name: string;
@@ -114,7 +112,7 @@ const AppSidebar: React.FC = () => {
         icon: <UserCircleIcon />,
         name: t("students"),
         path: "/students",
-        roles: [ "ROLE_TEACHER"],
+        roles: ["ROLE_TEACHER"],
       },
       {
         icon: <BoltIcon />,
@@ -137,7 +135,11 @@ const AppSidebar: React.FC = () => {
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
         subItems: [
           { name: t("attendance"), path: "/attendance", pro: false },
-          { name: t("attendanceHistory"), path: "/history-attendance", pro: false },
+          {
+            name: t("attendanceHistory"),
+            path: "/history-attendance",
+            pro: false,
+          },
         ],
       },
       {
@@ -204,7 +206,7 @@ const AppSidebar: React.FC = () => {
               <Dropdown
                 menu={getDropdownMenu(nav)}
                 trigger={["hover"]}
-                placement="topRight"
+                placement="rightTop"
               >
                 <div
                   className={`menu-item group flex justify-center dark:border-gray-800 dark:hover:bg-white/5 cursor-pointer ${
@@ -212,7 +214,6 @@ const AppSidebar: React.FC = () => {
                       ? "hover:bg-green-600 text-gray-200"
                       : "menu-item-inactive"
                   }`}
-                  title={nav.name}
                 >
                   <span className="menu-item-icon-size">{nav.icon}</span>
                 </div>
@@ -309,48 +310,67 @@ const AppSidebar: React.FC = () => {
     ROLE_PARENT: "Sfera Parent",
   };
   return (
-    <aside
-      className={`fixed top-0 left-0 z-60 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
-        isExpanded || isHovered || isMobileOpen ? "w-72.5" : "w-22.5"
-      } ${
-        isMobileOpen ? "translate-x-0" : "-translate-x-full"
-      } lg:translate-x-0`}
+    <ConfigProvider
+      theme={{
+        algorithm:
+          theme === "dark"
+            ? antdTheme.darkAlgorithm
+            : antdTheme.defaultAlgorithm,
+        token: {
+          colorBgElevated: theme === "dark" ? "#101828" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#1f2937" : "#d1d5db",
+        },
+        components: {
+          Dropdown: {
+            paddingBlock: 4,
+          },
+        },
+      }}
     >
-      <div className="py-5 flex justify-start">
-        <Link to={rolePathMap[currentRole]}>
-          <img
-            className="object-contain w-10 dark:hidden"
-            src="/images/logoOne.png"
-            alt="Logo"
-          />
-          <img
-            className=" object-contain w-10 hidden dark:block"
-            src="/images/logoTwo.png"
-            alt="Logo Dark"
-          />
-        </Link>
-        <h1
-          className={`ml-2 text-lg mt-1.5 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
-            isExpanded || isHovered || isMobileOpen
-              ? "opacity-100 w-auto block"
-              : "hidden"
-          }`}
-        >
-          {roleTitleMap[currentRole]}
-        </h1>
-      </div>
+      <aside
+        className={`fixed top-0 left-0 z-60 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
+          isExpanded || isHovered || isMobileOpen ? "w-72.5" : "w-22.5"
+        } ${
+          isMobileOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
+      >
+        <div className="py-5 flex justify-start">
+          <Link to={rolePathMap[currentRole]}>
+            <img
+              className="object-contain w-10 dark:hidden"
+              src="/images/logoOne.png"
+              alt="Logo"
+            />
+            <img
+              className=" object-contain w-10 hidden dark:block"
+              src="/images/logoTwo.png"
+              alt="Logo Dark"
+            />
+          </Link>
+          <h1
+            className={`ml-2 text-lg mt-1.5 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
+              isExpanded || isHovered || isMobileOpen
+                ? "opacity-100 w-auto block"
+                : "hidden"
+            }`}
+          >
+            {roleTitleMap[currentRole]}
+          </h1>
+        </div>
 
-      <nav className="flex-1 overflow-y-auto">
-        <h2 className="mb-4 text-xs uppercase text-gray-400">
-          {isExpanded || isHovered || isMobileOpen ? (
-            t("menu")
-          ) : (
-            <HorizontaLDots />
-          )}
-        </h2>
-        {renderMenuItems(filteredNavItems, "main")}
-      </nav>
-    </aside>
+        <nav className="flex-1 overflow-y-auto">
+          <h2 className="mb-4 text-xs uppercase text-gray-400">
+            {isExpanded || isHovered || isMobileOpen ? (
+              t("menu")
+            ) : (
+              <HorizontaLDots />
+            )}
+          </h2>
+          {renderMenuItems(filteredNavItems, "main")}
+        </nav>
+      </aside>
+    </ConfigProvider>
   );
 };
 

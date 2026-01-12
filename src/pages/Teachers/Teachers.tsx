@@ -1,16 +1,11 @@
 import { useState } from "react";
 import {
-  Table,
-  Modal,
   Form,
   Input,
   Select,
-  Popconfirm,
-  message,
   ConfigProvider,
   theme as antdTheme,
 } from "antd";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";

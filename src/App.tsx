@@ -4,6 +4,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { useEffect } from "react";
+
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -21,12 +23,13 @@ import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-// import Home from "./pages/Dashboard/Home";
+
 import Admin from "./dashboards/admin";
 import SuperAdmin from "./dashboards/super_admin";
 import Teacher from "./dashboards/teacher";
 import Student from "./dashboards/student";
 import Parent from "./dashboards/parent";
+
 import Teachers from "./pages/Teachers/Teachers";
 import Students from "./pages/Students/Students";
 import Parents from "./pages/Parents/Parents";
@@ -34,80 +37,62 @@ import Attendance from "./pages/Attendance/Attendance";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
-import "./i18n";
 import Assessnment from "./pages/Assessnment/Assessnment";
-import { Toaster } from "sonner";
-import { useTheme } from "./context/ThemeContext";
 import Messages from "./pages/Messages/Messages";
 import Admins from "./pages/Admins/Admins";
 import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
-import { useEffect } from "react";
 
-// Role'ga qarab redirect path
-const getRoleRedirectPath = (role: string | null): string => {
-  const ROLE_REDIRECTS: Record<string, string> = {
-    ROLE_SUPER_ADMIN: "/dashboard/super_admin",
-    ROLE_ADMIN: "/dashboard/admin",
-    ROLE_TEACHER: "/dashboard/teacher",
-    ROLE_STUDENT: "/dashboard/student",
-    ROLE_PARENT: "/dashboard/parent",
-  };
-  return role
-    ? ROLE_REDIRECTS[role] || "/dashboard/teacher"
-    : "/dashboard/teacher";
+import { Toaster } from "sonner";
+import { useTheme } from "./context/ThemeContext";
+import "./i18n";
+
+// Role bo'yicha dashboard path
+const ROLE_REDIRECTS: Record<string, string> = {
+  ROLE_SUPER_ADMIN: "/dashboard/super_admin",
+  ROLE_ADMIN: "/dashboard/admin",
+  ROLE_TEACHER: "/dashboard/teacher",
+  ROLE_STUDENT: "/dashboard/student",
+  ROLE_PARENT: "/dashboard/parent",
 };
 
-// RootRedirect komponenti
+// Role ga qarab redirect path
+const getRoleRedirectPath = (role: string | null) => {
+  return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
+};
 
+// RootRedirect - dashboardga yo'naltiradi
 const RootRedirect: React.FC = () => {
   const token = localStorage.getItem("auth_token");
   const role = localStorage.getItem("user_role");
 
-  // Agar login qilmagan bo‘lsa login sahifaga yo'naltir
-  if (!token) {
-    return <Navigate to="/signin" replace />;
-  }
-
-  // Agar login bo'lsa role bo‘yicha dashboardga yo'naltir
-  const getRoleRedirectPath = (role: string | null): string => {
-    const ROLE_REDIRECTS: Record<string, string> = {
-      ROLE_SUPER_ADMIN: "/dashboard/super_admin",
-      ROLE_ADMIN: "/dashboard/admin",
-      ROLE_TEACHER: "/dashboard/teacher",
-      ROLE_STUDENT: "/dashboard/student",
-      ROLE_PARENT: "/dashboard/parent",
-    };
-    return role
-      ? ROLE_REDIRECTS[role] || "/dashboard/teacher"
-      : "/dashboard/teacher";
-  };
-
-  const redirectPath = getRoleRedirectPath(role);
-  return <Navigate to={redirectPath} replace />;
+  if (!token) return <Navigate to="/signin" replace />;
+  return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
-// Protected Route - login bo'lmaganlarni sign in ga yo'naltiradi
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+// ProtectedRoute - login qilmaganlar signin ga yo'naltiriladi
+const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({
   children,
+  allowedRoles,
 }) => {
   const token = localStorage.getItem("auth_token");
+  const role = localStorage.getItem("user_role");
 
-  if (!token) {
-    return <Navigate to="/signin" replace />;
+  if (!token) return <Navigate to="/signin" replace />;
+
+  // Agar allowedRoles bo'lsa va user roli ulardan biri bo'lmasa
+  if (allowedRoles && !allowedRoles.includes(role || "")) {
+    return <Navigate to={getRoleRedirectPath(role)} replace />;
   }
 
   return <>{children}</>;
 };
 
-// Public Route - login bo'lganlarni dashboard ga yo'naltiradi
+// PublicRoute - login bo'lganlarni dashboardga yo'naltiradi
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const token = localStorage.getItem("auth_token");
   const role = localStorage.getItem("user_role");
 
-  if (token) {
-    const redirectPath = getRoleRedirectPath(role);
-    return <Navigate to={redirectPath} replace />;
-  }
+  if (token) return <Navigate to={getRoleRedirectPath(role)} replace />;
 
   return <>{children}</>;
 };
@@ -115,20 +100,20 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 export default function App() {
   const { theme } = useTheme();
 
+  // Back button bloklash
   useEffect(() => {
-    window.history.pushState(null, " ", window.location.href);
-    window.onpopstate = function () {
-      window.history.go(1);
-    };
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = () => window.history.go(1);
     return () => {
       window.onpopstate = null;
     };
   }, []);
+
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        {/* Auth Routes - login bo'lganlar kira olmaydi */}
+        {/* Auth */}
         <Route
           path="/signin"
           element={
@@ -138,7 +123,7 @@ export default function App() {
           }
         />
 
-        {/* Protected Dashboard Routes - faqat login bo'lganlar kira oladi */}
+        {/* Protected Layout */}
         <Route
           path="/"
           element={
@@ -148,20 +133,65 @@ export default function App() {
           }
         >
           <Route path="/" element={<RootRedirect />} />
-          <Route path="dashboard/admin" element={<Admin />} />
-          <Route path="dashboard/super_admin" element={<SuperAdmin />} />
-          <Route path="dashboard/teacher" element={<Teacher />} />
-          <Route path="dashboard/student" element={<Student />} />
-          <Route path="dashboard/parent" element={<Parent />} />
+
+          {/* Dashboards */}
+          <Route
+            path="dashboard/admin"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/super_admin"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
+                <SuperAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/teacher"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
+                <Teacher />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/student"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
+                <Student />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/parent"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
+                <Parent />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Users */}
           <Route path="teachers" element={<Teachers />} />
           <Route path="admins" element={<Admins />} />
           <Route path="students" element={<Students />} />
+          <Route path="parents" element={<Parents />} />
+
+          {/* Messages & Grades */}
           <Route path="messages" element={<Messages />} />
           <Route path="grades" element={<Grades />} />
           <Route path="assessment" element={<Assessnment />} />
-          <Route path="parents" element={<Parents />} />
+
+          {/* Attendance */}
           <Route path="attendance" element={<Attendance />} />
           <Route path="history-attendance" element={<AttendanceHistory />} />
+
+          {/* Groups & Rooms */}
           <Route path="groups" element={<Groups />} />
           <Route path="rooms" element={<Rooms />} />
 
@@ -192,11 +222,9 @@ export default function App() {
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Toaster
-        position="top-right"
-        richColors
-        theme={theme === "dark" ? "dark" : "light"}
-      />
+
+      {/* Toaster */}
+      <Toaster position="top-right" richColors theme={theme === "dark" ? "dark" : "light"} />
     </Router>
   );
 }

@@ -8,7 +8,6 @@ type SidebarContextType = {
   openSubmenu: string | null;
   isOpen: boolean;
 
-  // 🔒 Notification lock
   isLocked: boolean;
   lockSidebar: () => void;
   unlockSidebar: () => void;
@@ -35,18 +34,25 @@ export const useSidebar = () => {
   return context;
 };
 
+// 🔑 localStorage’dan boshlang‘ich holat
+const getInitialAsideState = () => {
+  const stored = localStorage.getItem("aside");
+  return stored === "true"; // faqat true bo‘lsa ochiq
+};
+
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState<boolean>(getInitialAsideState);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  // 🔒 Notification sidebar ochiqmi
   const [isLocked, setIsLocked] = useState(false);
+
+  // 📱 Responsive tekshiruv
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -61,6 +67,11 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 💾 isExpanded o‘zgarsa → localStorage’ga yozish
+  useEffect(() => {
+    localStorage.setItem("aside", String(isExpanded));
+  }, [isExpanded]);
+
   // 🔒 Toggle’larni bloklash
   const toggleSidebar = () => {
     if (isLocked) return;
@@ -72,11 +83,12 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsMobileOpen((prev) => !prev);
   };
 
-  // 🔥 Majburiy yopish
   const closeSidebar = () => setIsExpanded(false);
   const closeMobileSidebar = () => setIsMobileOpen(false);
+
   const handleMouseEnter = () => setIsOpen(true);
   const handleMouseLeave = () => setIsOpen(false);
+
   // 🔒 Lock / Unlock
   const lockSidebar = () => {
     setIsLocked(true);
@@ -102,6 +114,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         activeItem,
         openSubmenu,
         isOpen,
+
         isLocked,
         lockSidebar,
         unlockSidebar,
@@ -115,7 +128,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
         setActiveItem,
         toggleSubmenu,
         handleMouseEnter,
-        handleMouseLeave
+        handleMouseLeave,
       }}
     >
       {children}
