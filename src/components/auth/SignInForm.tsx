@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import PhoneInput from "../ui/input/PhoneInput";
 import PasswordInput from "../ui/input/PasswordInput";
 
-
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
   ROLE_ADMIN: "/dashboard/admin",
@@ -33,7 +32,7 @@ const phoneOptions = {
 
 export default function SignInForm() {
   const inputRef = useMaskito({ options: phoneOptions });
-  
+
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
@@ -44,6 +43,7 @@ export default function SignInForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Telefon va parol bo'sh bo'lsa
     if (!phone || !password) {
       toast.error(t("enterPhoneAndPassword"));
       return;
@@ -51,34 +51,38 @@ export default function SignInForm() {
 
     const cleanPhone = phone.replace(/\D/g, "");
 
+    // Telefon 998 bilan boshlanishini tekshirish
     if (!cleanPhone.startsWith("998")) {
       toast.error(t("phoneMustStartWith998"));
       return;
     }
 
     try {
+      // API chaqiruv
       const response = await loginMutation.mutateAsync({
         phone: cleanPhone,
         password,
       });
 
+      // Agar login muvaffaqiyatsiz bo'lsa
       if (!response?.success) {
         toast.error(t("invalidPhoneOrPassword"));
         return;
       }
 
+      // Redirect yo'li
       const redirectPath =
-        ROLE_REDIRECTS[response.message as string] ||
-        "/dashboard/teacher";
+        ROLE_REDIRECTS[response.message as string] || "/dashboard/teacher";
 
+      // Faqat bu yerda toast chaqiriladi
       toast.success(t("welcome"));
-      
+
+      // Yo'naltirish
       navigate(redirectPath, { replace: true });
     } catch (error: any) {
+      // Faqat bu yerda xatolik uchun toast
       toast.error(
-        error?.response?.data?.message ||
-        error?.message ||
-        t("loginError")
+        error?.response?.data?.message || error?.message || t("loginError")
       );
     }
   };
@@ -90,9 +94,7 @@ export default function SignInForm() {
           <h1 className="mb-2 font-semibold text-gray-800 text-title-sm sm:text-title-md">
             {t("login")}
           </h1>
-          <p className="text-sm text-gray-500">
-            {t("enterCredentials")}
-          </p>
+          <p className="text-sm text-gray-500">{t("enterCredentials")}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -125,7 +127,6 @@ export default function SignInForm() {
                   placeholder={t("password")}
                   disabled={loginMutation.isPending}
                 />
-
               </div>
             </div>
 
@@ -137,9 +138,7 @@ export default function SignInForm() {
               loading={loginMutation.isPending}
               size="large"
             >
-              {loginMutation.isPending
-                ? `${t("login")}...`
-                : t("login")}
+              {loginMutation.isPending ? `${t("login")}...` : t("login")}
             </Button>
           </div>
         </form>
