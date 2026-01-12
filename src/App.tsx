@@ -45,6 +45,7 @@ import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import "./i18n";
+import { authService } from "./services/authService ";
 
 // Role bo'yicha dashboard path
 const ROLE_REDIRECTS: Record<string, string> = {
@@ -62,20 +63,20 @@ const getRoleRedirectPath = (role: string | null) => {
 
 // RootRedirect - dashboardga yo'naltiradi
 const RootRedirect: React.FC = () => {
-  const token = localStorage.getItem("auth_token");
-  const role = localStorage.getItem("user_role");
+  const token = authService.getToken();
+  const role = authService.getRole();
 
   if (!token) return <Navigate to="/signin" replace />;
   return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
 // ProtectedRoute - login qilmaganlar signin ga yo'naltiriladi
-const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({
-  children,
-  allowedRoles,
-}) => {
-  const token = localStorage.getItem("auth_token");
-  const role = localStorage.getItem("user_role");
+const ProtectedRoute: React.FC<{
+  children: React.ReactNode;
+  allowedRoles?: string[];
+}> = ({ children, allowedRoles }) => {
+  const token = authService.getToken();
+  const role = authService.getRole();
 
   if (!token) return <Navigate to="/signin" replace />;
 
@@ -89,8 +90,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
 
 // PublicRoute - login bo'lganlarni dashboardga yo'naltiradi
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const token = localStorage.getItem("auth_token");
-  const role = localStorage.getItem("user_role");
+  const token = authService.getToken();
+  const role = authService.getRole();
 
   if (token) return <Navigate to={getRoleRedirectPath(role)} replace />;
 
@@ -224,7 +225,11 @@ export default function App() {
       </Routes>
 
       {/* Toaster */}
-      <Toaster position="top-right" richColors theme={theme === "dark" ? "dark" : "light"} />
+      <Toaster
+        position="top-right"
+        richColors
+        theme={theme === "dark" ? "dark" : "light"}
+      />
     </Router>
   );
 }

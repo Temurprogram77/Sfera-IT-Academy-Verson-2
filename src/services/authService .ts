@@ -48,7 +48,7 @@ class AuthService {
     }
 
     getRole(): UserRole | null {
-        return tokenManager.getRole() as UserRole | null;
+        return tokenManager.getRole() as UserRole | null;   
     }
 
     isTokenExpired(): boolean {
