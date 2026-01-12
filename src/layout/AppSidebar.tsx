@@ -211,7 +211,7 @@ const AppSidebar: React.FC = () => {
                 <div
                   className={`menu-item group flex justify-center dark:border-gray-800 dark:hover:bg-white/5 cursor-pointer ${
                     theme === "dark"
-                      ? "hover:bg-green-600 text-gray-200"
+                      ? "hover:bg-[#03906d] text-gray-200"
                       : "menu-item-inactive"
                   }`}
                 >
@@ -224,7 +224,7 @@ const AppSidebar: React.FC = () => {
                 className={`menu-item group flex items-center gap-3 ${
                   openSubmenu?.index === index && openSubmenu?.type === menuType
                     ? theme === "dark"
-                      ? "bg-green-700 text-white"
+                      ? "bg-[#03906d] text-white"
                       : "menu-item-active"
                     : theme === "dark"
                     ? "menu-item-inactive dark:menu-item-inactive-dark"
@@ -248,7 +248,7 @@ const AppSidebar: React.FC = () => {
               to={nav.path!}
               className={`menu-item  group flex items-center gap-3 ${
                 isActive(nav.path!)
-                  ? "dark:bg-green-700  text-white"
+                  ? "dark:bg-[#03906d]  text-white"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
               } ${isCollapsed ? "justify-center" : ""}`}
             >
@@ -277,7 +277,7 @@ const AppSidebar: React.FC = () => {
                       to={sub.path}
                       className={`menu-dropdown-item  ${
                         isActive(sub.path)
-                          ? "menu-dropdown-item-active dark:bg-green-700 dark:text-white"
+                          ? "menu-dropdown-item-active dark:bg-[#03906d] dark:text-white"
                           : "menu-dropdown-item-inactive dark:menu-dropdown-item-inactive-dark"
                       }`}
                     >

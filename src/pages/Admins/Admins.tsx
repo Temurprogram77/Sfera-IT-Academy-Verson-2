@@ -149,8 +149,8 @@ const Admins = () => {
                 <span
                   className={`px-3 py-1 text-xs rounded-full ${
                     role === "Super Admin"
-                      ? "bg-purple-100 text-purple-800"
-                      : "bg-blue-100 text-blue-800"
+                      ? "dark:bg-gray-700 dark:text-white bg-blue-100 text-blue-800"
+                      : "bg-blue-100 text-blue-800 dark:bg-gray-700 dark:text-white"
                   }`}
                 >
                   {role}
@@ -164,8 +164,8 @@ const Admins = () => {
                 <span
                   className={`px-3 py-1 text-xs rounded-full ${
                     status === "Faol"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "bg-[#03906d] text-white"
+                      : "text-white bg-red-800"
                   }`}
                 >
                   {status}
