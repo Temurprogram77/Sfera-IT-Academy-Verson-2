@@ -216,6 +216,7 @@ const Teachers = () => {
           onCancel={() => setIsModalVisible(false)}
           okText={t("save")}
           cancelText={t("cancel")}
+          className="mt-[-50px]"
         >
           <Form form={form} layout="vertical">
             <Form.Item
