@@ -208,7 +208,7 @@ const Teachers = () => {
             ]}
           />
         </div>
-
+  
         <ModalComponent
           open={isModalVisible}
           title={editingTeacher ? t("editTeacher") : t("add_teacher")}
@@ -216,7 +216,6 @@ const Teachers = () => {
           onCancel={() => setIsModalVisible(false)}
           okText={t("save")}
           cancelText={t("cancel")}
-          className="mt-[-50px]"
         >
           <Form form={form} layout="vertical">
             <Form.Item
@@ -271,7 +270,7 @@ const Teachers = () => {
             </Form.Item>
           </Form>
         </ModalComponent>
-      </div>
+</div>
     </ConfigProvider>
   );
 };

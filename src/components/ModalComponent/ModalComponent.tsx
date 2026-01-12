@@ -9,7 +9,6 @@ interface ModalComponentProps {
   okText?: string;
   cancelText?: string;
   children: ReactNode;
-  className?: string;
   footer?: ReactNode[] | null;
 }
 
@@ -32,8 +31,8 @@ const ModalComponent = ({
       okText={okText}
       cancelText={cancelText}
       footer={footer}
-      destroyOnClose
-      className=""
+      destroyOnHidden
+      centered
     >
       {children}
     </Modal>

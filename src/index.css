@@ -776,3 +776,7 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+body.ant-modal-open {
+  overflow: hidden;
+}
