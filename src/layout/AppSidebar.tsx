@@ -227,7 +227,7 @@ const AppSidebar: React.FC = () => {
                       ? "bg-green-700 text-white"
                       : "menu-item-active"
                     : theme === "dark"
-                    ? "hover:bg-green-600 text-gray-200"
+                    ? "menu-item-inactive dark:menu-item-inactive-dark"
                     : "menu-item-inactive"
                 }`}
               >
@@ -248,7 +248,7 @@ const AppSidebar: React.FC = () => {
               to={nav.path!}
               className={`menu-item  group flex items-center gap-3 ${
                 isActive(nav.path!)
-                  ? "menu-item-active dark:menu-item-active-dark"
+                  ? "dark:bg-green-700  text-white"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
               } ${isCollapsed ? "justify-center" : ""}`}
             >
@@ -277,7 +277,7 @@ const AppSidebar: React.FC = () => {
                       to={sub.path}
                       className={`menu-dropdown-item  ${
                         isActive(sub.path)
-                          ? "menu-dropdown-item-active dark:menu-dropdown-item-active-dark"
+                          ? "menu-dropdown-item-active dark:bg-green-700 dark:text-white"
                           : "menu-dropdown-item-inactive dark:menu-dropdown-item-inactive-dark"
                       }`}
                     >
