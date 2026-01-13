@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar as AntCalendar, Modal, Input, Button } from "antd";
+import { Calendar as AntCalendar, Modal, Input } from "antd";
 // import dayjs from "dayjs";
 
 const Calendar = () => {
@@ -18,7 +18,7 @@ const Calendar = () => {
   const handleOk = () => {
     setNotes({
       ...notes,
-      [selectedDate]: inputValue, // Sana bo‘yicha saqlash
+      [selectedDate]: inputValue,
     });
     setIsModalVisible(false);
   };
