@@ -47,7 +47,6 @@ const Calendar = () => {
         />
       </Modal>
 
-      {/* Tanlangan sanaga yozuvlarni ko‘rsatish (ixtiyoriy) */}
       <div style={{ marginTop: 20 }}>
         <h3>Saqlangan yozuvlar:</h3>
         {Object.keys(notes).length === 0 && <p>Hozircha yozuvlar yo‘q.</p>}
