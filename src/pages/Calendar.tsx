@@ -5,7 +5,7 @@ import { Calendar as AntCalendar, Modal, Input, Button } from "antd";
 const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(null); // Bosilgan sana
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal holati
-  const [notes, setNotes] = useState({}); // Sana bo‘yicha yozuvlar
+  const [notes, setNotes] = useState({});
   const [inputValue, setInputValue] = useState("");
 
   const onSelect = (date) => {
