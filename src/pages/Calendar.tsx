@@ -1,218 +1,67 @@
 import React, { useState } from "react";
-import {
-  Calendar as AntCalendar,
-  Modal,
-  Input,
-  Select,
-  ConfigProvider,
-  theme,
-  Card,
-  Alert,
-} from "antd";
-import type { CalendarProps } from "antd";
-import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
-import { useTheme } from "../context/ThemeContext";
+import { Calendar as AntCalendar, Modal, Input, Button } from "antd";
+// import dayjs from "dayjs";
 
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  level: "Danger" | "Success" | "Primary" | "Warning";
-}
+const Calendar = () => {
+  const [selectedDate, setSelectedDate] = useState(null); // Bosilgan sana
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal holati
+  const [notes, setNotes] = useState({}); // Sana bo‘yicha yozuvlar
+  const [inputValue, setInputValue] = useState(""); // Modal input qiymati
 
-const { Option } = Select;
-
-const levels: Event["level"][] = ["Danger", "Success", "Primary", "Warning"];
-
-const levelColors: Record<Event["level"], string> = {
-  Danger: "#ef4444",
-  Success: "#22c55e",
-  Primary: "#3b82f6",
-  Warning: "#f59e0b",
-};
-
-const lightTheme = {
-  algorithm: theme.defaultAlgorithm,
-  token: {
-    colorPrimary: "#22c55e",
-    colorBgContainer: "#ffffff",
-    colorBgLayout: "#f9fafb",
-    colorText: "#111827",
-    colorTextSecondary: "#6b7280",
-    borderRadius: 14,
-  },
-};
-
-const darkTheme = {
-  algorithm: theme.darkAlgorithm,
-  token: {
-    colorPrimary: "#22c55e",
-    colorBgContainer: "#020617",
-    colorBgLayout: "#020617",
-    colorText: "#e5e7eb",
-    colorTextSecondary: "#9ca3af",
-    borderRadius: 14,
-  },
-};
-
-
-
-const AntdCalendarApp: React.FC = () => {
-  const { isDark } = useTheme();
-  
-
-  // ✅ Ant Design example'dan olingan state'lar
-  const [value, setValue] = useState<Dayjs>(() => dayjs());
-  const [selectedValue, setSelectedValue] = useState<Dayjs>(() => dayjs());
-
-  // Event state'lar
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [eventTitle, setEventTitle] = useState("");
-  const [eventLevel, setEventLevel] = useState<Event["level"]>("Primary");
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-
-  // ✅ Ant Design onSelect (moslashtirilgan)
-  const onSelect: CalendarProps<Dayjs>["onSelect"] = (newValue) => {
-    setValue(newValue);
-    setSelectedValue(newValue);
-
-    const dateStr = newValue.format("YYYY-MM-DD");
-    const existing = events.find((e) => e.date === dateStr);
-
-    if (existing) {
-      setEditingEvent(existing);
-      setEventTitle(existing.title);
-      setEventLevel(existing.level);
-    } else {
-      setEditingEvent(null);
-      setEventTitle("");
-      setEventLevel("Primary");
-    }
-
-    setIsModalOpen(true);
+  // Sana bosilganda
+  const onSelect = (date) => {
+    const formattedDate = date.format("YYYY-MM-DD");
+    setSelectedDate(formattedDate);
+    setInputValue(notes[formattedDate] || ""); // Avvalgi yozuvni olib keladi
+    setIsModalVisible(true);
   };
 
-  // ✅ Ant Design onPanelChange
-  const onPanelChange: CalendarProps<Dayjs>["onPanelChange"] = (newValue) => {
-    setValue(newValue);
-  };
-
+  // Modalni saqlash
   const handleOk = () => {
-    if (!eventTitle.trim()) return;
-
-    const dateStr = selectedValue.format("YYYY-MM-DD");
-
-    if (editingEvent) {
-      setEvents((prev) =>
-        prev.map((e) =>
-          e.id === editingEvent.id
-            ? { ...e, title: eventTitle, level: eventLevel }
-            : e
-        )
-      );
-    } else {
-      setEvents((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          title: eventTitle,
-          date: dateStr,
-          level: eventLevel,
-        },
-      ]);
-    }
-
-    closeModal();
+    setNotes({
+      ...notes,
+      [selectedDate]: inputValue, // Sana bo‘yicha saqlash
+    });
+    setIsModalVisible(false);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingEvent(null);
-    setEventTitle("");
-    setEventLevel("Primary");
-  };
-
-  const dateCellRender = (value: Dayjs) => {
-    const dateStr = value.format("YYYY-MM-DD");
-    const dayEvents = events.filter((e) => e.date === dateStr);
-
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        {dayEvents.map((event) => (
-          <div
-            key={event.id}
-            style={{
-              backgroundColor: levelColors[event.level],
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: 6,
-              fontSize: 11,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {event.title}
-          </div>
-        ))}
-      </div>
-    );
+  // Modalni bekor qilish
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
-    <ConfigProvider theme={isDark ? darkTheme : lightTheme}>
-      <Card
-        style={{
-          maxWidth: 1300,
-          margin: "0 auto",
-          borderRadius: 18,
-        }}
-      >
-        <Alert
-          style={{ marginBottom: 16 }}
-          message={`You selected date: ${selectedValue.format("YYYY-MM-DD")}`}
-          type="info"
-        />
-
-        <AntCalendar
-          value={value}
-          fullscreen={false}
-          onSelect={onSelect}
-          onPanelChange={onPanelChange}
-          dateCellRender={dateCellRender}
-        />
-      </Card>
+    <div>
+      <AntCalendar onSelect={onSelect} />
 
       <Modal
-        open={isModalOpen}
+        title={`Qaydlar: ${selectedDate}`}
+        visible={isModalVisible}
         onOk={handleOk}
-        onCancel={closeModal}
-        title={editingEvent ? "Edit event" : "Add event"}
-        okText={editingEvent ? "Update" : "Add"}
+        onCancel={handleCancel}
+        okText="Saqlash"
+        cancelText="Bekor qilish"
       >
-        <Input
-          placeholder="Event title"
-          value={eventTitle}
-          onChange={(e) => setEventTitle(e.target.value)}
-          style={{ marginBottom: 12 }}
+        <Input.TextArea
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Nimadir yozing..."
+          rows={4}
         />
-
-        <Select
-          value={eventLevel}
-          onChange={(v) => setEventLevel(v)}
-          style={{ width: "100%" }}
-        >
-          {levels.map((level) => (
-            <Option key={level} value={level}>
-              {level}
-            </Option>
-          ))}
-        </Select>
       </Modal>
-    </ConfigProvider>
+
+      {/* Tanlangan sanaga yozuvlarni ko‘rsatish (ixtiyoriy) */}
+      <div style={{ marginTop: 20 }}>
+        <h3>Saqlangan yozuvlar:</h3>
+        {Object.keys(notes).length === 0 && <p>Hozircha yozuvlar yo‘q.</p>}
+        {Object.entries(notes).map(([date, note]) => (
+          <p key={date}>
+            <b>{date}:</b> {note}
+          </p>
+        ))}
+      </div>
+    </div>
   );
 };
 
-export default AntdCalendarApp;
+export default Calendar;
