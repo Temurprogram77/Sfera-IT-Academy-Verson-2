@@ -11,7 +11,7 @@ const Calendar = () => {
   const onSelect = (date) => {
     const formattedDate = date.format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
-    setInputValue(notes[formattedDate] || ""); // Avvalgi yozuvni olib keladi
+    setInputValue(notes[formattedDate] || "");
     setIsModalVisible(true);
   };
 
