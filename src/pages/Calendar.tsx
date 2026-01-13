@@ -3,7 +3,7 @@ import { Calendar as AntCalendar, Modal, Input, Button } from "antd";
 // import dayjs from "dayjs";
 
 const Calendar = () => {
-  const [selectedDate, setSelectedDate] = useState(null); // Bosilgan sana
+  const [selectedDate, setSelectedDate] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [notes, setNotes] = useState({});
   const [inputValue, setInputValue] = useState("");
