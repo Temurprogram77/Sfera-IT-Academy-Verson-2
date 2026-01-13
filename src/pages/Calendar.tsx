@@ -6,7 +6,7 @@ const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(null); // Bosilgan sana
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal holati
   const [notes, setNotes] = useState({}); // Sana bo‘yicha yozuvlar
-  const [inputValue, setInputValue] = useState(""); // Modal input qiymati
+  const [inputValue, setInputValue] = useState("");
 
   const onSelect = (date) => {
     const formattedDate = date.format("YYYY-MM-DD");
