@@ -30,7 +30,7 @@ export default function MessageSidebar({
     {
       id: 1,
       user: "Terry Franci",
-      text: "Project – Nganter App o‘zgartirishga ruxsat so‘radi",
+      text: "Project – Nganter App  ",
       time: "5 min ago",
       avatar: "/images/user/user-02.jpg",
       isRead: false,
@@ -113,8 +113,8 @@ export default function MessageSidebar({
 
           <ul className="flex-1 overflow-y-auto p-3 space-y-2">
             {filteredMessages.length === 0 && (
-              <p className="text-center bg-[#192231] text-sm text-gray-500">
-                Xabarlar yo‘q
+              <p className="text-center text-sm text-gray-500">
+                Xozircha o'qilmagan xabarlar yo'q.
               </p>
             )}
 

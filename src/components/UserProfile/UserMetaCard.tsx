@@ -17,7 +17,18 @@ export default function UserMetaCard() {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-              <img src="/images/logoOne.png" alt="user" />
+              <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
+                <img
+                  className="object-contain dark:hidden"
+                  src="/images/logoOne.png"
+                  alt="Logo"
+                />
+                <img
+                  className=" object-contain hidden dark:block"
+                  src="/images/logoTwo.png"
+                  alt="Logo Dark"
+                />
+              </span>
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
