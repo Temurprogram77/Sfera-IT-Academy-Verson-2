@@ -259,7 +259,7 @@ const Parents = () => {
                   { label: t("on_leave"), value: "on_leave" },
                 ]}
               />
-            </Form.Item>+
+            </Form.Item>
           </Form>
         </ModalComponent>
       </div>
