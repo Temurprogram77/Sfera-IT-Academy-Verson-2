@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Segmented, Button } from "antd";
+import { Segmented, Button, ConfigProvider } from "antd";
 import { useState } from "react";
+import IconButton from "../IconButton/IconButton";
 
 type MessageSidebarProps = {
   isOpen: boolean;
@@ -46,17 +47,15 @@ export default function MessageSidebar({
       id: 3,
       user: "Kimdir Smith",
       text: "He-he -way",
-      time: "2minut oldin",
+      time: "2 minut oldin",
       avatar: "/images/user/user-03.jpg",
       isRead: false,
-    }
+    },
   ]);
 
   const markAsRead = (id: number) => {
     setMessages((prev) =>
-      prev.map((msg) =>
-        msg.id === id ? { ...msg, isRead: true } : msg
-      )
+      prev.map((msg) => (msg.id === id ? { ...msg, isRead: true } : msg))
     );
   };
 
@@ -76,28 +75,45 @@ export default function MessageSidebar({
         className={`fixed top-0 right-0 z-[100] h-full w-[360px] bg-white dark:bg-gray-900 border-l shadow-xl dark:border-[#1d2939] transition-transform duration-300
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex items-center dark:border-[#1d2939] justify-between p-4 border-b">
-          <h5 className="text-lg dark:text-white font-semibold">
+        <div className="flex items-center justify-between p-4 border-b dark:border-[#1d2939]">
+          <h5 className="text-lg font-semibold dark:text-white">
             {t("notification")}
           </h5>
           <button onClick={onClose}>✕</button>
         </div>
+
         <div className="flex flex-col h-full">
           <div className="p-3">
-            <Segmented
-              block
-              value={filter}
-              onChange={(val) => setFilter(val as any)}
-              options={[
-                { label: "Hammasi", value: "all" },
-                { label: "O‘qilmagan", value: "unread" },
-                { label: "O‘qilgan", value: "read" },
-              ]}
-            />
+            <ConfigProvider
+              theme={{
+                components: {
+                  Segmented: {
+                    trackBg: "#020617",
+                    itemColor: "#94a3b8",
+                    itemHoverColor: "#ffffff",
+                    itemHoverBg: "#1e293b",
+                    itemSelectedBg: "#192231",
+                    itemSelectedColor: "#ffffff",
+                  },
+                },
+              }}
+            >
+              <Segmented
+                block
+                value={filter}
+                onChange={(val) => setFilter(val as any)}
+                options={[
+                  { label: "Hammasi", value: "all" },
+                  { label: "O‘qilmagan", value: "unread" },
+                  { label: "O‘qilgan", value: "read" },
+                ]}
+              />
+            </ConfigProvider>
           </div>
+
           <ul className="flex-1 overflow-y-auto p-3 space-y-2">
             {filteredMessages.length === 0 && (
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center bg-[#192231] text-sm text-gray-500">
                 Xabarlar yo‘q
               </p>
             )}
@@ -105,8 +121,12 @@ export default function MessageSidebar({
             {filteredMessages.map((msg) => (
               <li
                 key={msg.id}
-                className={`flex gap-3 rounded-lg border p-3
-                ${msg.isRead ? "bg-gray-50" : "bg-blue-50 dark:border-[#1d2939] border-blue-200"}`}
+                className={`flex gap-3 rounded-lg border p-3 dark:border-[#1d2939]
+                ${
+                  msg.isRead
+                    ? "bg-gray-50 dark:bg-gray-800 "
+                    : "bg-blue-50 dark:bg-gray-800 border-blue-200"
+                }`}
               >
                 <img
                   src={msg.avatar}
@@ -115,34 +135,29 @@ export default function MessageSidebar({
                 />
 
                 <div className="flex-1">
-                  <p className="text-sm">
-                    <span className="font-medium">{msg.user}</span>{" "}
-                    {msg.text}
+                  <p className="text-sm dark:text-gray-200">
+                    <span className="font-medium">{msg.user}</span> {msg.text}
                   </p>
-                  <span className="text-xs text-gray-500">
-                    {msg.time}
-                  </span>
+                  <span className="text-xs text-gray-500">{msg.time}</span>
 
                   {!msg.isRead && (
                     <div className="mt-2">
-                      <Button
-                        size="small"
-                        type="link"
+                      <IconButton
+                        text={"O‘qildi deb belgilash"}
                         onClick={() => markAsRead(msg.id)}
-                      >
-                        O‘qildi deb belgilash
-                      </Button>
+                      />
                     </div>
                   )}
                 </div>
               </li>
             ))}
           </ul>
+
           <div className="p-4 border-t dark:border-[#1d2939]">
             <Link
               to="/messages"
               onClick={onClose}
-              className="block w-full text-center text-sm font-medium px-4 py-2 rounded-lg border hover:bg-gray-100"
+              className="block w-full text-center text-sm font-medium px-4 py-2 rounded-lg border hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               {t("view_all_notifications")}
             </Link>
