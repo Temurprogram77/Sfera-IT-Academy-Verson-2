@@ -248,7 +248,7 @@ const AppSidebar: React.FC = () => {
               to={nav.path!}
               className={`menu-item  group flex items-center gap-3 ${
                 isActive(nav.path!)
-                  ? "dark:bg-[#03906d]  dark:text-white"
+                  ? "dark:bg-[#03906d] bg-[#ecf3ff] text-[#25ab61]  dark:text-white"
                   : "menu-item-inactive dark:menu-item-inactive-dark"
               } ${isCollapsed ? "justify-center" : ""}`}
             >
