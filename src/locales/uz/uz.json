@@ -100,5 +100,8 @@
   "edit": "ni tahrirlash",
   "new": "Yangi",
   "add": "qo‘shish",
-  "confirmDeleteSuffix": "ni o‘chirmoqchimisiz?"
+  "confirmDeleteSuffix": "ni o‘chirmoqchimisiz?",
+  "date": "Sana",
+  "comment": "Izoh",
+  "studentName": "Talaba ismi"
 }

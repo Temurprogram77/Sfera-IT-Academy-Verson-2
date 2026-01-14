@@ -100,5 +100,8 @@
   "edit": "ни таҳрирлаш",
   "new": "Янги",
   "add": "қўшиш",
-  "confirmDeleteSuffix": "ни ўчирмоқчимисиз?"
+  "confirmDeleteSuffix": "ни ўчирмоқчимисиз?" ,
+  "date": "Сана",
+  "comment": "Изоҳ",
+  "studentName": "Талаба исми"
 }

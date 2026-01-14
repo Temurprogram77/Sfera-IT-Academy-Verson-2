@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Table, Select, Input, ConfigProvider, Tag, theme as antdTheme } from "antd";
 import { useTheme } from "../../context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 interface AttendanceHistoryRecord {
   id: number;
@@ -25,7 +26,7 @@ const AttendanceHistory = () => {
   const [filterGroup, setFilterGroup] = useState<string>();
   const [filterDate, setFilterDate] = useState<string>();
   const [search, setSearch] = useState("");
-
+  const {t}=useTranslation()
   const filteredData = useMemo(() => {
     return historyData.filter((r) => {
       const matchGroup = filterGroup ? r.group === filterGroup : true;
@@ -46,23 +47,22 @@ const AttendanceHistory = () => {
   };
 
   const columns = [
-    { title: "Talaba", dataIndex: "student", key: "student" },
-    { title: "Guruh", dataIndex: "group", key: "group" },
-    { title: "Sana", dataIndex: "date", key: "date" },
+    { title: t("student"), dataIndex: "student", key: "student" },
+    { title: t("group"), dataIndex: "group", key: "group" },
+    { title: t("date"), dataIndex: "date", key: "date" },
     {
-      title: "Holati",
+      title: t("status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
     },
     {
-      title: "Izoh",
+      title: t("comment"),
       dataIndex: "note",
       key: "note",
       render: (n: string) => n || "-",
     },
   ];
-
   return (
     <ConfigProvider
       theme={{
@@ -75,11 +75,11 @@ const AttendanceHistory = () => {
       }}
     >
       <div className={`p-6 rounded-xl ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
-        <h1 className="text-xl font-semibold mb-4">Davomat tarixi</h1>
+        <h1 className="text-xl font-semibold mb-4 dark:text-white">{t("attendanceHistory")}</h1>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <Select
-            placeholder="Guruh"
+            placeholder={t("group")}
             allowClear
             className="w-40"
             value={filterGroup}
@@ -98,7 +98,7 @@ const AttendanceHistory = () => {
           />
 
           <Input
-            placeholder="Talaba ismi"
+            placeholder={t("studentName")}
             className="w-60"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
