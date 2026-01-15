@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -47,7 +47,6 @@ import { useTheme } from "./context/ThemeContext";
 import "./i18n";
 import { authService } from "./services/authService ";
 
-// Role bo'yicha dashboard path
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
   ROLE_ADMIN: "/dashboard/admin",
@@ -56,12 +55,21 @@ const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_PARENT: "/dashboard/parent",
 };
 
-// Role ga qarab redirect path
 const getRoleRedirectPath = (role: string | null) => {
   return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
 };
 
-// RootRedirect - dashboardga yo'naltiradi
+// Loading Component
+const LoadingScreen = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+      <p className="mt-4 text-gray-600">Yuklanmoqda...</p>
+    </div>
+  </div>
+);
+
+// RootRedirect
 const RootRedirect: React.FC = () => {
   const token = authService.getToken();
   const role = authService.getRole();
@@ -70,17 +78,55 @@ const RootRedirect: React.FC = () => {
   return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
-// ProtectedRoute - login qilmaganlar signin ga yo'naltiriladi
 const ProtectedRoute: React.FC<{
   children: React.ReactNode;
   allowedRoles?: string[];
 }> = ({ children, allowedRoles }) => {
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isValid, setIsValid] = useState(false);
+  const hasVerified = useRef(false);
+
   const token = authService.getToken();
   const role = authService.getRole();
 
-  if (!token) return <Navigate to="/signin" replace />;
+  useEffect(() => {
+    if (hasVerified.current) {
+      setIsVerifying(false);
+      return;
+    }
 
-  // Agar allowedRoles bo'lsa va user roli ulardan biri bo'lmasa
+    const verifyToken = async () => {
+      if (!token) {
+        setIsVerifying(false);
+        setIsValid(false);
+        hasVerified.current = true;
+        return;
+      }
+
+      try {
+        const valid = await authService.verifyToken();
+        setIsValid(valid);
+        hasVerified.current = true;
+      } catch (error) {
+        console.error('Token verification error:', error);
+        setIsValid(false);
+        hasVerified.current = true;
+      } finally {
+        setIsVerifying(false);
+      }
+    };
+
+    verifyToken();
+  }, []);
+
+  if (isVerifying) {
+    return <LoadingScreen />;
+  }
+
+  if (!token || !isValid) {
+    return <Navigate to="/signin" replace />;
+  }
+
   if (allowedRoles && !allowedRoles.includes(role || "")) {
     return <Navigate to={getRoleRedirectPath(role)} replace />;
   }
@@ -88,7 +134,7 @@ const ProtectedRoute: React.FC<{
   return <>{children}</>;
 };
 
-// PublicRoute - login bo'lganlarni dashboardga yo'naltiradi
+// PublicRoute
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const token = authService.getToken();
   const role = authService.getRole();
@@ -101,12 +147,45 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 export default function App() {
   const { theme } = useTheme();
 
-  // Back button bloklash
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = () => window.history.go(1);
     return () => {
       window.onpopstate = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const periodicVerify = async () => {
+      if (!isActive) return;
+
+      const token = authService.getToken();
+      if (token) {
+        await authService.verifyToken();
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      if (isActive) {
+        periodicVerify();
+
+        const intervalId = setInterval(() => {
+          if (isActive) {
+            periodicVerify();
+          }
+        }, 5 * 60 * 1000);
+
+        return () => {
+          clearInterval(intervalId);
+        };
+      }
+    }, 60 * 1000);
+
+    return () => {
+      isActive = false;
+      clearTimeout(timeoutId);
     };
   }, []);
 

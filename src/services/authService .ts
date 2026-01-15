@@ -1,8 +1,14 @@
+import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
+import { TokenVerifyResponse } from "../types/verify";
 import { tokenManager } from "../utils/tokenManager";
 
+
+
 class AuthService {
+    private static verificationPromise: Promise<boolean> | null = null;
+
     async login(credentials: LoginRequest): Promise<LoginResponse> {
         const response = await apiClient.post<LoginResponse>(
             `/auth/login?phone=${credentials.phone}&password=${credentials.password}`
@@ -14,6 +20,73 @@ class AuthService {
         }
 
         return response;
+    }
+
+    async verifyToken(): Promise<boolean> {
+        if (AuthService.verificationPromise) {
+            return AuthService.verificationPromise;
+        }
+
+        const token = this.getToken();
+
+        if (!token) {
+            return false;
+        }
+
+        if (!this.isValidJWTFormat(token)) {
+            this.logout();
+            return false;
+        }
+
+        AuthService.verificationPromise = (async () => {
+            try {
+                const response = await apiClient.post<TokenVerifyResponse>(
+                    API_ENDPOINTS.AUTH.VERIFY,
+                    { token }
+                );
+
+
+                if (response.success) {
+                    return true;
+                } else {
+                    this.logout();
+                    return false;
+                }
+            } catch (error: any) {
+
+                if (error.status === 401 || error.status === 403) {
+                    this.logout();
+                }
+
+                return false;
+            } finally {
+                setTimeout(() => {
+                    AuthService.verificationPromise = null;
+                }, 2000);
+            }
+        })();
+
+        return AuthService.verificationPromise;
+    }
+
+    private isValidJWTFormat(token: string): boolean {
+        const parts = token.split('.');
+
+        if (parts.length !== 3) {
+            return false;
+        }
+
+        try {
+            for (const part of parts) {
+                if (!part || part.length === 0) {
+                    return false;
+                }
+                atob(part.replace(/-/g, '+').replace(/_/g, '/'));
+            }
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
     decodeToken(token: string): User | null {
@@ -40,7 +113,19 @@ class AuthService {
     }
 
     isAuthenticated(): boolean {
-        return !!tokenManager.getToken() && !tokenManager.isTokenExpired();
+        const token = tokenManager.getToken();
+
+        if (!token) {
+            return false;
+        }
+
+        if (!this.isValidJWTFormat(token)) {
+            console.log('Invalid token format detected in isAuthenticated');
+            this.logout();
+            return false;
+        }
+
+        return !tokenManager.isTokenExpired();
     }
 
     getToken(): string | null {
@@ -48,7 +133,7 @@ class AuthService {
     }
 
     getRole(): UserRole | null {
-        return tokenManager.getRole() as UserRole | null;   
+        return tokenManager.getRole() as UserRole | null;
     }
 
     isTokenExpired(): boolean {
