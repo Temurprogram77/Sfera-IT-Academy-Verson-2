@@ -10,7 +10,8 @@ import { Toaster, toast } from "sonner";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/tanstack";
 import { ConfigProvider } from "antd";
-import { tokenManager } from "./utils/tokenManager"; 
+import { tokenManager } from "./utils/tokenManager";
+import { AuthProvider } from "./context/AuthContext"; // ✅ YANGI
 
 const antTheme = {
   token: {
@@ -47,10 +48,12 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={antTheme}>
         <ThemeProvider>
-          <AppWrapper>
-            <AppWithTokenManager />
-            <Toaster position="top-right" richColors />
-          </AppWrapper>
+          <AuthProvider>
+            <AppWrapper>
+              <AppWithTokenManager />
+              <Toaster position="top-right" richColors />
+            </AppWrapper>
+          </AuthProvider>
         </ThemeProvider>
       </ConfigProvider>
     </QueryClientProvider>

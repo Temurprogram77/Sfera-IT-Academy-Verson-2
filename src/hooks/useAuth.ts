@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { useMutation } from '@tanstack/react-query';
 import { LoginRequest } from '../types/api';
 import { authService } from '../services/authService ';
@@ -13,7 +12,6 @@ export const useLogin = () => {
 
 export const useLogout = () => {
     return () => {
-        console.log('Logging out...');
         authService.logout();
     };
 };

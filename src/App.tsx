@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -45,7 +45,7 @@ import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import "./i18n";
-import { authService } from "./services/authService ";
+import { useAuthContext } from "./context/AuthContext";
 
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
@@ -59,7 +59,6 @@ const getRoleRedirectPath = (role: string | null) => {
   return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
 };
 
-// Loading Component
 const LoadingScreen = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="text-center">
@@ -69,12 +68,8 @@ const LoadingScreen = () => (
   </div>
 );
 
-// RootRedirect
 const RootRedirect: React.FC = () => {
-  const token = authService.getToken();
-  const role = authService.getRole();
-
-  if (!token) return <Navigate to="/signin" replace />;
+  const { role } = useAuthContext();
   return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
@@ -82,48 +77,13 @@ const ProtectedRoute: React.FC<{
   children: React.ReactNode;
   allowedRoles?: string[];
 }> = ({ children, allowedRoles }) => {
-  const [isVerifying, setIsVerifying] = useState(true);
-  const [isValid, setIsValid] = useState(false);
-  const hasVerified = useRef(false);
-
-  const token = authService.getToken();
-  const role = authService.getRole();
-
-  useEffect(() => {
-    if (hasVerified.current) {
-      setIsVerifying(false);
-      return;
-    }
-
-    const verifyToken = async () => {
-      if (!token) {
-        setIsVerifying(false);
-        setIsValid(false);
-        hasVerified.current = true;
-        return;
-      }
-
-      try {
-        const valid = await authService.verifyToken();
-        setIsValid(valid);
-        hasVerified.current = true;
-      } catch (error) {
-        console.error('Token verification error:', error);
-        setIsValid(false);
-        hasVerified.current = true;
-      } finally {
-        setIsVerifying(false);
-      }
-    };
-
-    verifyToken();
-  }, []);
+  const { isAuthenticated, isVerifying, role } = useAuthContext();
 
   if (isVerifying) {
     return <LoadingScreen />;
   }
 
-  if (!token || !isValid) {
+  if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
 
@@ -134,16 +94,19 @@ const ProtectedRoute: React.FC<{
   return <>{children}</>;
 };
 
-// PublicRoute
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const token = authService.getToken();
-  const role = authService.getRole();
+  const { isAuthenticated, isVerifying, role } = useAuthContext();
 
-  if (token) return <Navigate to={getRoleRedirectPath(role)} replace />;
+  if (isVerifying) {
+    return <LoadingScreen />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={getRoleRedirectPath(role)} replace />;
+  }
 
   return <>{children}</>;
 };
-
 export default function App() {
   const { theme } = useTheme();
 
@@ -155,45 +118,10 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    let isActive = true;
-
-    const periodicVerify = async () => {
-      if (!isActive) return;
-
-      const token = authService.getToken();
-      if (token) {
-        await authService.verifyToken();
-      }
-    };
-
-    const timeoutId = setTimeout(() => {
-      if (isActive) {
-        periodicVerify();
-
-        const intervalId = setInterval(() => {
-          if (isActive) {
-            periodicVerify();
-          }
-        }, 5 * 60 * 1000);
-
-        return () => {
-          clearInterval(intervalId);
-        };
-      }
-    }, 60 * 1000);
-
-    return () => {
-      isActive = false;
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        {/* Auth */}
         <Route
           path="/signin"
           element={
@@ -203,7 +131,6 @@ export default function App() {
           }
         />
 
-        {/* Protected Layout */}
         <Route
           path="/"
           element={
@@ -214,7 +141,6 @@ export default function App() {
         >
           <Route path="/" element={<RootRedirect />} />
 
-          {/* Dashboards */}
           <Route
             path="dashboard/admin"
             element={

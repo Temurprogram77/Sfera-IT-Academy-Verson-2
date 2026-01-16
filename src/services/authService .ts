@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
@@ -52,10 +53,13 @@ class AuthService {
                     this.logout();
                     return false;
                 }
-            } catch (error: any) {
+            } catch (error: unknown) {
+                if (error instanceof AxiosError) {
+                    const status = error.response?.status;
 
-                if (error.status === 401 || error.status === 403) {
-                    this.logout();
+                    if (status === 401 || status === 403) {
+                        this.logout();
+                    }
                 }
 
                 return false;
@@ -84,7 +88,7 @@ class AuthService {
                 atob(part.replace(/-/g, '+').replace(/_/g, '/'));
             }
             return true;
-        } catch (error) {
+        } catch {
             return false;
         }
     }
@@ -120,7 +124,6 @@ class AuthService {
         }
 
         if (!this.isValidJWTFormat(token)) {
-            console.log('Invalid token format detected in isAuthenticated');
             this.logout();
             return false;
         }
