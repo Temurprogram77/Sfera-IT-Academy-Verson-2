@@ -81,11 +81,10 @@ export default function MessageSidebar({
             colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
             colorText: theme === "dark" ? "#e5e7eb" : "#111827",
             colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
-            colorPrimary: theme === "dark" ? "#3b82f6" : "#1890ff",
+            colorPrimary: theme === "dark" ? "#03906d" : "#03906d",
           },
           components: {
             Segmented: {
-              colorBg: theme === "dark" ? "#101828" : "#f3f4f6",
               colorText: theme === "dark" ? "#e5e7eb" : "#111827",
               colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
               colorPrimary: theme === "dark" ? "##101828" : "#1890ff",
