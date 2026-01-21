@@ -2,7 +2,9 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
     VERIFY: '/auth/verify',
-    LOGOUT: '/auth/logout',
+  },
+  STUDENT:{
+    GETALLSTUDENT: '/student/get-page-student',
   },
 
 

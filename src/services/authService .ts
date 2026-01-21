@@ -1,19 +1,23 @@
 import { AxiosError } from "axios";
-import { API_ENDPOINTS } from "../constants/apiEndpoints";
+import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
 import { TokenVerifyResponse } from "../types/verify";
 import { tokenManager } from "../utils/tokenManager";
 
 
-
 class AuthService {
     private static verificationPromise: Promise<boolean> | null = null;
 
     async login(credentials: LoginRequest): Promise<LoginResponse> {
-        const response = await apiClient.post<LoginResponse>(
-            `/auth/login?phone=${credentials.phone}&password=${credentials.password}`
-        );
+        const url = buildUrlWithParams(API_ENDPOINTS.AUTH.LOGIN, {
+            phone: credentials.phone,
+            password: credentials.password,
+        });
+        console.log(url);
+
+
+        const response = await apiClient.post<LoginResponse>(url);
 
         if (response.success && response.data) {
             tokenManager.saveToken(response.data, response.message as UserRole);

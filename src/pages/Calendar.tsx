@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Calendar as AntCalendar, Modal, Input, ConfigProvider, theme as antdTheme } from "antd";
+import { useState } from "react";
+import { Calendar as AntCalendar, Input, ConfigProvider, theme as antdTheme } from "antd";
 import { useTheme } from "../context/ThemeContext"; // sizning theme context
+import ModalComponent from "../components/ModalComponent/ModalComponent";
 
 const Calendar = () => {
   const { theme } = useTheme();
@@ -58,8 +59,8 @@ const Calendar = () => {
     >
       <div className="p-4 rounded-lg" style={{ background: theme === "dark" ? "#111827" : "#f9fafb" }}>
         <AntCalendar onSelect={onSelect} />
-        
-        <Modal
+
+        <ModalComponent
           title={`Qaydlar: ${selectedDate}`}
           open={isModalVisible}
           onOk={handleOk}
@@ -78,7 +79,7 @@ const Calendar = () => {
               borderColor: theme === "dark" ? "#374151" : "#d1d5db",
             }}
           />
-        </Modal>
+        </ModalComponent>
 
         <div style={{ marginTop: 20, color: theme === "dark" ? "#e5e7eb" : "#111827" }}>
           <h3>Saqlangan yozuvlar:</h3>
