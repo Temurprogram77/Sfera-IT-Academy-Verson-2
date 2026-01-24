@@ -3,63 +3,40 @@ import {
   Card,
   Row,
   Col,
-  Tag,
   ConfigProvider,
   theme as antdTheme,
   Button,
+  Spin,
+  Form,
+  Popconfirm,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../components/IconButton/IconButton";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import InputComponent from "../../components/InputComponent/InputComponent";
-
-const rooms = [
-  {
-    id: 1,
-    name: "Google",
-    status: "active",
-    img: {
-      light: "/src/assets/icons/google.png",
-      dark: "/src/assets/icons/google.png",
-    },
-    groups: ["Python-1", "Python-2"],
-  },
-  {
-    id: 2,
-    name: "ChatGPT",
-    status: "inactive",
-    img: {
-      light: "/src/assets/icons/chatgpt.png",
-      dark: "/src/assets/icons/chatgpt2.png",
-    },
-    groups: ["Frontend-1", "Frontend-2"],
-  },
-  {
-    id: 3,
-    name: "Midjourney",
-    status: "active",
-    img: {
-      light: "/src/assets/icons/Midjourney.svg",
-      dark: "/src/assets/icons/midjourney2.png",
-    },
-    groups: ["Design-1", "Design-2"],
-  },
-];
-
-interface Room {
-  id: number;
-  name: string;
-  status: string;
-  img: { light: string; dark: string };
-  groups: string[];
-}
+import { useRooms } from "../../hooks/useRooms";
+import { Room } from "../../types/room";
+import NotFoundData from "../OtherPage/NotFoundData";
 
 const Rooms = () => {
   const { theme } = useTheme();
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
   const { t } = useTranslation();
+  const [form] = Form.useForm();
+
+  const {
+    rooms,
+    loading,
+    error,
+    createRoom,
+    isCreating,
+    updateRoom,
+    isUpdating,
+    deleteRoom,
+    isDeleting,
+  } = useRooms();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
@@ -67,19 +44,63 @@ const Rooms = () => {
   const showModal = (room: Room | null = null) => {
     setSelectedRoom(room);
     setIsModalVisible(true);
+    if (room) {
+      form.setFieldsValue({ name: room.name });
+    }
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setSelectedRoom(null);
+    form.resetFields();
   };
+
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields();
+
+      if (selectedRoom) {
+        updateRoom(
+          {
+            id: selectedRoom.id,
+            name: values.name,
+          },
+          {
+            onSuccess: () => {
+              handleCancel(); // Faqat success bo'lgandan keyin yopiladi
+            },
+          }
+        );
+      } else {
+        // Create new room
+        createRoom(
+          { name: values.name },
+          {
+            onSuccess: () => {
+              handleCancel();
+            },
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Validation error:", error);
+    }
+  };
+  const handleDelete = (roomId: number, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    deleteRoom(roomId);
+  };
+
+  const isSaving = isCreating || isUpdating;
 
   return (
     <ConfigProvider
       theme={{
         algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
         token: {
-          colorBgContainer: theme === "dark" ? "#101828" : "#ffffff", // shu yer
+          colorBgContainer: theme === "dark" ? "#101828" : "#ffffff",
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
         },
@@ -91,45 +112,87 @@ const Rooms = () => {
           <h2 className="text-lg font-semibold dark:text-gray-200">
             {t("rooms")}
           </h2>
-          <IconButton
-            icon={<PlusOutlined />}
-            text={t("addRoom")}
-            onClick={() => showModal()}
-            type="primary"
-          />
+          <div className="flex gap-2">
+            <IconButton
+              icon={<PlusOutlined />}
+              text={t("addRoom")}
+              onClick={() => showModal()}
+              type="primary"
+            />
+          </div>
         </div>
 
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Spin size="large" tip={t("loading")} />
+          </div>
+        )}
+
+
+
         {/* Rooms list */}
-        <Row gutter={[16, 16]}>
-          {rooms.map((room) => (
-            <Col xs={24} sm={12} md={8} key={room.id}>
-              <Card
-                hoverable
-                onClick={() => showModal(room)}
-                className="cursor-pointer dark:bg-gray-800"
-                title={
-                  <div className="flex items-center gap-2">
-                    <img
-                      src={theme === "dark" ? room.img.dark : room.img.light}
-                      alt={room.name}
-                      className="w-6 h-6 object-contain"
-                    />
-                    <span className="dark:text-gray-200">{room.name}</span>
-                  </div>
-                }
-                extra={
-                  <Tag color={room.status === "active" ? "green" : "red"}>
-                    {room.status === "active" ? "Faol" : "Faol emas"}
-                  </Tag>
-                }
-              >
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {t("clickToViewDetails")}
-                </p>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        {!loading && !error && (
+          <>
+            {rooms.length === 0 ? (
+              <NotFoundData
+                title={"Xonalar mavjud emas"}
+                description={"Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing."}
+              />
+            ) : (
+              <Row gutter={[16, 16]}>
+                {rooms.map((room) => (
+                  <Col xs={24} sm={12} md={8} key={room.id}>
+                    <Card
+                      hoverable
+                      className="cursor-pointer dark:bg-gray-800"
+                      title={
+                        <div className="flex items-center justify-between">
+                          <span className="dark:text-gray-200">
+                            {room.name}
+                          </span>
+                          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<EditOutlined />}
+                              onClick={() => showModal(room)}
+                              className="dark:text-gray-400 dark:hover:text-gray-200"
+                            />
+                            <Popconfirm
+                              title={t("deleteRoomConfirm")}
+                              description={t("areYouSureDeleteRoom")}
+                              onConfirm={() => handleDelete(room.id)}
+                              okText={t("yes")}
+                              cancelText={t("no")}
+                              okButtonProps={{ loading: isDeleting }}
+                            >
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<DeleteOutlined />}
+                                danger
+                                className="dark:text-red-400 dark:hover:text-red-300"
+                              />
+                            </Popconfirm>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.
+                      </p>
+                      {room.schedules && room.schedules.length > 0 && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                          {room.schedules.length} {t("schedules")}
+                        </p>
+                      )}
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            )}
+          </>
+        )}
 
         {/* Modal */}
         <ModalComponent
@@ -137,16 +200,33 @@ const Rooms = () => {
           onCancel={handleCancel}
           title={selectedRoom ? t("editRoom") : t("addRoom")}
           footer={[
-            <Button key="close" onClick={handleCancel}>
+            <Button key="close" onClick={handleCancel} disabled={isSaving}>
               {t("close")}
             </Button>,
-            <IconButton text={t("save")} key="save" onClick={handleCancel} />,
+            <IconButton
+              text={t("save")}
+              key="save"
+              onClick={handleSave}
+              loading={isSaving}
+              type="primary"
+            />,
           ]}
         >
-          <div>
-            <p className="text-gray-500">{t("Xona qo'shish")}</p>
-            <InputComponent placeholder="Xona nomini Kiriting" className=""/>
-          </div>
+          <Form form={form} layout="vertical">
+            <Form.Item
+              name="name"
+              label={t("roomName")}
+              rules={[
+                { required: true, message: t("pleaseEnterRoomName") },
+                { min: 2, message: t("roomNameMinLength") },
+              ]}
+            >
+              <InputComponent
+                placeholder={t("enterRoomName")}
+                className=""
+              />
+            </Form.Item>
+          </Form>
         </ModalComponent>
       </div>
     </ConfigProvider>

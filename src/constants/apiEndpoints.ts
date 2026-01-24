@@ -3,22 +3,24 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     VERIFY: '/auth/verify',
   },
-  STUDENT:{
-    GETALLSTUDENT: '/student/get-page-student',
-  },
-
-
+  ROOM: {
+    LIST: '/room',
+    CREATE: '/room',
+    GET_BY_ID: (roomId: string | number) => `/room/${roomId}`,
+    UPDATE: '/room/update',
+    DELETE: (roomId: string | number) => `/room/${roomId}`,
+  }
 } as const;
 
 export const buildUrlWithParams = (
   endpoint: string,
-  params?: Record<string, string | number | boolean>
+  params?: Record<string, string | number | boolean | undefined | null>
 ): string => {
   if (!params) return endpoint;
 
   const queryString = Object.entries(params)
-    .filter(([_, value]) => value !== undefined && value !== null)
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .filter(([, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
     .join('&');
 
   return queryString ? `${endpoint}?${queryString}` : endpoint;
