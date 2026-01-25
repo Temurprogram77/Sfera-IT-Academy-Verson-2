@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -110,6 +110,27 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 export default function App() {
   const { theme } = useTheme();
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      console.log("Internet bor");
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      console.log("Internet yo‘q");
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
@@ -121,6 +142,23 @@ export default function App() {
 
   return (
     <Router>
+      {!isOnline && (
+        <div
+          style={{
+            background: "red",
+            color: "white",
+            padding: "10px",
+            textAlign: "center",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            zIndex: 9999,
+          }}
+        >
+          Internet yo‘q. Iltimos, ulanishni tekshiring.
+        </div>
+      )}
       <ScrollToTop />
       <Routes>
         <Route
