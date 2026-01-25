@@ -19,6 +19,7 @@ import InputComponent from "../../components/InputComponent/InputComponent";
 import { useRooms } from "../../hooks/useRooms";
 import { Room } from "../../types/room";
 import NotFoundData from "../OtherPage/NotFoundData";
+import { Link } from "react-router";
 
 const Rooms = () => {
   const { theme } = useTheme();
@@ -69,7 +70,7 @@ const Rooms = () => {
             onSuccess: () => {
               handleCancel(); // Faqat success bo'lgandan keyin yopiladi
             },
-          }
+          },
         );
       } else {
         // Create new room
@@ -79,7 +80,7 @@ const Rooms = () => {
             onSuccess: () => {
               handleCancel();
             },
-          }
+          },
         );
       }
     } catch (error) {
@@ -128,65 +129,70 @@ const Rooms = () => {
           </div>
         )}
 
-
-
         {/* Rooms list */}
         {!loading && !error && (
           <>
             {rooms.length === 0 ? (
               <NotFoundData
                 title={"Xonalar mavjud emas"}
-                description={"Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing."}
+                description={
+                  "Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing."
+                }
               />
             ) : (
               <Row gutter={[16, 16]}>
                 {rooms.map((room) => (
                   <Col xs={24} sm={12} md={8} key={room.id}>
-                    <Card
-                      hoverable
-                      className="cursor-pointer dark:bg-gray-800"
-                      title={
-                        <div className="flex items-center justify-between">
-                          <span className="dark:text-gray-200">
-                            {room.name}
-                          </span>
-                          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                            <Button
-                              type="text"
-                              size="small"
-                              icon={<EditOutlined />}
-                              onClick={() => showModal(room)}
-                              className="dark:text-gray-400 dark:hover:text-gray-200"
-                            />
-                            <Popconfirm
-                              title={t("deleteRoomConfirm")}
-                              description={t("areYouSureDeleteRoom")}
-                              onConfirm={() => handleDelete(room.id)}
-                              okText={t("yes")}
-                              cancelText={t("no")}
-                              okButtonProps={{ loading: isDeleting }}
+                    <Link to={`/room/${room.id}`}>
+                      <Card
+                        hoverable
+                        className="cursor-pointer dark:bg-gray-800"
+                        title={
+                          <div className="flex items-center justify-between">
+                            <span className="dark:text-gray-200">
+                              {room.name}
+                            </span>
+                            <div
+                              className="flex gap-2"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <Button
                                 type="text"
                                 size="small"
-                                icon={<DeleteOutlined />}
-                                danger
-                                className="dark:text-red-400 dark:hover:text-red-300"
+                                icon={<EditOutlined />}
+                                onClick={() => showModal(room)}
+                                className="dark:text-gray-400 dark:hover:text-gray-200"
                               />
-                            </Popconfirm>
+                              <Popconfirm
+                                title={t("deleteRoomConfirm")}
+                                description={t("areYouSureDeleteRoom")}
+                                onConfirm={() => handleDelete(room.id)}
+                                okText={t("yes")}
+                                cancelText={t("no")}
+                                okButtonProps={{ loading: isDeleting }}
+                              >
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<DeleteOutlined />}
+                                  danger
+                                  className="dark:text-red-400 dark:hover:text-red-300"
+                                />
+                              </Popconfirm>
+                            </div>
                           </div>
-                        </div>
-                      }
-                    >
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.
-                      </p>
-                      {room.schedules && room.schedules.length > 0 && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                          {room.schedules.length} {t("schedules")}
+                        }
+                      >
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.
                         </p>
-                      )}
-                    </Card>
+                        {room.schedules && room.schedules.length > 0 && (
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                            {room.schedules.length} {t("schedules")}
+                          </p>
+                        )}
+                      </Card>
+                    </Link>
                   </Col>
                 ))}
               </Row>
@@ -221,10 +227,7 @@ const Rooms = () => {
                 { min: 2, message: t("roomNameMinLength") },
               ]}
             >
-              <InputComponent
-                placeholder={t("enterRoomName")}
-                className=""
-              />
+              <InputComponent placeholder={t("enterRoomName")} className="" />
             </Form.Item>
           </Form>
         </ModalComponent>

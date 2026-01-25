@@ -46,6 +46,7 @@ import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
 import "./i18n";
 import { useAuthContext } from "./context/AuthContext";
+import RoomsID from "./pages/RoomsID/RoomsID";
 
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
@@ -200,6 +201,7 @@ export default function App() {
           {/* Groups & Rooms */}
           <Route path="groups" element={<Groups />} />
           <Route path="rooms" element={<Rooms />} />
+          <Route path="room/:id" element={<RoomsID />} />
 
           {/* Others Pages */}
           <Route path="profile" element={<UserProfiles />} />
