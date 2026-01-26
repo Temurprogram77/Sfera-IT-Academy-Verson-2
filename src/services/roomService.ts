@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
-import { CreateRoomDto, CreateRoomResponse, DeleteRoomResponse, RoomListResponse, RoomResponse, UpdateRoomDto } from "../types/room";
+import { CreateRoomDto, CreateRoomResponse, DeleteRoomResponse, RoomListResponse, RoomResponse } from "../types/room";
 
 
 class RoomService {
@@ -39,20 +39,6 @@ class RoomService {
       return response;
     } catch (error) {
       console.error("Create room error:", error);
-      throw error;
-    }
-  }
-
-  // Xona yangilash
-  async updateRoom(data: UpdateRoomDto): Promise<DeleteRoomResponse> {
-    try {
-      const response = await apiClient.put<DeleteRoomResponse>(
-        API_ENDPOINTS.ROOM.UPDATE,
-        data
-      );
-      return response;
-    } catch (error) {
-      console.error("Update room error:", error);
       throw error;
     }
   }

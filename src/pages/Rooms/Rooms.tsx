@@ -20,6 +20,7 @@ import { useRooms } from "../../hooks/useRooms";
 import { Room } from "../../types/room";
 import NotFoundData from "../OtherPage/NotFoundData";
 import { Link } from "react-router";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 const Rooms = () => {
   const { theme } = useTheme();
@@ -109,19 +110,15 @@ const Rooms = () => {
     >
       <div className="p-4 bg-white dark:bg-gray-900">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold dark:text-gray-200">
-            {t("rooms")}
-          </h2>
-          <div className="flex gap-2">
-            <IconButton
-              icon={<PlusOutlined />}
-              text={t("addRoom")}
-              onClick={() => showModal()}
-              type="primary"
-            />
-          </div>
-        </div>
+        <ListHeader
+          title={"Xonalar"}
+          count={rooms.length}
+          searchValue={""}
+          onSearchChange={() => { }}
+          searchPlaceholder={"Xonalarni qidirish"}
+          buttonText={"Yangi xona qo'shish"}
+          onButtonClick={() => showModal()}
+        />
 
         {loading && (
           <div className="flex justify-center items-center py-20">

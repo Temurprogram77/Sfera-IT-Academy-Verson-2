@@ -105,7 +105,7 @@ const Admins = () => {
     >
       <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
         <ListHeader
-          title={t("admins")}
+          title={t("admins")}d
           count={filteredAdmins.length}
           searchValue={search}
           onSearchChange={setSearch}
