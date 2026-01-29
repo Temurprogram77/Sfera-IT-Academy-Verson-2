@@ -1,7 +1,6 @@
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
-    VERIFY: '/auth/verify',
   },
   ROOM: {
     LIST: '/room',
@@ -11,7 +10,6 @@ export const API_ENDPOINTS = {
     DELETE: (roomId: string | number) => `/room/${roomId}`,
   }
 } as const;
-
 
 export const buildUrlWithParams = (
   endpoint: string,
@@ -23,6 +21,6 @@ export const buildUrlWithParams = (
     .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
     .join('&');
-
+  
   return queryString ? `${endpoint}?${queryString}` : endpoint;
 };

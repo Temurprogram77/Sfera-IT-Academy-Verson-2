@@ -1,21 +1,16 @@
-import { AxiosError } from "axios";
 import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import { LoginRequest, LoginResponse, User, UserRole } from "../types/api";
-import { TokenVerifyResponse } from "../types/verify";
 import { tokenManager } from "../utils/tokenManager";
 
 
 class AuthService {
-    private static verificationPromise: Promise<boolean> | null = null;
-
     async login(credentials: LoginRequest): Promise<LoginResponse> {
         const url = buildUrlWithParams(API_ENDPOINTS.AUTH.LOGIN, {
             phone: credentials.phone,
             password: credentials.password,
         });
         console.log(url);
-
 
         const response = await apiClient.post<LoginResponse>(url);
 
@@ -25,56 +20,6 @@ class AuthService {
         }
 
         return response;
-    }
-
-    async verifyToken(): Promise<boolean> {
-        if (AuthService.verificationPromise) {
-            return AuthService.verificationPromise;
-        }
-
-        const token = this.getToken();
-
-        if (!token) {
-            return false;
-        }
-
-        if (!this.isValidJWTFormat(token)) {
-            this.logout();
-            return false;
-        }
-
-        AuthService.verificationPromise = (async () => {
-            try {
-                const response = await apiClient.post<TokenVerifyResponse>(
-                    API_ENDPOINTS.AUTH.VERIFY,
-                    { token }
-                );
-
-
-                if (response.success) {
-                    return true;
-                } else {
-                    this.logout();
-                    return false;
-                }
-            } catch (error: unknown) {
-                if (error instanceof AxiosError) {
-                    const status = error.response?.status;
-
-                    if (status === 401 || status === 403) {
-                        this.logout();
-                    }
-                }
-
-                return false;
-            } finally {
-                setTimeout(() => {
-                    AuthService.verificationPromise = null;
-                }, 2000);
-            }
-        })();
-
-        return AuthService.verificationPromise;
     }
 
     private isValidJWTFormat(token: string): boolean {

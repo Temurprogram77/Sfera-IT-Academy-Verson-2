@@ -6,7 +6,7 @@ interface AuthContextType {
   isVerifying: boolean;
   token: string | null;
   role: string | null;
-  refreshAuth: () => Promise<void>;
+  refreshAuth: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,8 +17,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
-  const verifyTokenOnce = async () => {
-
+  const checkAuth = () => {
     const storedToken = authService.getToken();
     const storedRole = authService.getRole();
 
@@ -30,45 +29,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     setToken(storedToken);
     setRole(storedRole);
-
-    try {
-      const isValid = await authService.verifyToken();
-      setIsAuthenticated(isValid);
-    } catch {
-      setIsAuthenticated(false);
-    } finally {
-      setIsVerifying(false);
-    }
+    setIsAuthenticated(authService.isAuthenticated());
+    setIsVerifying(false);
   };
 
-  const refreshAuth = async () => {
-    await verifyTokenOnce();
+  const refreshAuth = () => {
+    checkAuth();
   };
 
   useEffect(() => {
-    verifyTokenOnce();
+    checkAuth();
   }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-
-    const interval = setInterval(async () => {
-      const storedToken = authService.getToken();
-
-      if (storedToken) {
-        const isValid = await authService.verifyToken();
-        if (!isValid) {
-          setIsAuthenticated(false);
-        }
-      } else {
-        setIsAuthenticated(false);
-      }
-    }, 5 * 60 * 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider
