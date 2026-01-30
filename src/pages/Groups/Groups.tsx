@@ -174,88 +174,89 @@ const Groups = () => {
   const searchKeys: (keyof Group)[] = ["name", "course", "teacher"];
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
-        token: {
-          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
-          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+  <ConfigProvider
+    theme={{
+      algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+      token: {
+        colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+        colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+        colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+      },
+      components: {
+        Modal: {
+          contentBg: theme === "dark" ? "#111827" : "#ffffff",
+          headerBg: theme === "dark" ? "#111827" : "#ffffff",
+          footerBg: theme === "dark" ? "#111827" : "#ffffff",
         },
-        components: {
-          Modal: {
-            contentBg: theme === "dark" ? "#111827" : "#ffffff",
-            headerBg: theme === "dark" ? "#111827" : "#ffffff",
-            footerBg: theme === "dark" ? "#111827" : "#ffffff",
-          },
-        },
-      }}
-    >
-      <div className="p-4 bg-white dark:bg-gray-900">
-        <ListHeader
-          title={t("groupsCount")}
-          count={filteredGroups.length}
-          searchValue={searchTerm}
-          onSearchChange={setSearchTerm}
-          searchPlaceholder={t("searchGroup")}
-          buttonText={t("addGroup")}
-          onButtonClick={() => showModal()}
+      },
+    }}
+  >
+    <div className="p-4 bg-white dark:bg-gray-900">
+      <ListHeader
+        title={t("groupsCount")}
+        count={filteredGroups.length}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder={t("searchGroup")}
+        buttonText={t("addGroup")}
+        onButtonClick={() => showModal()}
+      />
+      
+      <div className="overflow-x-auto mt-4">
+        <TableComponent<Group>
+          data={filteredGroups}  
+          columnsConfig={columnsConfig}
+          modalFields={modalFields}
+          searchKeys={searchKeys}
+          itemName={t("group")}  
         />
-        <div className="overflow-x-auto mt-4">
-          <TableComponent
-            data={groups}
-            columnsConfig={columnsConfig}
-            modalFields={modalFields}
-            searchKeys={searchKeys}
-            title={t("groupsCount")}
-            itemName="Guruh"
-          />
-        </div>
-        <ModalComponent
-          open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          onOk={handleOk}
-          title={editingGroup ? t("editGroup") : t("addGroup")}
-          okText={t("save")}
-          cancelText={t("cancel")}
-        >
-          <Form form={form} layout="vertical">
-            <InputComponent
-              name="name"
-              label={t("groupName")}
-              rules={[{ required: true }]}
-            />
-            <InputComponent
-              name="course"
-              label={t("course")}
-              rules={[{ required: true }]}
-            />
-            <InputComponent
-              name="teacher"
-              label={t("teacher")}
-              rules={[{ required: true }]}
-            />
-            <InputComponent
-              name="students"
-              label={t("studentsCount")}
-              type="number"
-              rules={[{ required: true }]}
-            />
-            <Form.Item
-              name="status"
-              label="Holati"
-              rules={[{ required: true }]}
-            >
-              <Select>
-                <Select.Option value="Faol">Faol</Select.Option>
-                <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
-              </Select>
-            </Form.Item>
-          </Form>
-        </ModalComponent>
       </div>
-    </ConfigProvider>
-  );
+      
+      <ModalComponent
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={handleOk}
+        title={editingGroup ? t("editGroup") : t("addGroup")}
+        okText={t("save")}
+        cancelText={t("cancel")}
+      >
+        <Form form={form} layout="vertical">
+          <InputComponent
+            name="name"
+            label={t("groupName")}
+            rules={[{ required: true }]}
+          />
+          <InputComponent
+            name="course"
+            label={t("course")}
+            rules={[{ required: true }]}
+          />
+          <InputComponent
+            name="teacher"
+            label={t("teacher")}
+            rules={[{ required: true }]}
+          />
+          <InputComponent
+            name="students"
+            label={t("studentsCount")}
+            type="number"
+            rules={[{ required: true }]}
+          />
+          <Form.Item
+            name="status"
+            label={t("status")} 
+            rules={[{ required: true }]}
+          >
+            <Select>
+              <Select.Option value="Faol">Faol</Select.Option>
+              <Select.Option value="Ta'tilda">Ta'tilda</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </ModalComponent>
+    </div>
+  </ConfigProvider>
+);
 };
 
 export default Groups;

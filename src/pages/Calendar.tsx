@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Calendar as AntCalendar, Input, ConfigProvider, theme as antdTheme } from "antd";
+import {
+  Calendar as AntCalendar,
+  Input,
+  ConfigProvider,
+  theme as antdTheme,
+} from "antd";
 import { useTheme } from "../context/ThemeContext"; // sizning theme context
 import ModalComponent from "../components/ModalComponent/ModalComponent";
 
@@ -50,14 +55,16 @@ const Calendar = () => {
           },
           Calendar: {
             fullBg: theme === "dark" ? "#111827" : "#ffffff",
-            panelBg: theme === "dark" ? "#1f2937" : "#ffffff",
-            todayColor: theme === "dark" ? "#3b82f6" : "#1890ff",
-            dateActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
+            fullPanelBg: theme === "dark" ? "#1f2937" : "#ffffff", 
+            itemActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
           },
         },
       }}
     >
-      <div className="p-4 rounded-lg" style={{ background: theme === "dark" ? "#111827" : "#f9fafb" }}>
+      <div
+        className="p-4 rounded-lg"
+        style={{ background: theme === "dark" ? "#111827" : "#f9fafb" }}
+      >
         <AntCalendar onSelect={onSelect} />
 
         <ModalComponent
@@ -81,9 +88,14 @@ const Calendar = () => {
           />
         </ModalComponent>
 
-        <div style={{ marginTop: 20, color: theme === "dark" ? "#e5e7eb" : "#111827" }}>
+        <div
+          style={{
+            marginTop: 20,
+            color: theme === "dark" ? "#e5e7eb" : "#111827",
+          }}
+        >
           <h3>Saqlangan yozuvlar:</h3>
-          {Object.keys(notes).length === 0 && <p>Hozircha yozuvlar yo‘q.</p>}
+          {Object.keys(notes).length === 0 && <p>Hozircha yozuvlar yo'q.</p>}
           {Object.entries(notes).map(([date, note]) => (
             <p key={date}>
               <b>{date}:</b> {note}
