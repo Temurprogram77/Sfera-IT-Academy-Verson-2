@@ -17,7 +17,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
-/* ================= TYPES ================= */
 
 export type ColumnConfig<T> = {
   key: string;
@@ -35,12 +34,11 @@ export type ModalField<T> = {
 interface TableComponentProps<T extends { id: number }> {
   data: T[];
   columnsConfig: ColumnConfig<T>[];
-  modalFields?: ModalField<T>[]; // ❗ optional
+  modalFields?: ModalField<T>[];
   searchKeys?: (keyof T)[];
   itemName?: string;
 }
 
-/* ================= COMPONENT ================= */
 
 const TableComponent = <T extends { id: number }>({
   data,
@@ -55,25 +53,21 @@ const TableComponent = <T extends { id: number }>({
 
   const [items, setItems] = useState<T[]>(data);
 
-  /* CRUD MODAL */
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
 
-  /* VIEW MODAL */
 
   const [viewOpen, setViewOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
 
   const [form] = Form.useForm();
 
-  /* ================= SYNC ================= */
 
   useEffect(() => {
     setItems(data);
   }, [data]);
 
-  /* ================= SEARCH ================= */
 
   const filteredItems = useMemo(() => {
     if (!searchKeys.length) return items;
@@ -87,7 +81,6 @@ const TableComponent = <T extends { id: number }>({
     );
   }, [items, searchKeys]);
 
-  /* ================= CRUD ================= */
 
   const showModal = (item: T | null = null) => {
     setEditingItem(item);
@@ -129,14 +122,12 @@ const TableComponent = <T extends { id: number }>({
     toast.success(`${itemName} o‘chirildi`);
   };
 
-  /* ================= ROW CLICK (VIEW) ================= */
 
   const handleRowClick = (record: T) => {
     setSelectedItem(record);
     setViewOpen(true);
   };
 
-  /* ================= COLUMNS ================= */
 
   const columns = [
     ...columnsConfig.map((col) => ({
@@ -175,7 +166,6 @@ const TableComponent = <T extends { id: number }>({
     },
   ].filter(Boolean);
 
-  /* ================= THEME ================= */
 
   return (
     <ConfigProvider
@@ -199,7 +189,6 @@ const TableComponent = <T extends { id: number }>({
     >
       <div className="bg-white dark:bg-gray-900 rounded-xl">
 
-        {/* TABLE */}
 
         <div className="overflow-x-auto">
 
@@ -219,7 +208,6 @@ const TableComponent = <T extends { id: number }>({
 
         </div>
 
-        {/* CRUD MODAL */}
 
         {modalFields.length > 0 && (
           <ModalComponent
@@ -249,7 +237,6 @@ const TableComponent = <T extends { id: number }>({
           </ModalComponent>
         )}
 
-        {/* VIEW MODAL */}
 
         <Modal
           open={viewOpen}

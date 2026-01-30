@@ -79,7 +79,6 @@ const ProtectedRoute: React.FC<{
 }> = ({ children, allowedRoles }) => {
   const { isAuthenticated, isVerifying, role } = useAuthContext();
 
-  // 🔹 Role aniqlanmaguncha loading ko'rsatish
   if (isVerifying || (isAuthenticated && !role)) {
     return <LoadingScreen />;
   }
