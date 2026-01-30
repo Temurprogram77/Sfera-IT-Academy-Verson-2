@@ -12,6 +12,14 @@ export const API_ENDPOINTS = {
   USER: {
     PROFILE: "/user/me",
   },
+  STUDENT: {
+    LIST: '/student',
+    CREATE_STUDENT: '/student/saveStudent',
+    CREATE_PARENT: '/student/saveParent',
+    GET_BY_ID: (studentId: string | number) => `/student/${studentId}`,
+    UPDATE: '/student',
+    DELETE:  (studentId: string | number) => `/student/${studentId}`,
+  }
 } as const;
 
 export const buildUrlWithParams = (

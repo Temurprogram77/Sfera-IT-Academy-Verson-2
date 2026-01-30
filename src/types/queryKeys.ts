@@ -10,4 +10,8 @@ export const QUERY_KEYS = {
   AUTH: {
     USER: ["auth", "user"] as const,
   },
+  STUDENTS: {
+    ALL: ["students"] as const,
+    DETAIL: (id: string | number) => ["students", id] as const,
+  },
 } as const;
