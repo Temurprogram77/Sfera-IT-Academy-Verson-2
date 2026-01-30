@@ -156,7 +156,7 @@ export default function App() {
             zIndex: 9999,
           }}
         >
-          Internet yo‘q. Iltimos, ulanishni tekshiring.
+          Internet yo‘q. Iltimos, tarmoqni tekshiring.
         </div>
       )}
       <ScrollToTop />
