@@ -7,7 +7,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { useStudents } from "../../hooks/useStudent";
 import { Student } from "../../types/student";
-import { toast } from "sonner";
 
 const Students = () => {
   const { theme } = useTheme();
