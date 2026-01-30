@@ -129,19 +129,7 @@ const Students = () => {
               title: t("student"),
               render: (record: Student) => (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    {record.imgUrl ? (
-                      <img
-                        src={record.imgUrl}
-                        alt={record.fulName}
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        {record.fulName.charAt(0).toUpperCase()}
-                      </span>
-                    )}
-                  </div>
+                  
                   <div>
                     <div className="font-medium">{record.fulName}</div>
                     <div className="text-xs text-gray-500">

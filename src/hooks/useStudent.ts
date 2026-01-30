@@ -13,18 +13,14 @@ import { QUERY_KEYS } from "../types/queryKeys";
 export const useStudents = () => {
   const queryClient = useQueryClient();
 
-  // GET ALL STUDENTS
   const { data, isLoading, error, refetch, isRefetching } = useQuery<
     StudentListResponse,
     Error
   >({
     queryKey: QUERY_KEYS.STUDENTS.ALL,
     queryFn: () => studentService.getStudents(),
-    staleTime: 5 * 60 * 1000, // 5 min
-    refetchOnWindowFocus: false,
   });
 
-  // CREATE STUDENT
   const createMutation = useMutation<
     StudentActionResponse,
     Error,
@@ -42,7 +38,6 @@ export const useStudents = () => {
     },
   });
 
-  // CREATE PARENT
   const createParentMutation = useMutation<
     StudentActionResponse,
     Error,
@@ -60,7 +55,6 @@ export const useStudents = () => {
     },
   });
 
-  // UPDATE STUDENT
   const updateMutation = useMutation<
     StudentActionResponse,
     Error,
@@ -78,7 +72,6 @@ export const useStudents = () => {
     },
   });
 
-  // DELETE STUDENT
   const deleteMutation = useMutation<
     StudentActionResponse,
     Error,
@@ -97,7 +90,6 @@ export const useStudents = () => {
   });
 
   return {
-    // Data
     students: data?.data?.body || [],
     pagination: {
       page: data?.data?.page || 0,

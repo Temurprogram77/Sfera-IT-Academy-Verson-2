@@ -19,7 +19,6 @@ import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
@@ -245,9 +244,6 @@ export default function App() {
           <Route path="profile" element={<UserProfiles />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="blank" element={<Blank />} />
-
-          {/* Forms */}
-          <Route path="form-elements" element={<FormElements />} />
 
           {/* Tables */}
           <Route path="basic-tables" element={<BasicTables />} />
