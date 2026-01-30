@@ -43,7 +43,6 @@ export default function SignInForm() {
   const { t } = useTranslation();
   const { refreshAuth } = useAuthContext();
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -53,7 +52,6 @@ export default function SignInForm() {
     }
 
     const cleanPhone = phone.replace(/\D/g, "");
-
     if (!cleanPhone.startsWith("998")) {
       toast.error(t("phoneMustStartWith998"));
       return;
@@ -70,24 +68,32 @@ export default function SignInForm() {
         return;
       }
 
-      await refreshAuth();
+      // Token va role localStorage'ga saqlash
+      localStorage.setItem("auth_token", response.data);
+      localStorage.setItem("user_role", response.message);
 
-      const redirectPath =
-        ROLE_REDIRECTS[response.message as string] ||
-        "/dashboard/teacher";
+      // AuthContext'ni yangilash
+      refreshAuth();
+
+      // Role'ga qarab redirect
+      const role = String(response.message).trim();
+      const redirectPath = ROLE_REDIRECTS[role] || "/dashboard/student";
 
       toast.success(t("welcome"));
 
-      navigate(redirectPath, { replace: true });
+      // Kichik kechikish bilan navigate qilish
+      setTimeout(() => {
+        navigate(redirectPath, { replace: true });
+      }, 100);
 
     } catch (error: unknown) {
       console.error("Login error:", error);
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message ||
-          error?.message ||
-          t("loginError")
+          error?.response?.data?.message || error?.message || t("loginError"),
         );
+      } else {
+        toast.error(t("loginError"));
       }
     }
   };
@@ -99,9 +105,7 @@ export default function SignInForm() {
           <h1 className="mb-2 font-semibold text-gray-800 text-title-sm sm:text-title-md">
             {t("login")}
           </h1>
-          <p className="text-sm text-gray-500">
-            {t("enterCredentials")}
-          </p>
+          <p className="text-sm text-gray-500">{t("enterCredentials")}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -142,9 +146,7 @@ export default function SignInForm() {
               loading={loginMutation.isPending}
               size="large"
             >
-              {loginMutation.isPending
-                ? `${t("login")}...`
-                : t("login")}
+              {loginMutation.isPending ? `${t("login")}...` : t("login")}
             </Button>
           </div>
         </form>

@@ -3,9 +3,20 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useProfile } from "../../hooks/useProfile";
+import { formatPhone } from "../../utils/phoneFormatter";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
+  const { user, loading, error } = useProfile();
+
+  if (loading) {
+    return <p>Profile Malumotlari Yuklanmoqda...</p>;
+  }
+
+  if (error) {
+    return <p>Xatolik: {error}</p>;
+  }
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
@@ -22,10 +33,26 @@ export default function UserInfoCard() {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                First Name
+                Role
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                role
+                <p>
+                  {(() => {
+                    const role = user?.role;
+
+                    return role === "ROLE_ADMIN"
+                      ? "Admin"
+                      : role === "ROLE_SUPER_ADMIN"
+                        ? "Super Admin"
+                        : role === "ROLE_TEACHER"
+                          ? "O‘qituvchi"
+                          : role === "ROLE_STUDENT"
+                            ? "O‘quvchi"
+                            : role === "ROLE_PARENT"
+                              ? "Ota-ona"
+                              : "Noma’lum rol";
+                  })()}
+                </p>
               </p>
             </div>
 
@@ -34,7 +61,7 @@ export default function UserInfoCard() {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Lastname
+                {user?.fullName}
               </p>
             </div>
 
@@ -52,7 +79,9 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
+                <p>
+                  {formatPhone(user?.phone)}
+                </p>
               </p>
             </div>
 

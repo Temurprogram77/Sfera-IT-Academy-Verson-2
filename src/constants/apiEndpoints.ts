@@ -8,7 +8,10 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (roomId: string | number) => `/room/${roomId}`,
     UPDATE: '/room/update',
     DELETE: (roomId: string | number) => `/room/${roomId}`,
-  }
+  },
+  USER: {
+    PROFILE: "/user/me",
+  },
 } as const;
 
 export const buildUrlWithParams = (
@@ -21,6 +24,6 @@ export const buildUrlWithParams = (
     .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
     .join('&');
-  
+
   return queryString ? `${endpoint}?${queryString}` : endpoint;
 };

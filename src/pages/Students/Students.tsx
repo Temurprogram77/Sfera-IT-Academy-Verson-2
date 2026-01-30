@@ -1,14 +1,11 @@
 import { useState } from "react";
 import {
-  Table,
   Form,
   Input,
   Select,
-  Popconfirm,
   ConfigProvider,
   theme as antdTheme,
 } from "antd";
-import { PencilIcon, TrashBinIcon, UserIcon } from "../../icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { useTheme } from "../../context/ThemeContext";
@@ -86,67 +83,6 @@ const Students = () => {
 
     setIsModalVisible(false);
   };
-
-  const handleDelete = (id: number) => {
-    setStudents((prev) => prev.filter((s) => s.id !== id));
-    toast.success(t("studentDeleted"));
-  };
-
-  const columns = [
-    {
-      title: t("student"),
-      dataIndex: "name",
-      render: (_: any, record: any) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </div>
-          <div>
-            <div className="font-medium">{record.name}</div>
-            <div className="text-xs text-gray-500">{record.email}</div>
-          </div>
-        </div>
-      ),
-    },
-    { title: t("course"), dataIndex: "course" },
-    { title: t("group"), dataIndex: "group" },
-    { title: t("phone"), dataIndex: "phone" },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      render: (text: string) => (
-        <span
-          className={`px-3 py-1 text-xs rounded-full ${
-            text === "Faol"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-          }`}
-        >
-          {text}
-        </span>
-      ),
-    },
-    {
-      title: t("actions"),
-      render: (_: any, record: any) => (
-        <div className="flex justify-end gap-3">
-          <button onClick={() => showModal(record)}>
-            <PencilIcon className="w-5 h-5 text-blue-600" />
-          </button>
-          <Popconfirm
-            title={t("confirmDelete")}
-            onConfirm={() => handleDelete(record.id)}
-            okText={t("yes")}
-            cancelText={t("no")}
-          >
-            <button>
-              <TrashBinIcon className="w-5 h-5 text-red-600" />
-            </button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
 
   return (
     <ConfigProvider

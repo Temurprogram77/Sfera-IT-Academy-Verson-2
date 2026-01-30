@@ -64,7 +64,6 @@ const LoadingScreen = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="text-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-      <p className="mt-4 text-gray-600">Yuklanmoqda...</p>
     </div>
   </div>
 );
@@ -80,7 +79,8 @@ const ProtectedRoute: React.FC<{
 }> = ({ children, allowedRoles }) => {
   const { isAuthenticated, isVerifying, role } = useAuthContext();
 
-  if (isVerifying) {
+  // 🔹 Role aniqlanmaguncha loading ko'rsatish
+  if (isVerifying || (isAuthenticated && !role)) {
     return <LoadingScreen />;
   }
 
@@ -88,7 +88,7 @@ const ProtectedRoute: React.FC<{
     return <Navigate to="/signin" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(role || "")) {
+  if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to={getRoleRedirectPath(role)} replace />;
   }
 
@@ -108,6 +108,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return <>{children}</>;
 };
+
 export default function App() {
   const { theme } = useTheme();
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);

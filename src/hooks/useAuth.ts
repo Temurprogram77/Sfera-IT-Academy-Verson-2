@@ -3,29 +3,29 @@ import { LoginRequest } from '../types/api';
 import { authService } from '../services/authService ';
 
 export const useLogin = () => {
-    return useMutation({
-        mutationFn: (credentials: LoginRequest) => {
-            return authService.login(credentials);
-        },
-    });
+  return useMutation({
+    mutationFn: (credentials: LoginRequest) => {
+      return authService.login(credentials);
+    },
+  });
 };
 
 export const useLogout = () => {
-    return () => {
-        authService.logout();
-    };
+  return () => {
+    authService.logout();
+  };
 };
 
 export const useAuth = () => {
-    const token = authService.getToken();
-    const role = authService.getRole();
-    const isTokenExpired = authService.isTokenExpired();
-    const isAuthenticated = !!token && !isTokenExpired;
+  const token = authService.getToken();
+  const role = authService.getRole();
+  const isTokenExpired = authService.isTokenExpired();
+  const isAuthenticated = !!token && !isTokenExpired;
 
-    return {
-        isAuthenticated,
-        token,
-        role,
-        isTokenExpired,
-    };
+  return {
+    isAuthenticated,
+    token,
+    role,
+    isTokenExpired,
+  };
 };
