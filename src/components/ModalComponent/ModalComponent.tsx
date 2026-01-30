@@ -10,6 +10,7 @@ interface ModalComponentProps {
   cancelText?: string;
   children: ReactNode;
   footer?: ReactNode[] | null;
+  confirmLoading?: boolean;  // ✅ Buni qo'shing
 }
 
 const ModalComponent = ({
@@ -21,6 +22,7 @@ const ModalComponent = ({
   cancelText = "Bekor qilish",
   children,
   footer,
+  confirmLoading,  // ✅ Destructure qiling
 }: ModalComponentProps) => {
   return (
     <Modal
@@ -31,6 +33,7 @@ const ModalComponent = ({
       okText={okText}
       cancelText={cancelText}
       footer={footer}
+      confirmLoading={confirmLoading}  
       destroyOnHidden
       centered
     >
