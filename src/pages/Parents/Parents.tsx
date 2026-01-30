@@ -122,18 +122,19 @@ const Parents = () => {
         />
 
         <TableComponent<Parent>
-          data={initialParents}
-          title="Ota-onalar"
+          data={filteredParents}  
           itemName={t("parent")}
           searchKeys={["name", "student", "phone"]}
           columnsConfig={[
             {
               title: t("parent"),
               dataIndex: "name",
-              render: (_: any, record: Parent) => (
+              render: (record: Parent) => (  
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    {/* Icon */}
+                    <span className="text-lg font-semibold">
+                      {record.name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
                   <div>
                     <div className="font-medium">{record.name}</div>
@@ -148,20 +149,20 @@ const Parents = () => {
             },
             {
               title: t("phone"),
-              dataIndex: "phone",
+              dataIndex: "phone", 
             },
             {
               title: t("status"),
               dataIndex: "status",
-              render: (status: string) => (
+              render: (record: Parent) => (  
                 <span
                   className={`px-3 py-1 text-xs rounded-full ${
-                    status === "active"
+                    record.status === "active"
                       ? "bg-[#03906d] text-white"
                       : "text-white bg-yellow-500"
                   }`}
                 >
-                  {status === "active" ? "Faol" : "Ta’til"}
+                  {record.status === "active" ? "Faol" : "Ta'til"}
                 </span>
               ),
             },
@@ -197,7 +198,7 @@ const Parents = () => {
               component: (
                 <Select>
                   <Select.Option value="active">Faol</Select.Option>
-                  <Select.Option value="on_leave">Ta’til</Select.Option>
+                  <Select.Option value="on_leave">Ta'til</Select.Option>
                 </Select>
               ),
               rules: [{ required: true }],
@@ -251,14 +252,10 @@ const Parents = () => {
               label={t("status")}
               rules={[{ required: true }]}
             >
-              <SelectComponent
-                value={status}
-                onChange={(val) => setStatus(val)}
-                options={[
-                  { label: t("active"), value: "active" },
-                  { label: t("on_leave"), value: "on_leave" },
-                ]}
-              />
+              <Select>  {/* ✅ SelectComponent o'rniga oddiy Select */}
+                <Select.Option value="active">{t("active")}</Select.Option>
+                <Select.Option value="on_leave">{t("on_leave")}</Select.Option>
+              </Select>
             </Form.Item>
           </Form>
         </ModalComponent>
