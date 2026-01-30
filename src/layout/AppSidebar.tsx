@@ -206,7 +206,7 @@ const AppSidebar: React.FC = () => {
               <Dropdown
                 menu={getDropdownMenu(nav)}
                 trigger={["hover"]}
-                placement="rightTop"
+                placement="topRight"
               >
                 <div
                   className={`menu-item group flex justify-center dark:border-gray-800 dark:hover:bg-white/5 cursor-pointer ${
