@@ -111,12 +111,12 @@ const Rooms = () => {
       <div className="p-4 bg-white dark:bg-gray-900">
         {/* Header */}
         <ListHeader
-          title={"Xonalar"}
+          title={t("rooms")}
           count={rooms.length}
           searchValue={search}
           onSearchChange={(value) => setSearch(value)}
-          searchPlaceholder={"Xonalarni qidirish"}
-          buttonText={"Yangi xona qo'shish"}
+          searchPlaceholder={t("searchRooms")}
+          buttonText={t("addRoom")}
           onButtonClick={() => showModal()}
         />
 
@@ -221,11 +221,11 @@ const Rooms = () => {
               name="name"
               label={t("roomName")}
               rules={[
-                { required: true, message: t("pleaseEnterRoomName") },
+                { required: true, message: `${t('please')} ${t("enterRoomName")}` },
                 { min: 2, message: t("roomNameMinLength") },
               ]}
             >
-              <InputComponent placeholder={t("enterRoomName")} className="" />
+              <InputComponent placeholder={t("enterRoomName")}  />
             </Form.Item>
           </Form>
         </ModalComponent>

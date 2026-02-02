@@ -128,5 +128,11 @@
   "statistics": "Statistika",
   "monthly": "Oylik",
   "quarterly": "Choraklik",
-  "annually": "Yillik"
+  "annually": "Yillik",
+  "searchRooms": "Xonalarni qidirish",
+  "addNewRoom": "Yangi xona qo‘shish",
+  "roomName": "Xona nomi",
+  "enterRoomName": "Xona nomini kiriting",
+   "please": "Iltimos",
+   "roomNameMinLength": "Xona nomi kamida ikkita harfdan tashkil topishi kerak"
 }

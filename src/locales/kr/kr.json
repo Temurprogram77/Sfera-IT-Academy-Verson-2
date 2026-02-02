@@ -127,5 +127,11 @@
   "statistics": "Статистика",
   "monthly": "Ойлик",
   "quarterly": "Чораклик",
-  "yearly": "Йиллик"
+  "yearly": "Йиллик",
+  "searchRooms": "Хоналарни қидириш",
+  "addNewRoom": "Янги хона қўшиш",
+  "roomName": "Хона номи",
+  "enterRoomName": "Хона номини киритинг",
+  "please": "Илтимос",
+  "roomNameMinLength": "Хона номи камида иккита ҳарфдан ташкил топиши керак"
 }
