@@ -6,7 +6,9 @@ export const QUERY_KEYS = {
   USER: {
     PROFILE: ["user", "profile"],
   },
-
+  GROUPS: {
+    ALL: ["groups"],
+  },
   AUTH: {
     USER: ["auth", "user"] as const,
   },

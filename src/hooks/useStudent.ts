@@ -4,7 +4,6 @@ import { studentService } from "../services/studentService";
 import {
   StudentListResponse,
   CreateStudentDto,
-  CreateParentDto,
   UpdateStudentDto,
   StudentActionResponse,
 } from "../types/student";
@@ -34,23 +33,6 @@ export const useStudents = () => {
     onError: (error: any) => {
       const errorMessage =
         error?.response?.data?.message || "Failed to create student";
-      toast.error(errorMessage);
-    },
-  });
-
-  const createParentMutation = useMutation<
-    StudentActionResponse,
-    Error,
-    CreateParentDto
-  >({
-    mutationFn: (data: CreateParentDto) => studentService.createParent(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
-      toast.success("Parent created successfully");
-    },
-    onError: (error: any) => {
-      const errorMessage =
-        error?.response?.data?.message || "Failed to create parent";
       toast.error(errorMessage);
     },
   });
@@ -106,13 +88,11 @@ export const useStudents = () => {
 
     // Mutations
     createStudent: createMutation.mutate,
-    createParent: createParentMutation.mutate,
     updateStudent: updateMutation.mutate,
     deleteStudent: deleteMutation.mutate,
 
     // Loading states
     isCreating: createMutation.isPending,
-    isCreatingParent: createParentMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
   };
