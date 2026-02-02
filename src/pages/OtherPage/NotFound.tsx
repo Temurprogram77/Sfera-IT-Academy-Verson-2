@@ -1,8 +1,10 @@
 import GridShape from "../../components/common/GridShape";
 import { Link } from "react-router";
 import PageMeta from "../../components/common/PageMeta";
+import { useTranslation } from "react-i18next";
 
 export default function NotFound() {
+    const {t}=useTranslation()
   return (
     <>
       <PageMeta
@@ -13,7 +15,7 @@ export default function NotFound() {
         <GridShape />
         <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
           <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">
-            ERROR
+            {t("error")}
           </h1>
 
           <p className="!p-0 h-[220px] text-green-500 text-[200px]">404</p>
@@ -24,14 +26,14 @@ export default function NotFound() {
           />
 
           <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
-            Siz qidirayotgan sahifani topa olmayapmiz!
+            {t("pageNotFound")}
           </p>
 
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
           >
-            Orqaga qaytish
+            {t("goBack")}
           </Link>
         </div>
         {/* <!-- Footer --> */}

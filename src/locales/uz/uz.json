@@ -137,5 +137,8 @@
    "roomNameMinLength": "Xona nomi kamida ikkita harfdan tashkil topishi kerak",
    "noRoomsAvailable": "Xonalar mavjud emas",
     "noRoomsYetMessage": "Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing.",
-    "clickToViewRoomAvailability": "Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing."
+    "clickToViewRoomAvailability": "Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.",
+    "pageNotFound": "Siz qidirayotgan sahifani topa olmayapmiz!",
+    "goBack": "Orqaga qaytish",
+    "error": "Xatolik"
 }
