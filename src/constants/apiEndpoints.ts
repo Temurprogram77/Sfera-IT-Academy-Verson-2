@@ -18,7 +18,13 @@ export const API_ENDPOINTS = {
     CREATE_PARENT: '/student/saveParent',
     GET_BY_ID: (studentId: string | number) => `/student/${studentId}`,
     UPDATE: '/student',
-    DELETE:  (studentId: string | number) => `/student/${studentId}`,
+    DELETE: (studentId: string | number) => `/student/${studentId}`,
+  },
+  GROUP: {
+    ALL: '/group/all',
+  },
+  FILE: {
+    UPLOAD: '/api/v1/files/upload',
   }
 } as const;
 

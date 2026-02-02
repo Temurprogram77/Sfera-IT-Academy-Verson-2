@@ -1,11 +1,9 @@
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
-
 import {
   StudentListResponse,
   StudentResponse,
   CreateStudentDto,
-  CreateParentDto,
   StudentActionResponse,
   UpdateStudentDto,
 } from "../types/student";
@@ -46,20 +44,6 @@ class StudentService {
       return response;
     } catch (error) {
       console.error("Create student error:", error);
-      throw error;
-    }
-  }
-
-  // POST /student/saveParent - Create new parent
-  async createParent(data: CreateParentDto): Promise<StudentActionResponse> {
-    try {
-      const response = await apiClient.post<StudentActionResponse>(
-        API_ENDPOINTS.STUDENT.CREATE_PARENT,
-        data
-      );
-      return response;
-    } catch (error) {
-      console.error("Create parent error:", error);
       throw error;
     }
   }

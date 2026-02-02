@@ -8,11 +8,12 @@ export interface PaginatedResponse<T> {
 }
 
 // ============= STUDENT TYPE (from API GET) =============
+// API qaytaradi: fulName, phoneNumber, imgUrl, groupId, groupName
 export interface Student {
   id: number;
   fulName: string;
-  imgUrl: string;
   phoneNumber: string;
+  imgUrl: string; // API returns imgUrl (empty string if no image)
   groupId: number;
   groupName: string;
 }
@@ -39,6 +40,7 @@ export interface StudentActionResponse {
 // ============= DTOs (Request Bodies) =============
 
 // POST /student/saveStudent
+// API kutadi: fullName, phone, imgUrl, password, groupId, parentPhone, parentName
 export interface CreateStudentDto {
   fullName: string;
   phone: string;
@@ -49,14 +51,8 @@ export interface CreateStudentDto {
   parentName: string;
 }
 
-// POST /student/saveParent
-export interface CreateParentDto {
-  fullName: string;
-  phone: string;
-  password: string;
-}
-
 // PUT /student
+// API kutadi: id, fullName, phone, imgUrl
 export interface UpdateStudentDto {
   id: number;
   fullName: string;
