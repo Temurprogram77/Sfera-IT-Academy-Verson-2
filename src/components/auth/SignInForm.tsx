@@ -27,14 +27,10 @@ const basePhoneOptions = maskitoPhoneOptionsGenerator({
   strict: false,
 });
 
-const phoneOptions = {
-  ...basePhoneOptions,
-  lazy: false,
-};
+const phoneOptions = { ...basePhoneOptions, lazy: false };
 
 export default function SignInForm() {
   const inputRef = useMaskito({ options: phoneOptions });
-
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
@@ -75,22 +71,18 @@ export default function SignInForm() {
       // AuthContext'ni yangilash
       refreshAuth();
 
-      // Role'ga qarab redirect
       const role = String(response.message).trim();
       const redirectPath = ROLE_REDIRECTS[role] || "/dashboard/student";
 
       toast.success(t("welcome"));
 
-      // Kichik kechikish bilan navigate qilish
-      setTimeout(() => {
-        navigate(redirectPath, { replace: true });
-      }, 100);
-
+      // Role'ga qarab dashboardga redirect
+      navigate(redirectPath, { replace: true });
     } catch (error: unknown) {
       console.error("Login error:", error);
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message || error?.message || t("loginError"),
+          error?.response?.data?.message || error?.message || t("loginError")
         );
       } else {
         toast.error(t("loginError"));
@@ -114,7 +106,6 @@ export default function SignInForm() {
               <Label>
                 {t("phone")} <span className="text-error-500">*</span>
               </Label>
-
               <PhoneInput
                 ref={inputRef}
                 value={phone}
@@ -128,15 +119,12 @@ export default function SignInForm() {
               <Label>
                 {t("password")} <span className="text-error-500">*</span>
               </Label>
-
-              <div className="relative">
-                <PasswordInput
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t("password")}
-                  disabled={loginMutation.isPending}
-                />
-              </div>
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("password")}
+                disabled={loginMutation.isPending}
+              />
             </div>
 
             <Button

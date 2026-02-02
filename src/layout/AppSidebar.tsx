@@ -4,7 +4,6 @@ import {
   BoltIcon,
   BoxCubeIcon,
   CalenderIcon,
-  CheckCircleIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
@@ -127,19 +126,6 @@ const AppSidebar: React.FC = () => {
         subItems: [
           { name: t("grades"), path: "/grades", pro: false },
           { name: t("assessment"), path: "/assessment", pro: false },
-        ],
-      },
-      {
-        icon: <CheckCircleIcon />,
-        name: t("attendance"),
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
-        subItems: [
-          { name: t("attendance"), path: "/attendance", pro: false },
-          {
-            name: t("attendanceHistory"),
-            path: "/history-attendance",
-            pro: false,
-          },
         ],
       },
       {

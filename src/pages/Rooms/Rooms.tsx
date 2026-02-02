@@ -28,6 +28,7 @@ const Rooms = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
+  const [search, setSearch] = useState("");
   const {
     rooms,
     loading,
@@ -38,8 +39,7 @@ const Rooms = () => {
     isUpdating,
     deleteRoom,
     isDeleting,
-  } = useRooms();
-
+  } = useRooms(search);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
@@ -113,8 +113,8 @@ const Rooms = () => {
         <ListHeader
           title={"Xonalar"}
           count={rooms.length}
-          searchValue={""}
-          onSearchChange={() => {}}
+          searchValue={search}
+          onSearchChange={(value) => setSearch(value)}
           searchPlaceholder={"Xonalarni qidirish"}
           buttonText={"Yangi xona qo'shish"}
           onButtonClick={() => showModal()}

@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation
 } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { LoadingScreen } from "./components/loading/Loading";
@@ -21,7 +22,6 @@ import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
-import { ScrollToTop } from "./components/common/ScrollToTop";
 
 import Admin from "./dashboards/admin";
 import SuperAdmin from "./dashboards/super_admin";
@@ -32,21 +32,25 @@ import Parent from "./dashboards/parent";
 import Teachers from "./pages/Teachers/Teachers";
 import Students from "./pages/Students/Students";
 import Parents from "./pages/Parents/Parents";
-import Attendance from "./pages/Attendance/Attendance";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
 import Assessnment from "./pages/Assessnment/Assessnment";
 import Messages from "./pages/Messages/Messages";
 import Admins from "./pages/Admins/Admins";
-import AttendanceHistory from "./pages/AttendanceHistory/AttendanceHistory";
+import RoomsID from "./pages/RoomsID/RoomsID";
 
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
-import "./i18n";
 import { useAuthContext } from "./context/AuthContext";
-import RoomsID from "./pages/RoomsID/RoomsID";
+import { ScrollToTop } from "./components/common/ScrollToTop";
+import "./i18n";
+interface Props {
+  children: React.ReactNode;
+  allowedRoles?: string[]; // ruxsat berilgan rollar
+}
 
+// 5 ta role uchun redirect xaritasi
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
   ROLE_ADMIN: "/dashboard/admin",
@@ -55,65 +59,59 @@ const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_PARENT: "/dashboard/parent",
 };
 
+// role asosida redirect path olish
 const getRoleRedirectPath = (role: string | null) => {
   return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
 };
 
-
+// bosh sahifa uchun redirect
 const RootRedirect: React.FC = () => {
   const { role } = useAuthContext();
   return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
-const ProtectedRoute: React.FC<{
-  children: React.ReactNode;
-  allowedRoles?: string[];
-}> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, isVerifying, role } = useAuthContext();
+// Protected Route
+function ProtectedRoute({ children, allowedRoles }: Props) {
+  const token = localStorage.getItem("auth_token");
+  const role = localStorage.getItem("user_role");
+  const location = useLocation();
 
-  if (isVerifying || (isAuthenticated && !role)) {
-    return <LoadingScreen />;
+  // Token yo'q bo'lsa loginga yo'naltirish
+  if (!token) {
+    return <Navigate to="/signin" replace state={{ from: location }} />;
   }
 
-  if (!isAuthenticated) {
+  // Agar allowedRoles berilgan bo'lsa va user roli mos kelmasa
+  if (allowedRoles && !allowedRoles.includes(role || "")) {
+    // Role asosida home page'ga yo'naltirish
+    if (role === "ROLE_ADMIN") return <Navigate to="/admin" replace />;
+    if (role === "ROLE_TEACHER") return <Navigate to="/teacher" replace />;
     return <Navigate to="/signin" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(role)) {
-    return <Navigate to={getRoleRedirectPath(role)} replace />;
+  return <>{children}</>;
+}
+
+// Public Route
+function PublicRoute({ children }: Props) {
+  const token = localStorage.getItem("auth_token");
+  const role = localStorage.getItem("user_role");
+
+  if (token && role && ROLE_REDIRECTS[role]) {
+    return <Navigate to={ROLE_REDIRECTS[role]} replace />;
   }
 
   return <>{children}</>;
-};
+}
 
-const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isVerifying, role } = useAuthContext();
-
-  if (isVerifying) {
-    return <LoadingScreen />;
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to={getRoleRedirectPath(role)} replace />;
-  }
-
-  return <>{children}</>;
-};
-
+// App Component
 export default function App() {
   const { theme } = useTheme();
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
 
   useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      console.log("Internet bor");
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-      console.log("Internet yo‘q");
-    };
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
@@ -121,14 +119,6 @@ export default function App() {
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
-  useEffect(() => {
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = () => window.history.go(1);
-    return () => {
-      window.onpopstate = null;
     };
   }, []);
 
@@ -153,6 +143,7 @@ export default function App() {
       )}
       <ScrollToTop />
       <Routes>
+        {/* Auth */}
         <Route
           path="/signin"
           element={
@@ -162,6 +153,7 @@ export default function App() {
           }
         />
 
+        {/* Dashboard */}
         <Route
           path="/"
           element={
@@ -172,6 +164,7 @@ export default function App() {
         >
           <Route path="/" element={<RootRedirect />} />
 
+          {/* Dashboards */}
           <Route
             path="dashboard/admin"
             element={
@@ -224,16 +217,12 @@ export default function App() {
           <Route path="grades" element={<Grades />} />
           <Route path="assessment" element={<Assessnment />} />
 
-          {/* Attendance */}
-          <Route path="attendance" element={<Attendance />} />
-          <Route path="history-attendance" element={<AttendanceHistory />} />
-
           {/* Groups & Rooms */}
           <Route path="groups" element={<Groups />} />
           <Route path="rooms" element={<Rooms />} />
           <Route path="room/:id" element={<RoomsID />} />
 
-          {/* Others Pages */}
+          {/* Profile & Other Pages */}
           <Route path="profile" element={<UserProfiles />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="blank" element={<Blank />} />

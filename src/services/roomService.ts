@@ -1,22 +1,28 @@
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
-import { 
-  CreateRoomDto, 
-  CreateRoomResponse, 
-  DeleteRoomResponse, 
-  RoomListResponse, 
+import {
+  CreateRoomDto,
+  CreateRoomResponse,
+  DeleteRoomResponse,
+  RoomListResponse,
   RoomResponse,
-  UpdateRoomDto  // Buni import qiling
+  UpdateRoomDto, // Buni import qiling
 } from "../types/room";
-
 
 class RoomService {
   // Barcha xonanalarni olish
-  async getRooms(): Promise<RoomListResponse> {
+  async getRooms(search?: string): Promise<RoomListResponse> {
     try {
       const response = await apiClient.get<RoomListResponse>(
-        API_ENDPOINTS.ROOM.LIST
+        API_ENDPOINTS.ROOM.LIST,
+        {
+          params: {
+            // Agar backend name paramini kutsa
+            name: search || "",
+          },
+        },
       );
+
       return response;
     } catch (error) {
       console.error("Get rooms error:", error);
@@ -41,7 +47,7 @@ class RoomService {
     try {
       const response = await apiClient.post<CreateRoomResponse>(
         API_ENDPOINTS.ROOM.CREATE,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -52,17 +58,17 @@ class RoomService {
 
   // YANGI: Xonani yangilash
   async updateRoom(data: UpdateRoomDto): Promise<DeleteRoomResponse> {
-  try {
-    const response = await apiClient.put<DeleteRoomResponse>(
-      API_ENDPOINTS.ROOM.UPDATE, // ID siz
-      data // ID body ichida
-    );
-    return response;
-  } catch (error) {
-    console.error("Update room error:", error);
-    throw error;
+    try {
+      const response = await apiClient.put<DeleteRoomResponse>(
+        API_ENDPOINTS.ROOM.UPDATE, // ID siz
+        data, // ID body ichida
+      );
+      return response;
+    } catch (error) {
+      console.error("Update room error:", error);
+      throw error;
+    }
   }
-}
 
   // Xona o'chirish
   async deleteRoom(roomId: string | number): Promise<DeleteRoomResponse> {

@@ -5,14 +5,18 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useProfile } from "../../hooks/useProfile";
 import { formatPhone } from "../../utils/phoneFormatter";
-import { LoadingScreen } from "../loading/Loading";
+import { Spin } from "antd";
+import { useTranslation } from "react-i18next";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { user, loading, error } = useProfile();
+  const { t } = useTranslation();
 
   if (loading) {
-    return <LoadingScreen/>;
+    return <div className="flex justify-center items-center py-20">
+      <Spin size="large" tip={t("loading")} />
+    </div>;
   }
 
   if (error) {
@@ -80,9 +84,7 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                <p>
-                  {formatPhone(user?.phone)}
-                </p>
+                <p>{formatPhone(user?.phone)}</p>
               </p>
             </div>
 

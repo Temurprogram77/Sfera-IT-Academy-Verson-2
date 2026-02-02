@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient, UseQueryResult } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { roomService } from "../services/roomService";
 import {
   RoomListResponse,
@@ -18,35 +23,40 @@ interface UseRoomsReturn {
   refetch: () => void;
   isRefetching: boolean;
 
-  createRoom: (data: CreateRoomDto, options?: { onSuccess?: () => void }) => void;
+  createRoom: (
+    data: CreateRoomDto,
+    options?: { onSuccess?: () => void },
+  ) => void;
   isCreating: boolean;
 
-  updateRoom: (data: UpdateRoomDto, options?: { onSuccess?: () => void }) => void;
+  updateRoom: (
+    data: UpdateRoomDto,
+    options?: { onSuccess?: () => void },
+  ) => void;
   isUpdating: boolean;
 
   deleteRoom: (roomId: string | number) => void;
   isDeleting: boolean;
 }
 
-export const useRooms = (): UseRoomsReturn => {
+export const useRooms = (search: string = ""): UseRoomsReturn => {
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isRefetching,
-  }: UseQueryResult<RoomListResponse, Error> = useQuery({
-    queryKey: QUERY_KEYS.ROOMS.ALL,
-    queryFn: () => roomService.getRooms(),
+  const { data, isLoading, error, refetch, isRefetching } = useQuery({
+    queryKey: [QUERY_KEYS.ROOMS.ALL, search],
+    queryFn: () => roomService.getRooms(search),
+
+    placeholderData: (previousData) => previousData,
   });
 
   const createMutation = useMutation<CreateRoomResponse, Error, CreateRoomDto>({
     mutationFn: (data: CreateRoomDto) => roomService.createRoom(data),
     onSuccess: (response) => {
       if (response.success) {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ROOMS.ALL });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROOMS.ALL],
+        });
+
         toast.success("Room created successfully");
       }
     },
@@ -68,7 +78,11 @@ export const useRooms = (): UseRoomsReturn => {
     },
   });
 
-  const deleteMutation = useMutation<DeleteRoomResponse, Error, string | number>({
+  const deleteMutation = useMutation<
+    DeleteRoomResponse,
+    Error,
+    string | number
+  >({
     mutationFn: (roomId: string | number) => roomService.deleteRoom(roomId),
     onSuccess: (response) => {
       if (response.success) {
