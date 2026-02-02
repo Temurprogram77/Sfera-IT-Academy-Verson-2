@@ -140,5 +140,9 @@
     "clickToViewRoomAvailability": "Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.",
     "pageNotFound": "Siz qidirayotgan sahifani topa olmayapmiz!",
     "goBack": "Orqaga qaytish",
-    "error": "Xatolik"
+    "error": "Xatolik",
+    "days": "Kunlar",
+    "time": "Vaqt",
+    "subjectOrTeacher": "Fan yoki ustoz...",
+    "addLesson": "Dars qo‘shish"
 }

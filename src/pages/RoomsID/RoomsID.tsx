@@ -9,6 +9,7 @@ import {
 
 import ListHeader from "../../components/ListHeader/ListHeader";
 import TableComponent from "../../components/TableComponent/TableComponent";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -64,7 +65,7 @@ const RoomsID = () => {
   const [search, setSearch] = useState("");
 
   /* ================= FILTER ================= */
-
+  const {t}=useTranslation()
   const filteredData = useMemo(() => {
     return roomData.schedules.filter(
       (item) =>
@@ -78,7 +79,7 @@ const RoomsID = () => {
   const columnsConfig = [
     {
       key: "subject",
-      title: "Fan",
+      title: t("subject"),
 
       render: (record: Schedule) => (
         <div className="flex items-center gap-3">
@@ -94,7 +95,7 @@ const RoomsID = () => {
 
     {
       key: "days",
-      title: "Kunlar",
+      title: t("days"),
 
       render: (record: Schedule) => (
         <Space wrap>
@@ -109,7 +110,7 @@ const RoomsID = () => {
 
     {
       key: "startTime",
-      title: "Vaqt",
+      title: t("time"),
 
       render: (record: Schedule) => (
         <Tag color="green">
@@ -120,7 +121,7 @@ const RoomsID = () => {
 
     {
       key: "teacher",
-      title: "Ustoz",
+      title: t("teacher"),
 
       render: (record: Schedule) => (
         <Space>
@@ -132,7 +133,7 @@ const RoomsID = () => {
 
     {
       key: "students",
-      title: "O‘quvchilar",
+      title: t("students"),
 
       render: (record: Schedule) => (
         <Space>
@@ -153,8 +154,8 @@ const RoomsID = () => {
         count={filteredData.length}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Fan yoki ustoz..."
-        buttonText="Dars qo‘shish"
+        searchPlaceholder={t("subjectOrTeacher")}
+        buttonText={t("addLesson")}
         onButtonClick={() => {}}
       />
 
