@@ -131,9 +131,9 @@ const Rooms = () => {
           <>
             {rooms.length === 0 ? (
               <NotFoundData
-                title={"Xonalar mavjud emas"}
+                title={t("noRoomsAvailable")}
                 description={
-                  "Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing."
+                  t("noRoomsYetMessage")
                 }
               />
             ) : (
@@ -182,7 +182,7 @@ const Rooms = () => {
                     >
                       <Link to={`/room/${room.id}`} className="w-full h-full">
                         <p className="text-sm py-5 px-3 text-gray-500 dark:text-gray-400">
-                          Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.
+                          {t("clickToViewRoomAvailability")}
                         </p>
                       </Link>
                       {room.schedules && room.schedules.length > 0 && (

@@ -134,5 +134,8 @@
   "roomName": "Xona nomi",
   "enterRoomName": "Xona nomini kiriting",
    "please": "Iltimos",
-   "roomNameMinLength": "Xona nomi kamida ikkita harfdan tashkil topishi kerak"
+   "roomNameMinLength": "Xona nomi kamida ikkita harfdan tashkil topishi kerak",
+   "noRoomsAvailable": "Xonalar mavjud emas",
+    "noRoomsYetMessage": "Hozircha xonalar qo'shilmagan. Iltimos, yangi xona qo'shing.",
+    "clickToViewRoomAvailability": "Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing."
 }
