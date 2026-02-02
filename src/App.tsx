@@ -5,7 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import { LoadingScreen } from "./components/loading/Loading";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -59,13 +59,6 @@ const getRoleRedirectPath = (role: string | null) => {
   return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
 };
 
-const LoadingScreen = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-    </div>
-  </div>
-);
 
 const RootRedirect: React.FC = () => {
   const { role } = useAuthContext();

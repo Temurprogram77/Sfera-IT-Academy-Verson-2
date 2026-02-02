@@ -7,6 +7,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { useStudents } from "../../hooks/useStudent";
 import { Student } from "../../types/student";
+import { LoadingScreen } from "../../components/loading/Loading";
 
 const Students = () => {
   const { theme } = useTheme();
@@ -92,7 +93,7 @@ const Students = () => {
     }
   };
 
-  if (loading) return <p>{t("loading")}...</p>;
+  if (loading) return <LoadingScreen/>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -129,7 +130,7 @@ const Students = () => {
               title: t("student"),
               render: (record: Student) => (
                 <div className="flex items-center gap-3">
-                  
+
                   <div>
                     <div className="font-medium">{record.fulName}</div>
                     <div className="text-xs text-gray-500">

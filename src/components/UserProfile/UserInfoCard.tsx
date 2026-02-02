@@ -5,13 +5,14 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useProfile } from "../../hooks/useProfile";
 import { formatPhone } from "../../utils/phoneFormatter";
+import { LoadingScreen } from "../loading/Loading";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { user, loading, error } = useProfile();
 
   if (loading) {
-    return <p>Profile Malumotlari Yuklanmoqda...</p>;
+    return <LoadingScreen/>;
   }
 
   if (error) {

@@ -114,7 +114,7 @@ const Rooms = () => {
           title={"Xonalar"}
           count={rooms.length}
           searchValue={""}
-          onSearchChange={() => { }}
+          onSearchChange={() => {}}
           searchPlaceholder={"Xonalarni qidirish"}
           buttonText={"Yangi xona qo'shish"}
           onButtonClick={() => showModal()}
@@ -140,56 +140,57 @@ const Rooms = () => {
               <Row gutter={[16, 16]}>
                 {rooms.map((room) => (
                   <Col xs={24} sm={12} md={8} key={room.id}>
-                    <Link to={`/room/${room.id}`}>
-                      <Card
-                        hoverable
-                        className="cursor-pointer dark:bg-gray-800"
-                        title={
-                          <div className="flex items-center justify-between">
-                            <span className="dark:text-gray-200">
-                              {room.name}
-                            </span>
-                            <div
-                              className="flex gap-2"
-                              onClick={(e) => e.stopPropagation()}
+                    <Card
+                      hoverable
+                      className="cursor-pointer dark:bg-gray-800"
+                      bodyStyle={{ padding: "0 12px" }}
+                      title={
+                        <div className="flex items-center justify-between">
+                          <span className="dark:text-gray-200">
+                            {room.name}
+                          </span>
+                          <div
+                            className="flex gap-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<EditOutlined />}
+                              onClick={() => showModal(room)}
+                              className="dark:text-gray-400 dark:hover:text-gray-200"
+                            />
+                            <Popconfirm
+                              title={t("deleteRoomConfirm")}
+                              description={t("areYouSureDeleteRoom")}
+                              onConfirm={() => handleDelete(room.id)}
+                              okText={t("yes")}
+                              cancelText={t("no")}
+                              okButtonProps={{ loading: isDeleting }}
                             >
                               <Button
                                 type="text"
                                 size="small"
-                                icon={<EditOutlined />}
-                                onClick={() => showModal(room)}
-                                className="dark:text-gray-400 dark:hover:text-gray-200"
+                                icon={<DeleteOutlined />}
+                                danger
+                                className="dark:text-red-400 dark:hover:text-red-300"
                               />
-                              <Popconfirm
-                                title={t("deleteRoomConfirm")}
-                                description={t("areYouSureDeleteRoom")}
-                                onConfirm={() => handleDelete(room.id)}
-                                okText={t("yes")}
-                                cancelText={t("no")}
-                                okButtonProps={{ loading: isDeleting }}
-                              >
-                                <Button
-                                  type="text"
-                                  size="small"
-                                  icon={<DeleteOutlined />}
-                                  danger
-                                  className="dark:text-red-400 dark:hover:text-red-300"
-                                />
-                              </Popconfirm>
-                            </div>
+                            </Popconfirm>
                           </div>
-                        }
-                      >
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        </div>
+                      }
+                    >
+                      <Link to={`/room/${room.id}`} className="w-full h-full">
+                        <p className="text-sm py-5 px-3 text-gray-500 dark:text-gray-400">
                           Xonadagi bo'sh vaqtlar sonini ko'rish uchun bosing.
                         </p>
-                        {room.schedules && room.schedules.length > 0 && (
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                            {room.schedules.length} {t("schedules")}
-                          </p>
-                        )}
-                      </Card>
-                    </Link>
+                      </Link>
+                      {room.schedules && room.schedules.length > 0 && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                          {room.schedules.length} {t("schedules")}
+                        </p>
+                      )}
+                    </Card>
                   </Col>
                 ))}
               </Row>
