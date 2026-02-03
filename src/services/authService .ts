@@ -10,7 +10,6 @@ class AuthService {
             phone: credentials.phone,
             password: credentials.password,
         });
-        console.log(url);
 
         const response = await apiClient.post<LoginResponse>(url);
 

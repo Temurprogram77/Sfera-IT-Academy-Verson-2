@@ -6,7 +6,7 @@ import {
   DeleteRoomResponse,
   RoomListResponse,
   RoomResponse,
-  UpdateRoomDto, // Buni import qiling
+  UpdateRoomDto,
 } from "../types/room";
 
 class RoomService {

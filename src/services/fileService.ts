@@ -1,18 +1,18 @@
 import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
-import { FileUploadResponse, UploadProgress } from "../types/file";
+import { UploadProgress } from "../types/file";
 
 class FileService {
   // POST /api/v1/files/upload - Upload file
   async uploadFile(
     file: File,
     onProgress?: (progress: UploadProgress) => void
-  ): Promise<FileUploadResponse> {
+  ): Promise<string> {
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await apiClient.post<FileUploadResponse>(
+      const response = await apiClient.post<string>(
         API_ENDPOINTS.FILE.UPLOAD,
         formData,
         {
@@ -34,7 +34,7 @@ class FileService {
         }
       );
 
-      return response;
+      return response as string;
     } catch (error) {
       console.error("File upload error:", error);
       throw error;
@@ -49,14 +49,14 @@ class FileService {
     if (!allowedTypes.includes(file.type)) {
       return {
         valid: false,
-        error: "Only JPG, JPEG, and PNG files are allowed",
+        error: "Faqat JPG, JPEG va PNG formatdagi fayllar ruxsat etilgan",
       };
     }
 
     if (file.size > maxSize) {
       return {
         valid: false,
-        error: `File size must be less than ${maxSizeMB}MB`,
+        error: `Fayl hajmi ${maxSizeMB}MB dan kichik bo'lishi kerak`,
       };
     }
 

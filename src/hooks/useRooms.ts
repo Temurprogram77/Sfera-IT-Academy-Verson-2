@@ -2,11 +2,9 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-  UseQueryResult,
 } from "@tanstack/react-query";
 import { roomService } from "../services/roomService";
 import {
-  RoomListResponse,
   Room,
   CreateRoomDto,
   UpdateRoomDto,

@@ -20,6 +20,12 @@ export const API_ENDPOINTS = {
     UPDATE: '/student',
     DELETE: (studentId: string | number) => `/student/${studentId}`,
   },
+  TEACHER: {
+    LIST: '/teacher',
+    CREATE_TEACHER: '/teacher/saveUser',
+    UPDATE: '/teacher',
+    DELETE: (teacherId: string | number) => `/teacher/${teacherId}`,
+  },
   GROUP: {
     ALL: '/group/all',
   },

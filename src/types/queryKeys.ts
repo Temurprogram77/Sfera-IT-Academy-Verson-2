@@ -16,4 +16,7 @@ export const QUERY_KEYS = {
     ALL: ["students"] as const,
     DETAIL: (id: string | number) => ["students", id] as const,
   },
+  TEACHERS:{
+    CREATE:"teachers"
+  }
 } as const;

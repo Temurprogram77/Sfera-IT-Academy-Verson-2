@@ -10,7 +10,7 @@ import {
   Form,
   Popconfirm,
 } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTheme } from "../../context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../components/IconButton/IconButton";
@@ -69,12 +69,11 @@ const Rooms = () => {
           },
           {
             onSuccess: () => {
-              handleCancel(); // Faqat success bo'lgandan keyin yopiladi
+              handleCancel();
             },
           },
         );
       } else {
-        // Create new room
         createRoom(
           { name: values.name },
           {
@@ -225,7 +224,7 @@ const Rooms = () => {
                 { min: 2, message: t("roomNameMinLength") },
               ]}
             >
-              <InputComponent placeholder={t("enterRoomName")}  />
+              <InputComponent placeholder={t("enterRoomName")} />
             </Form.Item>
           </Form>
         </ModalComponent>
