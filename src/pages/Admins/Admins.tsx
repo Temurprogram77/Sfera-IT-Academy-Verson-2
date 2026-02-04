@@ -1,11 +1,14 @@
 import { useState, useMemo } from "react";
-import { Form, Input, Select, ConfigProvider, theme as antdTheme } from "antd";
+import { Form, theme as antdTheme } from "antd";
 import { useTheme } from "../../context/ThemeContext";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import TableComponent from "../../components/TableComponent/TableComponent";
+import SelectComponent from "../../components/Select/Select";
+import InputComponent from "../../components/InputComponent/InputComponent";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
 
 interface Admin {
   id: number;
@@ -59,7 +62,7 @@ const Admins = () => {
       (a) =>
         a.name.toLowerCase().includes(search.toLowerCase()) ||
         a.email.toLowerCase().includes(search.toLowerCase()) ||
-        a.phone.includes(search)
+        a.phone.includes(search),
     );
   }, [admins, search]);
 
@@ -74,7 +77,7 @@ const Admins = () => {
 
     if (editingAdmin) {
       setAdmins((prev) =>
-        prev.map((a) => (a.id === editingAdmin.id ? { ...a, ...values } : a))
+        prev.map((a) => (a.id === editingAdmin.id ? { ...a, ...values } : a)),
       );
       toast.success(t("admin_updated"));
     } else {
@@ -86,187 +89,174 @@ const Admins = () => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
-        token: {
-          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
-          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
-        },
-        components: {
-          Modal: {
-            contentBg: theme === "dark" ? "#111827" : "#ffffff",
-            headerBg: theme === "dark" ? "#111827" : "#ffffff",
-            footerBg: theme === "dark" ? "#111827" : "#ffffff",
-          },
-        },
-      }}
-    >
-      <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
-        <ListHeader
-          title={t("admins")}
-          count={filteredAdmins.length}
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("searchAdmin")}
-          buttonText={t("addAdmin")}
-          onButtonClick={() => openModal()}
-        />
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
+      <ListHeader
+        title={t("admins")}
+        count={filteredAdmins.length}
+        searchValue={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={t("searchAdmin")}
+        buttonText={t("addAdmin")}
+        onButtonClick={() => openModal()}
+      />
 
-        <TableComponent<Admin>
-          data={initialAdmins}
-          title={t("admins")}
-          itemName={t("admin")}
-          searchKeys={["name", "email", "phone"]}
-          columnsConfig={[
-            {
-              title: t("admin"),
-              dataIndex: "name",
-              render: (_: any, record: any) => (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    {/* User Icon */}
-                  </div>
-                  <div>
-                    <div className="font-medium">{record.name}</div>
-                    <div className="text-xs text-gray-500">{record.email}</div>
-                  </div>
+      <TableComponent<Admin>
+        data={initialAdmins}
+        title={t("admins")}
+        itemName={t("admin")}
+        searchKeys={["name", "email", "phone"]}
+        columnsConfig={[
+          {
+            title: t("admin"),
+            dataIndex: "name",
+            render: (_: any, record: any) => (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  {/* User Icon */}
                 </div>
-              ),
-            },
-            { title: t("phone"), dataIndex: "phone" },
-            {
-              title: t("role"),
-              dataIndex: "role",
-              render: (role: string) => (
-                <span
-                  className={`px-3 py-1 text-xs rounded-full ${
-                    role === "Super Admin"
-                      ? "dark:bg-gray-700 dark:text-white bg-blue-100 text-blue-800"
-                      : "bg-blue-100 text-blue-800 dark:bg-gray-700 dark:text-white"
-                  }`}
-                >
-                  {role}
-                </span>
-              ),
-            },
-            {
-              title: t("status"),
-              dataIndex: "status",
-              render: (status: string) => (
-                <span
-                  className={`px-3 py-1 text-xs rounded-full ${
-                    status === "Faol"
-                      ? "bg-[#03906d] text-white"
-                      : "text-white bg-red-800"
-                  }`}
-                >
-                  {status}
-                </span>
-              ),
-            },
-          ]}
-          modalFields={[
-            {
-              name: "name",
-              label: t("fullname"),
-              component: <Input />,
-              rules: [{ required: true }],
-            },
-            {
-              name: "email",
-              label: t("email"),
-              component: <Input />,
-              rules: [{ required: true, type: "email" }],
-            },
-            {
-              name: "phone",
-              label: t("phone"),
-              component: <Input />,
-              rules: [{ required: true }],
-            },
-            {
-              name: "role",
-              label: t("role"),
-              component: (
-                <Select>
-                  <Select.Option value="Super Admin">Super Admin</Select.Option>
-                  <Select.Option value="Admin">Admin</Select.Option>
-                </Select>
-              ),
-              rules: [{ required: true }],
-            },
-            {
-              name: "status",
-              label: t("status"),
-              component: (
-                <Select>
-                  <Select.Option value="Faol">Faol</Select.Option>
-                  <Select.Option value="Bloklangan">Bloklangan</Select.Option>
-                </Select>
-              ),
-              rules: [{ required: true }],
-            },
-          ]}
-        />
+                <div>
+                  <div className="font-medium">{record.name}</div>
+                  <div className="text-xs text-gray-500">{record.email}</div>
+                </div>
+              </div>
+            ),
+          },
+          { title: t("phone"), dataIndex: "phone" },
+          {
+            title: t("role"),
+            dataIndex: "role",
+            render: (role: string) => (
+              <span
+                className={`px-3 py-1 text-xs rounded-full ${
+                  role === "Super Admin"
+                    ? "dark:bg-gray-700 dark:text-white bg-blue-100 text-blue-800"
+                    : "bg-blue-100 text-blue-800 dark:bg-gray-700 dark:text-white"
+                }`}
+              >
+                {role}
+              </span>
+            ),
+          },
+          {
+            title: t("status"),
+            dataIndex: "status",
+            render: (status: string) => (
+              <span
+                className={`px-3 py-1 text-xs rounded-full ${
+                  status === "Faol"
+                    ? "bg-[#03906d] text-white"
+                    : "text-white bg-red-800"
+                }`}
+              >
+                {status}
+              </span>
+            ),
+          },
+        ]}
+        modalFields={[
+          {
+            name: "name",
+            label: t("fullname"),
+            component: <InputComponent />,
+            rules: [{ required: true }],
+          },
+          {
+            name: "email",
+            label: t("email"),
+            component: <InputComponent />,
+            rules: [{ required: true, type: "email" }],
+          },
+          {
+            name: "phone",
+            label: t("phone"),
+            component: <InputComponent />,
+            rules: [{ required: true }],
+          },
+          {
+            name: "role",
+            label: t("role"),
+            component: (
+              <SelectComponent
+                options={[
+                  { label: "Super Admin", value: "Super Admin" },
+                  { label: "Admin", value: "Admin" },
+                ]}
+              />
+            ),
 
-        <ModalComponent
-          open={isModalOpen}
-          title={editingAdmin ? t("editAdmin") : t("addAdmin")}
-          onOk={handleSave}
-          onCancel={() => setIsModalOpen(false)}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="name"
-              label={t("fullname")}
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
+            rules: [{ required: true }],
+          },
+          {
+            name: "status",
+            label: t("status"),
+            component: (
+              <SelectComponent
+                options={[
+                  { label: "Faol", value: "Faol" },
+                  { label: "Bloklangan", value: "Bloklangan" },
+                ]}
+              />
+            ),
+            rules: [{ required: true }],
+          },
+        ]}
+      />
 
-            <Form.Item
-              name="email"
-              label={t("email")}
-              rules={[{ required: true, type: "email" }]}
-            >
-              <Input />
-            </Form.Item>
+      <ModalComponent
+        open={isModalOpen}
+        title={editingAdmin ? t("editAdmin") : t("addAdmin")}
+        onOk={() => form.submit()}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <FormWrapper form={form} onFinish={handleSave}>
+          <Form.Item
+            name="name"
+            label={t("fullname")}
+            rules={[{ required: true }]}
+          >
+            <InputComponent />
+          </Form.Item>
 
-            <Form.Item
-              name="phone"
-              label={t("phone")}
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
+          <Form.Item
+            name="email"
+            label={t("email")}
+            rules={[{ required: true, type: "email" }]}
+          >
+            <InputComponent />
+          </Form.Item>
 
-            <Form.Item
-              name="role"
-              label={t("role")}
-              rules={[{ required: true }]}
-            >
-              <Select>
-                <Select.Option value="Super Admin">Super Admin</Select.Option>
-                <Select.Option value="Admin">Admin</Select.Option>
-              </Select>
-            </Form.Item>
+          <Form.Item
+            name="phone"
+            label={t("phone")}
+            rules={[{ required: true }]}
+          >
+            <InputComponent />
+          </Form.Item>
 
-            <Form.Item
-              name="status"
-              label={t("status")}
-              rules={[{ required: true }]}
-            >
-              <Select>
-                <Select.Option value="Faol">Faol</Select.Option>
-                <Select.Option value="Bloklangan">Bloklangan</Select.Option>
-              </Select>
-            </Form.Item>
-          </Form>
-        </ModalComponent>
-      </div>
-    </ConfigProvider>
+          <Form.Item name="role" label={t("role")} rules={[{ required: true }]}>
+            <SelectComponent
+              options={[
+                { label: "Super Admin", value: "Super Admin" },
+                { label: "Admin", value: "Admin" },
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label={t("status")}
+            rules={[{ required: true }]}
+          >
+            <SelectComponent
+              options={[
+                { label: "Faol", value: "Faol" },
+                { label: "Bloklangan", value: "Bloklangan" },
+              ]}
+            />
+          </Form.Item>
+        </FormWrapper>
+      </ModalComponent>
+    </div>
   );
 };
 

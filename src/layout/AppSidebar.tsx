@@ -14,7 +14,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
-import { ConfigProvider, Dropdown, theme as antdTheme } from "antd";
+import { Dropdown } from "antd";
 import type { MenuProps } from "antd";
 type NavItem = {
   name: string;
@@ -36,7 +36,7 @@ const AppSidebar: React.FC = () => {
     index: number;
   } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
+    {},
   );
 
   const getDropdownMenu = (nav: NavItem): MenuProps => ({
@@ -153,16 +153,16 @@ const AppSidebar: React.FC = () => {
         ],
       },
     ],
-    [t, i18n.language]
+    [t, i18n.language],
   );
 
   const filteredNavItems = allNavItems.filter(
-    (item) => currentRole && item.roles.includes(currentRole)
+    (item) => currentRole && item.roles.includes(currentRole),
   );
 
   const isActive = useCallback(
     (path: string) => location.pathname.startsWith(path),
-    [location.pathname]
+    [location.pathname],
   );
 
   useEffect(() => {
@@ -179,7 +179,7 @@ const AppSidebar: React.FC = () => {
 
   const handleSubmenuToggle = (index: number, type: "main" | "others") => {
     setOpenSubmenu((p) =>
-      p && p.index === index && p.type === type ? null : { index, type }
+      p && p.index === index && p.type === type ? null : { index, type },
     );
   };
 
@@ -213,8 +213,8 @@ const AppSidebar: React.FC = () => {
                       ? "bg-[#03906d] text-white"
                       : "menu-item-active"
                     : theme === "dark"
-                    ? "menu-item-inactive dark:menu-item-inactive-dark"
-                    : "menu-item-inactive"
+                      ? "menu-item-inactive dark:menu-item-inactive-dark"
+                      : "menu-item-inactive"
                 }`}
               >
                 <span className="menu-item-icon-size">{nav.icon}</span>
@@ -296,67 +296,48 @@ const AppSidebar: React.FC = () => {
     ROLE_PARENT: "Sfera Parent",
   };
   return (
-    <ConfigProvider
-      theme={{
-        algorithm:
-          theme === "dark"
-            ? antdTheme.darkAlgorithm
-            : antdTheme.defaultAlgorithm,
-        token: {
-          colorBgElevated: theme === "dark" ? "#101828" : "#ffffff",
-          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-          colorBorder: theme === "dark" ? "#1f2937" : "#d1d5db",
-        },
-        components: {
-          Dropdown: {
-            paddingBlock: 4,
-          },
-        },
-      }}
+    <aside
+      className={`fixed top-0 left-0 z-60 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
+        isExpanded || isHovered || isMobileOpen ? "w-72.5" : "w-22.5"
+      } ${
+        isMobileOpen ? "translate-x-0" : "-translate-x-full"
+      } lg:translate-x-0`}
     >
-      <aside
-        className={`fixed top-0 left-0 z-60 h-screen border-r dark:border-gray-800 border-gray-200 bg-white px-5 transition-all duration-300 dark:bg-gray-900 ${
-          isExpanded || isHovered || isMobileOpen ? "w-72.5" : "w-22.5"
-        } ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
-        <div className="py-5 flex justify-start">
-          <Link to={rolePathMap[currentRole]}>
-            <img
-              className="object-contain w-10 dark:hidden"
-              src="/images/logoOne.png"
-              alt="Logo"
-            />
-            <img
-              className=" object-contain w-10 hidden dark:block"
-              src="/images/logoTwo.png"
-              alt="Logo Dark"
-            />
-          </Link>
-          <h1
-            className={`ml-2 text-lg mt-1.5 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
-              isExpanded || isHovered || isMobileOpen
-                ? "opacity-100 w-auto block"
-                : "hidden"
-            }`}
-          >
-            {roleTitleMap[currentRole]}
-          </h1>
-        </div>
+      <div className="py-5 flex justify-start">
+        <Link to={rolePathMap[currentRole]}>
+          <img
+            className="object-contain w-10 dark:hidden"
+            src="/images/logoOne.png"
+            alt="Logo"
+          />
+          <img
+            className=" object-contain w-10 hidden dark:block"
+            src="/images/logoTwo.png"
+            alt="Logo Dark"
+          />
+        </Link>
+        <h1
+          className={`ml-2 text-lg mt-1.5 font-semibold text-gray-800 dark:text-white transition-all duration-300 ${
+            isExpanded || isHovered || isMobileOpen
+              ? "opacity-100 w-auto block"
+              : "hidden"
+          }`}
+        >
+          {roleTitleMap[currentRole]}
+        </h1>
+      </div>
 
-        <nav className="flex-1 overflow-y-auto">
-          <h2 className="mb-4 text-xs uppercase text-gray-400">
-            {isExpanded || isHovered || isMobileOpen ? (
-              t("menu")
-            ) : (
-              <HorizontaLDots />
-            )}
-          </h2>
-          {renderMenuItems(filteredNavItems, "main")}
-        </nav>
-      </aside>
-    </ConfigProvider>
+      <nav className="flex-1 overflow-y-auto">
+        <h2 className="mb-4 text-xs uppercase text-gray-400">
+          {isExpanded || isHovered || isMobileOpen ? (
+            t("menu")
+          ) : (
+            <HorizontaLDots />
+          )}
+        </h2>
+        {renderMenuItems(filteredNavItems, "main")}
+      </nav>
+    </aside>
   );
 };
 

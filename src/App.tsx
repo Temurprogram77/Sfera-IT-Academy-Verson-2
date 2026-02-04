@@ -3,10 +3,10 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LoadingScreen } from "./components/loading/Loading";
+// import { LoadingScreen } from "./components/loading/Loading";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -45,6 +45,7 @@ import { useTheme } from "./context/ThemeContext";
 import { useAuthContext } from "./context/AuthContext";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
+import { ConfigProvider, theme as antdTheme } from "antd";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -108,7 +109,7 @@ function PublicRoute({ children }: Props) {
 export default function App() {
   const { theme } = useTheme();
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-
+  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
@@ -123,136 +124,169 @@ export default function App() {
   }, []);
 
   return (
-    <Router>
-      {!isOnline && (
-        <div
-          style={{
-            background: "red",
-            color: "white",
-            padding: "10px",
-            textAlign: "center",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            zIndex: 9999,
-          }}
-        >
-          Internet yo‘q. Iltimos, tarmoqni tekshiring.
-        </div>
-      )}
-      <ScrollToTop />
-      <Routes>
-        {/* Auth */}
-        <Route
-          path="/signin"
-          element={
-            <PublicRoute>
-              <SignIn />
-            </PublicRoute>
-          }
+    <ConfigProvider
+      theme={{
+        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
+
+        token: {
+          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
+        },
+
+        components: {
+          Modal: {
+            contentBg: theme === "dark" ? "#111827" : "#ffffff",
+            headerBg: theme === "dark" ? "#111827" : "#ffffff",
+            footerBg: theme === "dark" ? "#111827" : "#ffffff",
+          },
+          Segmented: {
+            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
+            colorPrimary: theme === "dark" ? "##101828" : "#1890ff",
+          },
+          Dropdown: {
+            paddingBlock: 4,
+          },
+          Calendar: {
+            fullBg: theme === "dark" ? "#111827" : "#ffffff",
+            fullPanelBg: theme === "dark" ? "#1f2937" : "#ffffff",
+            itemActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
+          },
+        },
+      }}
+    >
+      <Router>
+        {!isOnline && (
+          <div
+            style={{
+              background: "red",
+              color: "white",
+              padding: "10px",
+              textAlign: "center",
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              zIndex: 9999,
+            }}
+          >
+            Internet yo‘q. Iltimos, tarmoqni tekshiring.
+          </div>
+        )}
+        <ScrollToTop />
+        <Routes>
+          {/* Auth */}
+          <Route
+            path="/signin"
+            element={
+              <PublicRoute>
+                <SignIn />
+              </PublicRoute>
+            }
+          />
+
+          {/* Dashboard */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<RootRedirect />} />
+
+            {/* Dashboards */}
+            <Route
+              path="dashboard/admin"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="dashboard/super_admin"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
+                  <SuperAdmin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="dashboard/teacher"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
+                  <Teacher />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="dashboard/student"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
+                  <Student />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="dashboard/parent"
+              element={
+                <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
+                  <Parent />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Users */}
+            <Route path="teachers" element={<Teachers />} />
+            <Route path="admins" element={<Admins />} />
+            <Route path="students" element={<Students />} />
+            <Route path="parents" element={<Parents />} />
+
+            {/* Messages & Grades */}
+            <Route path="messages" element={<Messages />} />
+            <Route path="grades" element={<Grades />} />
+            <Route path="assessment" element={<Assessnment />} />
+
+            {/* Groups & Rooms */}
+            <Route path="groups" element={<Groups />} />
+            <Route path="rooms" element={<Rooms />} />
+            <Route path="room/:id" element={<RoomsID />} />
+
+            {/* Profile & Other Pages */}
+            <Route path="profile" element={<UserProfiles />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="blank" element={<Blank />} />
+
+            {/* Tables */}
+            <Route path="basic-tables" element={<BasicTables />} />
+
+            {/* UI Elements */}
+            <Route path="alerts" element={<Alerts />} />
+            <Route path="avatars" element={<Avatars />} />
+            <Route path="badge" element={<Badges />} />
+            <Route path="buttons" element={<Buttons />} />
+            <Route path="images" element={<Images />} />
+            <Route path="videos" element={<Videos />} />
+
+            {/* Charts */}
+            <Route path="line-chart" element={<LineChart />} />
+            <Route path="bar-chart" element={<BarChart />} />
+          </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
+        {/* Toaster */}
+        <Toaster
+          position="top-right"
+          richColors
+          theme={theme === "dark" ? "dark" : "light"}
         />
-
-        {/* Dashboard */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/" element={<RootRedirect />} />
-
-          {/* Dashboards */}
-          <Route
-            path="dashboard/admin"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/super_admin"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
-                <SuperAdmin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/teacher"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
-                <Teacher />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/student"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
-                <Student />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/parent"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
-                <Parent />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Users */}
-          <Route path="teachers" element={<Teachers />} />
-          <Route path="admins" element={<Admins />} />
-          <Route path="students" element={<Students />} />
-          <Route path="parents" element={<Parents />} />
-
-          {/* Messages & Grades */}
-          <Route path="messages" element={<Messages />} />
-          <Route path="grades" element={<Grades />} />
-          <Route path="assessment" element={<Assessnment />} />
-
-          {/* Groups & Rooms */}
-          <Route path="groups" element={<Groups />} />
-          <Route path="rooms" element={<Rooms />} />
-          <Route path="room/:id" element={<RoomsID />} />
-
-          {/* Profile & Other Pages */}
-          <Route path="profile" element={<UserProfiles />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="blank" element={<Blank />} />
-
-          {/* Tables */}
-          <Route path="basic-tables" element={<BasicTables />} />
-
-          {/* UI Elements */}
-          <Route path="alerts" element={<Alerts />} />
-          <Route path="avatars" element={<Avatars />} />
-          <Route path="badge" element={<Badges />} />
-          <Route path="buttons" element={<Buttons />} />
-          <Route path="images" element={<Images />} />
-          <Route path="videos" element={<Videos />} />
-
-          {/* Charts */}
-          <Route path="line-chart" element={<LineChart />} />
-          <Route path="bar-chart" element={<BarChart />} />
-        </Route>
-
-        {/* Fallback */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-
-      {/* Toaster */}
-      <Toaster
-        position="top-right"
-        richColors
-        theme={theme === "dark" ? "dark" : "light"}
-      />
-    </Router>
+      </Router>
+    </ConfigProvider>
   );
 }

@@ -1,15 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-  Table,
-  Form,
-  Popconfirm,
-  ConfigProvider,
-  theme as antdTheme,
-} from "antd";
+import { Table, Form, Popconfirm } from "antd";
 
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
-import { useTheme } from "../../context/ThemeContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -33,15 +26,17 @@ interface TableComponentProps<T extends { id: number }> {
   modalFields?: ModalField<T>[];
   searchKeys?: (keyof T)[];
   itemName?: string;
-  pagination?: false | {
-    current?: number;
-    pageSize?: number;
-    total?: number;
-    onChange?: (page: number, pageSize: number) => void;
-    showSizeChanger?: boolean;
-    showTotal?: (total: number) => string;
-    pageSizeOptions?: string[];
-  };
+  pagination?:
+    | false
+    | {
+        current?: number;
+        pageSize?: number;
+        total?: number;
+        onChange?: (page: number, pageSize: number) => void;
+        showSizeChanger?: boolean;
+        showTotal?: (total: number) => string;
+        pageSizeOptions?: string[];
+      };
   onEdit?: (record: T) => void;
   onDelete?: (id: number) => void;
 }
@@ -56,8 +51,6 @@ const TableComponent = <T extends { id: number }>({
   onEdit,
   onDelete,
 }: TableComponentProps<T>) => {
-  const { theme } = useTheme();
-  const { darkAlgorithm, defaultAlgorithm } = antdTheme;
   const { t } = useTranslation();
 
   const [items, setItems] = useState<T[]>(data);
@@ -73,7 +66,7 @@ const TableComponent = <T extends { id: number }>({
     if (!searchKeys.length) return items;
 
     return items.filter((i) =>
-      searchKeys.some((key) => String(i[key]).toLowerCase().includes(""))
+      searchKeys.some((key) => String(i[key]).toLowerCase().includes("")),
     );
   }, [items, searchKeys]);
 
@@ -104,7 +97,7 @@ const TableComponent = <T extends { id: number }>({
 
     if (editingItem) {
       setItems((prev) =>
-        prev.map((i) => (i.id === editingItem.id ? { ...i, ...values } : i))
+        prev.map((i) => (i.id === editingItem.id ? { ...i, ...values } : i)),
       );
 
       toast.success(`${itemName} yangilandi`);
@@ -155,63 +148,43 @@ const TableComponent = <T extends { id: number }>({
   ].filter(Boolean);
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
-
-        token: {
-          colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
-
-          colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-
-          colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
-        },
-      }}
-    >
-      <div className="bg-white dark:bg-gray-900 rounded-xl">
-<<<<<<< HEAD
-=======
-
->>>>>>> 01e1cfc (added)
-        <div className="overflow-x-auto">
-          <Table
-            columns={columns as any}
-            dataSource={filteredItems}
-            rowKey="id"
-            pagination={pagination}
-            scroll={{ x: 900 }}
-          />
-        </div>
-
-        {modalFields.length > 0 && (
-          <ModalComponent
-            open={isModalVisible}
-            title={
-              editingItem
-                ? `${itemName} ${t("edit")}`
-                : `${t("new")} ${itemName}`
-            }
-            onOk={handleSave}
-            onCancel={() => setIsModalVisible(false)}
-            okText={t("save")}
-            cancelText={t("close")}
-          >
-            <Form form={form} layout="vertical">
-              {modalFields.map((field) => (
-                <Form.Item
-                  key={String(field.name)}
-                  name={field.name as string}
-                  label={field.label}
-                  rules={field.rules || []}
-                >
-                  {field.component}
-                </Form.Item>
-              ))}
-            </Form>
-          </ModalComponent>
-        )}
+    <div className="bg-white dark:bg-gray-900 rounded-xl">
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns as any}
+          dataSource={filteredItems}
+          rowKey="id"
+          pagination={pagination}
+          scroll={{ x: 900 }}
+        />
       </div>
-    </ConfigProvider>
+
+      {modalFields.length > 0 && (
+        <ModalComponent
+          open={isModalVisible}
+          title={
+            editingItem ? `${itemName} ${t("edit")}` : `${t("new")} ${itemName}`
+          }
+          onOk={handleSave}
+          onCancel={() => setIsModalVisible(false)}
+          okText={t("save")}
+          cancelText={t("close")}
+        >
+          <Form form={form} layout="vertical">
+            {modalFields.map((field) => (
+              <Form.Item
+                key={String(field.name)}
+                name={field.name as string}
+                label={field.label}
+                rules={field.rules || []}
+              >
+                {field.component}
+              </Form.Item>
+            ))}
+          </Form>
+        </ModalComponent>
+      )}
+    </div>
   );
 };
 

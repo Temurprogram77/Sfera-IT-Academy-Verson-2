@@ -1,5 +1,5 @@
 import React from "react";
-import { Select } from "antd";
+import { Select} from "antd";
 
 interface SelectComponentProps {
   value?: string;
@@ -19,8 +19,10 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   placeholder = "Holatni tanlang",
   style = { width: "100%" },
 }) => {
+
   return (
     <Select
+      popupClassName="dark-select-dropdown"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
