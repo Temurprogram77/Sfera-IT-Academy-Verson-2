@@ -20,8 +20,12 @@ const Students = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [form] = Form.useForm();
+
+  const { uploadFile, uploadProgress, isUploading } = useFileUpload();
 
   // STUDENTS HOOK
   const {
@@ -34,7 +38,11 @@ const Students = () => {
     isCreating,
     isUpdating,
     isDeleting,
-  } = useStudents();
+  } = useStudents({
+    name: search || undefined,
+    page: currentPage,
+    size: pageSize,
+  });
 
   // GROUPS HOOK
   const { groups, loading: groupsLoading } = useGroups();

@@ -18,6 +18,7 @@ export const useStudents = () => {
   >({
     queryKey: QUERY_KEYS.STUDENTS.ALL,
     queryFn: () => studentService.getStudents(),
+    staleTime: 1000 * 60 * 5,
   });
 
   const createMutation = useMutation<
