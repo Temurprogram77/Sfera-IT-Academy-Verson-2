@@ -8,6 +8,7 @@ import {
   Select,
   Upload,
   Progress,
+  Spin,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
@@ -60,7 +61,7 @@ const Students = () => {
         (s) =>
           s.fulName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           s.groupName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.phoneNumber.includes(searchTerm)
+          s.phoneNumber.includes(searchTerm),
       )
     : [];
 
@@ -175,7 +176,7 @@ const Students = () => {
     },
   };
 
-  if (loading) return <LoadingScreen />;
+  // if (loading) return <LoadingScreen />;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -200,7 +201,11 @@ const Students = () => {
           buttonText={t("addStudent")}
           onButtonClick={() => showModal()}
         />
-
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Spin size="large" tip={t("loading")} />
+          </div>
+        )}
         {/* TABLE */}
         <TableComponent<Student>
           data={filteredStudents}
@@ -219,7 +224,7 @@ const Students = () => {
                       className="w-10 h-10 rounded-full object-cover"
                       onError={(e) => {
                         // Fallback if image fails to load
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   )}
@@ -323,11 +328,14 @@ const Students = () => {
                 {
                   validator: (_, value) => {
                     const formatted = formatPhoneNumber(value || "");
-                    if (formatted.length === 12 && formatted.startsWith("998")) {
+                    if (
+                      formatted.length === 12 &&
+                      formatted.startsWith("998")
+                    ) {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error("Phone must be 12 digits starting with 998")
+                      new Error("Phone must be 12 digits starting with 998"),
                     );
                   },
                 },
@@ -453,7 +461,9 @@ const Students = () => {
                           return Promise.resolve();
                         }
                         return Promise.reject(
-                          new Error("Phone must be 12 digits starting with 998")
+                          new Error(
+                            "Phone must be 12 digits starting with 998",
+                          ),
                         );
                       },
                     },

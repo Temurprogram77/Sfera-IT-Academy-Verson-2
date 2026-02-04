@@ -1,5 +1,6 @@
-import { Modal } from "antd";
+import { Modal, ConfigProvider } from "antd";
 import { ReactNode } from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 interface ModalComponentProps {
   open: boolean;
@@ -10,7 +11,7 @@ interface ModalComponentProps {
   cancelText?: string;
   children: ReactNode;
   footer?: ReactNode[] | null;
-  confirmLoading?: boolean;  // ✅ Buni qo'shing
+  confirmLoading?: boolean;
 }
 
 const ModalComponent = ({
@@ -22,23 +23,39 @@ const ModalComponent = ({
   cancelText = "Bekor qilish",
   children,
   footer,
-  confirmLoading,  // ✅ Destructure qiling
+  confirmLoading,
 }: ModalComponentProps) => {
+  const { theme } = useTheme();
   return (
-    <Modal
-      open={open}
-      title={title}
-      onOk={onOk}
-      onCancel={onCancel}
-      okText={okText}
-      cancelText={cancelText}
-      footer={footer}
-      confirmLoading={confirmLoading}  
-      destroyOnHidden
-      centered
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#1890ff", // Primary rang (OK button)
+          colorBgMask: "rgba(0, 0, 0, 0.45)", // Modal orqa fon
+          borderRadiusLG: 8, // Border radius
+        },
+        components: {
+          Modal: {
+            contentBg: theme === "dark" ? "#111827" : "#ffffff",
+            headerBg: theme === "dark" ? "#111827" : "#ffffff",
+            footerBg: theme === "dark" ? "#111827" : "#ffffff",
+          },
+        },
+      }}
     >
-      {children}
-    </Modal>
+      <Modal
+        open={open}
+        title={title}
+        onOk={onOk}
+        onCancel={onCancel}
+        okText={okText}
+        cancelText={cancelText}
+        footer={footer}
+        confirmLoading={confirmLoading}
+      >
+        {children}
+      </Modal>
+    </ConfigProvider>
   );
 };
 

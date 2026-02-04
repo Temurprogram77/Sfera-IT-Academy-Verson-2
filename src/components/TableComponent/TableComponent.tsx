@@ -169,6 +169,10 @@ const TableComponent = <T extends { id: number }>({
       }}
     >
       <div className="bg-white dark:bg-gray-900 rounded-xl">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 01e1cfc (added)
         <div className="overflow-x-auto">
           <Table
             columns={columns as any}
