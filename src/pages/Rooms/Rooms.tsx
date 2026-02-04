@@ -19,7 +19,6 @@ const Rooms = () => {
   const {
     rooms,
     loading,
-    refetch,
     error,
     createRoom,
     isCreating,

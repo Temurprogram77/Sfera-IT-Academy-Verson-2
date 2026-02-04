@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from "react";
-
 import { useModal } from "../../hooks/useModal";
 import Modal from "../Modal/Modal";
-import Button from "../IconButton/IconButton";
-import Input from "../Input/Input";
-import Label from "../form/Label";
-import FormWrapper from "../FormWrapper/FormWrapper";
 
 import { useProfile } from "../../hooks/useProfile";
 import { formatPhone } from "../../utils/phoneFormatter";
@@ -14,65 +8,10 @@ import { Spin } from "antd";
 import { useTranslation } from "react-i18next";
 
 export default function UserInfoCard() {
-  const { isOpen, openModal, closeModal } = useModal();
+  const { isOpen, closeModal } = useModal();
   const { user, loading, error } = useProfile();
   const { t } = useTranslation();
 
-  /* =========================
-      FORM STATE
-  ========================== */
-  const [formData, setFormData] = useState({
-    facebook: "",
-    twitter: "",
-    linkedin: "",
-    instagram: "",
-    fullName: "",
-    phone: "",
-  });
-
-  /* =========================
-      USER → FORM
-  ========================== */
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        facebook: user?.facebook || "",
-        twitter: user?.twitter || "",
-        linkedin: user?.linkedin || "",
-        instagram: user?.instagram || "",
-        fullName: user?.fullName || "",
-        phone: user?.phone || "",
-      });
-    }
-  }, [user]);
-
-  /* =========================
-      INPUT CHANGE
-  ========================== */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  /* =========================
-      SAVE
-  ========================== */
-  const handleSave = () => {
-    console.log("Saved data:", formData);
-
-    // Keyinchalik backend:
-    // await updateProfile(formData)
-
-    closeModal();
-  };
-
-  /* =========================
-      LOADING
-  ========================== */
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
@@ -146,17 +85,6 @@ export default function UserInfoCard() {
               </p>
             </div>
 
-            {/* EMAIL */}
-            <div>
-              <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-                {t("email")}
-              </p>
-
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.email || "sferaAcademy@gmail.com"}
-              </p>
-            </div>
-
             {/* PHONE */}
             <div>
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
@@ -191,113 +119,6 @@ export default function UserInfoCard() {
             </p>
 
           </div>
-
-          {/* =========================
-              FORM
-          ========================== */}
-          <FormWrapper onSubmit={handleSave} className="flex flex-col">
-
-            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-
-              {/* SOCIAL */}
-              <div>
-
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
-                  {t("socialLinks")}
-                </h5>
-
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-                  <div>
-                    <Label>{t("facebook")}</Label>
-                    <Input
-                      name="facebook"
-                      value={formData.facebook}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>X.com</Label>
-                    <Input
-                      name="twitter"
-                      value={formData.twitter}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>{t("linkedin")}</Label>
-                    <Input
-                      name="linkedin"
-                      value={formData.linkedin}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>{t("instagram")}</Label>
-                    <Input
-                      name="instagram"
-                      value={formData.instagram}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                </div>
-              </div>
-
-              {/* PERSONAL */}
-              <div className="mt-7">
-
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
-                  {t("personalInformation")}
-                </h5>
-
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-                  <div>
-                    <Label>{t("fullname")}</Label>
-                    <Input
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>{t("phone")}</Label>
-                    <Input
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-
-            {/* BUTTONS */}
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-
-              <Button
-                size="sm"
-                variant="outline"
-                type="button"
-                onClick={closeModal}
-              >
-                {t("close")}
-              </Button>
-
-              <Button size="sm" type="submit">
-                {t("saveChanges")}
-              </Button>
-
-            </div>
-
-          </FormWrapper>
         </div>
       </Modal>
     </div>
