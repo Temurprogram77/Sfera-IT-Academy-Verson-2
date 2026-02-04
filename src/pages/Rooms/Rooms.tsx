@@ -19,6 +19,7 @@ const Rooms = () => {
   const {
     rooms,
     loading,
+    refetch,
     error,
     createRoom,
     isCreating,
@@ -50,35 +51,20 @@ const Rooms = () => {
 
       if (selectedRoom) {
         updateRoom(
-          {
-            id: selectedRoom.id,
-            name: values.name,
-          },
-          {
-            onSuccess: () => {
-              handleCancel();
-            },
-          },
+          { id: selectedRoom.id, name: values.name },
+          { onSuccess: handleCancel },
         );
       } else {
-        createRoom(
-          { name: values.name },
-          {
-            onSuccess: () => {
-              handleCancel();
-            },
-          },
-        );
+        createRoom({ name: values.name }, { onSuccess: handleCancel });
       }
     } catch (error) {
       console.error("Validation error:", error);
     }
   };
   const handleDelete = (roomId: number, e?: React.MouseEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
+    if (e) e.stopPropagation();
     deleteRoom(roomId);
+    // refetch();
   };
 
   const isSaving = isCreating || isUpdating;

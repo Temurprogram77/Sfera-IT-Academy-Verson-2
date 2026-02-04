@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomService } from "../services/roomService";
 import {
   Room,
@@ -53,6 +49,7 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
       if (response.success) {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.ROOMS.ALL],
+          exact: false,
         });
 
         toast.success("Room created successfully");
@@ -67,7 +64,10 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
     mutationFn: (data: UpdateRoomDto) => roomService.updateRoom(data),
     onSuccess: (response) => {
       if (response.success) {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ROOMS.ALL });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROOMS.ALL],
+          exact: false,
+        });
         toast.success("Room updated successfully");
       }
     },
@@ -84,7 +84,11 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
     mutationFn: (roomId: string | number) => roomService.deleteRoom(roomId),
     onSuccess: (response) => {
       if (response.success) {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ROOMS.ALL });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROOMS.ALL],
+          exact: false,
+        });
+
         toast.success("Room deleted successfully");
       }
     },

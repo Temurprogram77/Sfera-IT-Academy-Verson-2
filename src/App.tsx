@@ -147,6 +147,9 @@ export default function App() {
           },
           Dropdown: {
             paddingBlock: 4,
+            colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
           },
           Calendar: {
             fullBg: theme === "dark" ? "#111827" : "#ffffff",

@@ -6,39 +6,39 @@ import {
   CreateStudentDto,
   UpdateStudentDto,
   StudentActionResponse,
+  StudentListParams,
 } from "../types/student";
 import { QUERY_KEYS } from "../types/queryKeys";
 
-export const useStudents = () => {
+export const useStudents = (params?: StudentListParams) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, refetch, isRefetching } = useQuery<
+  const { data: StudentData, isLoading, error, refetch, isRefetching } = useQuery<
     StudentListResponse,
     Error
   >({
-    queryKey: QUERY_KEYS.STUDENTS.ALL,
-    queryFn: () => studentService.getStudents(),
+    queryKey: [QUERY_KEYS.STUDENTS, params],
+    queryFn: () => studentService.getStudents(params),
     staleTime: 1000 * 60 * 5,
   });
 
-  const createMutation = useMutation<
+  const createStudentMutation = useMutation<
     StudentActionResponse,
     Error,
     CreateStudentDto
   >({
     mutationFn: (data: CreateStudentDto) => studentService.createStudent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
-      toast.success("Student created successfully");
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS] });
+      toast.success("Student muvaffaqiyatli qo'shildi");
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error?.response?.data?.message || "Failed to create student";
-      toast.error(errorMessage);
+    onError: (error: Error) => {
+      toast.error("Student qo'shishda xatolik yuz berdi");
+      console.error("Create student error:", error)
     },
   });
 
-  const updateMutation = useMutation<
+  const updateStudentMutation = useMutation<
     StudentActionResponse,
     Error,
     UpdateStudentDto
@@ -48,53 +48,49 @@ export const useStudents = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
       toast.success("Student updated successfully");
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error?.response?.data?.message || "Failed to update student";
-      toast.error(errorMessage);
+    onError: (error: Error) => {
+      toast.error("Student yangilashda xatolik yuz berdi.");console.error("Update student error:", error);
     },
   });
 
-  const deleteMutation = useMutation<
+  const deleteStudentMutation = useMutation<
     StudentActionResponse,
     Error,
     number | string
   >({
-    mutationFn: (id: number | string) => studentService.deleteStudent(id),
+    mutationFn: (studentId: number | string) => studentService.deleteStudent(studentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
-      toast.success("Student deleted successfully");
+      toast.success("Student muvaffaqiyatli o'chirildi");
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error?.response?.data?.message || "Failed to delete student";
-      toast.error(errorMessage);
+    onError: (error: Error) => {
+      toast.error("Student o'chirishda xatolik yuz berdi");console.error("Delete student error:", error);
     },
   });
 
   return {
-    students: data?.data?.body || [],
+    students: StudentData?.data?.body || [],
     pagination: {
-      page: data?.data?.page || 0,
-      size: data?.data?.size || 10,
-      totalPage: data?.data?.totalPage || 0,
-      totalElements: data?.data?.totalElements || 0,
+      page: StudentData?.data?.page || 0,
+      size: StudentData?.data?.size || 10,
+      totalPage: StudentData?.data?.totalPage || 0,
+      totalElements: StudentData?.data?.totalElements || 0,
     },
 
     // States
     loading: isLoading,
-    error: error?.message || null,
+    error,
     refetch,
     isRefetching,
 
     // Mutations
-    createStudent: createMutation.mutate,
-    updateStudent: updateMutation.mutate,
-    deleteStudent: deleteMutation.mutate,
+    createStudent: createStudentMutation.mutate,
+    updateStudent: updateStudentMutation.mutate,
+    deleteStudent: deleteStudentMutation.mutate,
 
     // Loading states
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
+    isCreating: createStudentMutation.isPending,
+    isUpdating: updateStudentMutation.isPending,
+    isDeleting: deleteStudentMutation.isPending,
   };
 };

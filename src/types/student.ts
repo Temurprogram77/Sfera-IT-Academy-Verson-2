@@ -18,6 +18,13 @@ export interface Student {
   groupName: string;
 }
 
+export interface StudentListParams extends Record<string, string | number | undefined> {
+  name?: string;
+  phone?: string;
+  page?: number;
+  size?: number;
+}
+
 // ============= API RESPONSES =============
 export interface StudentListResponse {
   success: boolean;

@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from "../constants/apiEndpoints";
+import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import {
   StudentListResponse,
@@ -6,15 +6,15 @@ import {
   CreateStudentDto,
   StudentActionResponse,
   UpdateStudentDto,
+  StudentListParams,
 } from "../types/student";
 
 class StudentService {
   // GET /student - Get all students
-  async getStudents(): Promise<StudentListResponse> {
+  async getStudents(params?: StudentListParams): Promise<StudentListResponse> {
     try {
-      const response = await apiClient.get<StudentListResponse>(
-        API_ENDPOINTS.STUDENT.LIST
-      );
+      const url = buildUrlWithParams(API_ENDPOINTS.STUDENT.LIST, params);
+      const response = await apiClient.get<StudentListResponse>(url)
       return response;
     } catch (error) {
       console.error("Get students error:", error);
