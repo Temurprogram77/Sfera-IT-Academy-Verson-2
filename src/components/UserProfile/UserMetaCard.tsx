@@ -78,7 +78,6 @@ export default function UserMetaCard() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end"></div>
           </div>
           <IconButton
             text={t("editItem")}
