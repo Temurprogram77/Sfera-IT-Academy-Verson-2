@@ -1,10 +1,7 @@
 import { useState } from "react";
-import {
-  Calendar as AntCalendar,
-  Input,
-} from "antd";
+import { Calendar as AntCalendar, Input } from "antd";
 import { useTheme } from "../context/ThemeContext"; // sizning theme context
-import ModalComponent from "../components/ModalComponent/ModalComponent";
+import ModalComponent from "../components/Modal/Modal";
 
 const Calendar = () => {
   const { theme } = useTheme();

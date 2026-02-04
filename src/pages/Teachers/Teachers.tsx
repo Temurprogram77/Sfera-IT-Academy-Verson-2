@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { Form, Spin } from "antd";
 import { useTeacher } from "../../hooks/useTeacher";
-import InputComponent from "../../components/InputComponent/InputComponent";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import InputComponent from "../../components/Input/Input";
+import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import NotFoundData from "../OtherPage/NotFoundData";
 import { Teacher as TeacherType } from "../../types/teacher";
-import FileUpload from "../../components/InputComponent/FileUpload";
+import FileUpload from "../../components/Input/FileUpload";
 import { useFileUpload } from "../../hooks/useFileUpload";
 
 const Teacher = () => {
-
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);

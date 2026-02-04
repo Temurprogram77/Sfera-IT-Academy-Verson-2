@@ -1,18 +1,10 @@
 import { useState } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Spin,
-  Form,
-  Popconfirm,
-} from "antd";
+import { Card, Row, Col, Button, Spin, Form, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../components/IconButton/IconButton";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
-import InputComponent from "../../components/InputComponent/InputComponent";
+import ModalComponent from "../../components/Modal/Modal";
+import InputComponent from "../../components/Input/Input";
 import { useRooms } from "../../hooks/useRooms";
 import { Room } from "../../types/room";
 import NotFoundData from "../OtherPage/NotFoundData";

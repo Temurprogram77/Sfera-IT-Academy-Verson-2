@@ -1,13 +1,9 @@
 import { useState } from "react";
-import {
-  Form,
-  Select,
-  message,
-} from "antd";
+import { Form, Select, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTranslation } from "react-i18next";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
-import InputComponent from "../../components/InputComponent/InputComponent";
+import ModalComponent from "../../components/Modal/Modal";
+import InputComponent from "../../components/Input/Input";
 import TableComponent from "../../components/TableComponent/TableComponent";
 
 // Types

@@ -2,12 +2,12 @@ import { useState, useMemo } from "react";
 import { Form, theme as antdTheme } from "antd";
 import { useTheme } from "../../context/ThemeContext";
 import ListHeader from "../../components/ListHeader/ListHeader";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import ModalComponent from "../../components/Modal/Modal";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import SelectComponent from "../../components/Select/Select";
-import InputComponent from "../../components/InputComponent/InputComponent";
+import InputComponent from "../../components/Input/Input";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 
 interface Admin {

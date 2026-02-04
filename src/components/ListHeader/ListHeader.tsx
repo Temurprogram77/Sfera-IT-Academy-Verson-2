@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import IconButton from "../IconButton/IconButton";
-import InputComponent from "../InputComponent/InputComponent";
+import InputComponent from "../Input/Input";
 
 /* ===== Props type ===== */
 interface ListHeaderProps {

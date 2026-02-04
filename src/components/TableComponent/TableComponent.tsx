@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Table, Form, Popconfirm } from "antd";
 
 import { PencilIcon, TrashBinIcon } from "../../icons";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import ModalComponent from "../Modal/Modal";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 

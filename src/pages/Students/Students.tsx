@@ -1,17 +1,9 @@
 import { useState } from "react";
-import {
-  Form,
-  Input,
-  Popconfirm,
-  Select,
-  Upload,
-  Progress,
-  Spin,
-} from "antd";
+import { Form, Input, Popconfirm, Select, Upload, Progress, Spin } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
-import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/TableComponent/TableComponent";
 import { useTranslation } from "react-i18next";
 import { useStudents } from "../../hooks/useStudent";
