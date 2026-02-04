@@ -1,13 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '../services/authService ';
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  isVerifying: boolean;
-  token: string | null;
-  role: string | null;
-  refreshAuth: () => void;
-}
+import { AuthContextType } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

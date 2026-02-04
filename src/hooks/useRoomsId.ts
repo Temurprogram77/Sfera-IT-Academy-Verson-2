@@ -1,14 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { roomService } from "../services/roomService";
-import { RoomResponse } from "../types/room";
+import { RoomResponse, UseRoomIdReturn } from "../types/room";
 import { QUERY_KEYS } from "../types/queryKeys";
-
-interface UseRoomIdReturn {
-  room: any | null; // agar Room type bo‘lsa, almashtiring
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
 
 export const useRoomId = (
   roomId: string | number

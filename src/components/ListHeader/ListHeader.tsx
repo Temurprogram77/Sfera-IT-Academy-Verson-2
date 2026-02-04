@@ -1,22 +1,9 @@
-import { ReactNode } from "react";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import IconButton from "../IconButton/IconButton";
 import InputComponent from "../Input/Input";
+import { ListHeaderProps } from "../../types/listHeader";
 
-/* ===== Props type ===== */
-interface ListHeaderProps {
-  title: string;
-  count: number;
-  searchValue: string;
-  onSearchChange: (value: string) => void;
-  searchPlaceholder?: string;
-  buttonText: string;
-  onButtonClick: () => void;
-  children?: ReactNode;
-}
-
-/* ===== Component ===== */
 const ListHeader: React.FC<ListHeaderProps> = ({
   title,
   count,

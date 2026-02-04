@@ -1,17 +1,5 @@
 import { Form, Input } from "antd";
-import { ReactNode } from "react";
-
-interface InputComponentProps {
-  name?: string;
-  label?: ReactNode;
-  rules?: any[];
-  placeholder?: string;
-  prefix?: ReactNode;
-  className?: string;
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: "text" | "number" | "email" | "password";
-}
+import { InputComponentProps } from "../../types/input";
 
 const InputComponent = ({
   name,

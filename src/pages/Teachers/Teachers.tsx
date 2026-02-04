@@ -3,7 +3,7 @@ import { Form, Spin } from "antd";
 import { useTeacher } from "../../hooks/useTeacher";
 import InputComponent from "../../components/Input/Input";
 import ModalComponent from "../../components/Modal/Modal";
-import TableComponent from "../../components/TableComponent/TableComponent";
+import TableComponent from "../../components/Table/Table";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import NotFoundData from "../OtherPage/NotFoundData";
 import { Teacher as TeacherType } from "../../types/teacher";
@@ -174,26 +174,6 @@ const Teacher = () => {
                     </div>
                   </div>
                 </div>
-              ),
-            },
-            {
-              key: "phone",
-              title: "Telefon",
-              dataIndex: "phone",
-              render: (phone: string) => (
-                <span className="text-gray-700 dark:text-gray-300">
-                  {phone}
-                </span>
-              ),
-            },
-            {
-              key: "status",
-              title: "Holat",
-              dataIndex: "status",
-              render: (status: string) => (
-                <span className="px-3 py-1 text-xs rounded-full bg-[#03906d] text-white">
-                  {status || "Faol"}
-                </span>
               ),
             },
           ]}

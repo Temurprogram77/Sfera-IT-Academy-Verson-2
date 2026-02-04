@@ -4,7 +4,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
-import TableComponent from "../../components/TableComponent/TableComponent";
+import TableComponent from "../../components/Table/Table";
 import { useTranslation } from "react-i18next";
 import { useStudents } from "../../hooks/useStudent";
 import { useGroups } from "../../hooks/useGroups";

@@ -1,33 +1,14 @@
 import { useState, useMemo } from "react";
 import { Tag, Typography, Avatar, Space } from "antd";
 
-import {
-  UserOutlined,
-  TeamOutlined,
-  BookOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, TeamOutlined, BookOutlined } from "@ant-design/icons";
 
 import ListHeader from "../../components/ListHeader/ListHeader";
-import TableComponent from "../../components/TableComponent/TableComponent";
+import TableComponent from "../../components/Table/Table";
 import { useTranslation } from "react-i18next";
+import { Schedule } from "../../types/room";
 
 const { Text } = Typography;
-
-/* ================= TYPES ================= */
-
-interface Schedule {
-  id: number;
-  subject: string;
-  days: string[];
-  startTime: string;
-  endTime: string;
-  teacher: string;
-  students: string[];
-  room: string;
-  description: string;
-}
-
-/* ================= DATA ================= */
 
 const roomData = {
   name: "Frontend 12-guruh",
@@ -65,12 +46,12 @@ const RoomsID = () => {
   const [search, setSearch] = useState("");
 
   /* ================= FILTER ================= */
-  const {t}=useTranslation()
+  const { t } = useTranslation();
   const filteredData = useMemo(() => {
     return roomData.schedules.filter(
       (item) =>
         item.subject.toLowerCase().includes(search.toLowerCase()) ||
-        item.teacher.toLowerCase().includes(search.toLowerCase())
+        item.teacher.toLowerCase().includes(search.toLowerCase()),
     );
   }, [search]);
 
@@ -83,10 +64,7 @@ const RoomsID = () => {
 
       render: (record: Schedule) => (
         <div className="flex items-center gap-3">
-          <Avatar
-            icon={<BookOutlined />}
-            className="bg-blue-500"
-          />
+          <Avatar icon={<BookOutlined />} className="bg-blue-500" />
 
           <Text strong>{record.subject}</Text>
         </div>
@@ -146,7 +124,6 @@ const RoomsID = () => {
 
   return (
     <div className="p-4 md:p-6">
-
       {/* HEADER */}
 
       <ListHeader

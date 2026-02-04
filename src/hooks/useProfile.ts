@@ -1,17 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { userService } from "../services/userService";
-import { UserProfileResponse, User } from "../types/user";
+import { UseProfileReturn, UserProfileResponse } from "../types/user";
 import { QUERY_KEYS } from "../types/queryKeys";
-
-interface UseProfileReturn {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-  isRefetching: boolean;
-}
-
 export const useProfile = (): UseProfileReturn => {
   const {
     data,

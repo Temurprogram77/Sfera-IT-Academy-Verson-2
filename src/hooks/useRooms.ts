@@ -1,37 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomService } from "../services/roomService";
 import {
-  Room,
   CreateRoomDto,
   UpdateRoomDto,
   CreateRoomResponse,
   DeleteRoomResponse,
+  UseRoomsReturn,
 } from "../types/room";
 import { QUERY_KEYS } from "../types/queryKeys";
 import { toast } from "sonner";
 
-interface UseRoomsReturn {
-  rooms: Room[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
-  isRefetching: boolean;
-
-  createRoom: (
-    data: CreateRoomDto,
-    options?: { onSuccess?: () => void },
-  ) => void;
-  isCreating: boolean;
-
-  updateRoom: (
-    data: UpdateRoomDto,
-    options?: { onSuccess?: () => void },
-  ) => void;
-  isUpdating: boolean;
-
-  deleteRoom: (roomId: string | number) => void;
-  isDeleting: boolean;
-}
 
 export const useRooms = (search: string = ""): UseRoomsReturn => {
   const queryClient = useQueryClient();

@@ -2,17 +2,9 @@ import { Upload, Progress } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { useState } from "react";
+import { FileUploadProps } from "../../types/fileUpload";
 
 const { Dragger } = Upload;
-
-interface FileUploadProps {
-  onFileSelect: (file: File | null) => void;
-  uploadedImageUrl?: string;
-  onRemove?: () => void;
-  disabled?: boolean;
-  uploadProgress?: number;
-  isUploading?: boolean;
-}
 
 const FileUpload = ({
   onFileSelect,

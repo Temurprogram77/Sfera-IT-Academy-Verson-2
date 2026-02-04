@@ -1,12 +1,6 @@
 import React from "react";
 import { Form } from "antd";
-
-interface FormWrapperProps {
-  form: any;
-  onFinish?: (values: any) => void;
-  children: React.ReactNode;
-  layout?: "vertical" | "horizontal" | "inline";
-}
+import { FormWrapperProps } from "../../types/formWrapper";
 
 const FormWrapper: React.FC<FormWrapperProps> = ({
   form,

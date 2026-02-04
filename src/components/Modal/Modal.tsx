@@ -1,17 +1,5 @@
 import { Modal } from "antd";
-import { ReactNode } from "react";
-
-interface ModalComponentProps {
-  open: boolean;
-  title: ReactNode;
-  onOk?: () => void;
-  onCancel: () => void;
-  okText?: string;
-  cancelText?: string;
-  children: ReactNode;
-  footer?: ReactNode[] | null;
-  confirmLoading?: boolean;
-}
+import { ModalComponentProps } from "../../types/modal";
 
 const ModalComponent = ({
   open,

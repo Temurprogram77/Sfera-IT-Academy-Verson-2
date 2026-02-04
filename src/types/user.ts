@@ -10,3 +10,12 @@ export interface UserProfileResponse {
   message: string;
   data: User;
 }
+
+export interface UseProfileReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+  isRefetching: boolean;
+}
+

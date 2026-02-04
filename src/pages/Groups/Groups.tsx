@@ -4,7 +4,7 @@ import ListHeader from "../../components/ListHeader/ListHeader";
 import { useTranslation } from "react-i18next";
 import ModalComponent from "../../components/Modal/Modal";
 import InputComponent from "../../components/Input/Input";
-import TableComponent from "../../components/TableComponent/TableComponent";
+import TableComponent from "../../components/Table/Table";
 
 // Types
 type Group = {

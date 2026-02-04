@@ -1,13 +1,6 @@
 import React from "react";
-import { Select} from "antd";
-
-interface SelectComponentProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  options?: { label: string; value: string }[];
-  placeholder?: string;
-  style?: React.CSSProperties;
-}
+import { Select } from "antd";
+import { SelectComponentProps } from "../../types/select";
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
   value,

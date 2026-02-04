@@ -1,18 +1,5 @@
 import { Button } from "antd";
-import { ReactNode } from "react";
-
-interface IconButtonProps {
-  icon?: ReactNode;
-  text?: string;
-  onClick?: () => void;
-  type?: "default" | "primary" | "dashed" | "link" | "text";
-  className?: string;
-  loading?: boolean;
-  disabled?: boolean;
-  danger?: boolean;
-  htmlType?: "button" | "submit" | "reset";
-}
-
+import { IconButtonProps } from "../../types/iconButton";
 const IconButton = ({
   icon,
   text,
