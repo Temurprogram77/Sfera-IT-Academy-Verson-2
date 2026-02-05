@@ -8,7 +8,7 @@ export default function ScheduleList() {
     <Card
       title={
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Schedules</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Schedules</h2>
           <p className="text-sm text-slate-500 mt-1">All room schedules and classes</p>
         </div>
       }

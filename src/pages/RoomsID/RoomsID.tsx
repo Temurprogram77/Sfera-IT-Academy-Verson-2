@@ -8,7 +8,7 @@ import ClassDistribution from '../../components/rooms/Classdistribution'
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen bg-[#eef2ff] dark:bg-[#101828] p-8">
       <div className="max-w-7xl mx-auto">
         <Header />
 

@@ -14,11 +14,11 @@ interface ScheduleProps {
 
 export default function ScheduleCard({ schedule }: ScheduleProps) {
   return (
-    <div className="border-l-4 border-indigo-500 bg-gradient-to-r from-indigo-50 to-transparent p-4 rounded-lg">
+    <div className="border-l-4 border-indigo-500 dark:border-[#1d2939] bg-[#eef2ff] dark:bg-[#111827] p-4 rounded-lg">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <h3 className="font-bold text-slate-900">{schedule.title}</h3>
-          <p className="text-sm text-slate-600 mt-1">{schedule.location}</p>
+          <h3 className="font-bold text-slate-900 dark:text-white">{schedule.title}</h3>
+          <p className="text-sm text-slate-600 dark:text-gray-400 mt-1">{schedule.location}</p>
           <p className="text-indigo-600 font-semibold text-sm mt-2">{schedule.time}</p>
           <div className="flex gap-2 mt-3">
             {schedule.days.map((day) => (
