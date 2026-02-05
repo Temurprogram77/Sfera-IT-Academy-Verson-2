@@ -145,5 +145,9 @@
     "days": "Kunlar",
     "time": "Vaqt",
     "subjectOrTeacher": "Fan yoki ustoz...",
-    "addLesson": "Dars qo‘shish"
+    "addLesson": "Dars qo‘shish",
+    "editRoom": "Xonani tahrirlash",
+    "deleteRoomConfirm": "Xonani o‘chirmoqchimisiz?",
+    "areYouSureDeleteRoom": "Xonani o‘chirishga ishonchingiz komilmi?"
 }
+ 

@@ -143,5 +143,9 @@
    "days": "Кунлар",
   "time": "Вақт",
   "subjectOrTeacher": "Фан ёки устоз...",
-  "addLesson": "Дарс қўшиш"
+  "addLesson": "Дарс қўшиш",
+  "editRoom": "Хонани таҳрирлаш",
+  "deleteRoomConfirm": "Хонани ўчирмоқчимисиз?",
+  "areYouSureDeleteRoom": "Хонани ўчиришга ишончингиз комилми?"
 }
+ 
