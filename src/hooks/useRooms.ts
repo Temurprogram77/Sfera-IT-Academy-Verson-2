@@ -6,27 +6,28 @@ import {
   CreateRoomResponse,
   DeleteRoomResponse,
   UseRoomsReturn,
+  RoomListParams,
 } from "../types/room";
 import { QUERY_KEYS } from "../types/queryKeys";
 import { toast } from "sonner";
 
 
-export const useRooms = (search: string = ""): UseRoomsReturn => {
+export const useRooms = (params?: RoomListParams): UseRoomsReturn => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, refetch, isRefetching } = useQuery({
-    queryKey: [QUERY_KEYS.ROOMS.ALL, search],
-    queryFn: () => roomService.getRooms(search),
+  const { data: RoomData, isLoading, error, refetch, isRefetching } = useQuery({
+    queryKey: [QUERY_KEYS.ROOMS, params],
+    queryFn: () => roomService.getRooms(params),
 
     placeholderData: (previousData) => previousData,
   });
 
-  const createMutation = useMutation<CreateRoomResponse, Error, CreateRoomDto>({
+  const createRoomMutation = useMutation<CreateRoomResponse, Error, CreateRoomDto>({
     mutationFn: (data: CreateRoomDto) => roomService.createRoom(data),
     onSuccess: (response) => {
       if (response.success) {
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROOMS.ALL],
+          queryKey: [QUERY_KEYS.ROOMS],
           exact: false,
         });
 
@@ -38,12 +39,12 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
     },
   });
 
-  const updateMutation = useMutation<DeleteRoomResponse, Error, UpdateRoomDto>({
+  const updateRoomMutation = useMutation<DeleteRoomResponse, Error, UpdateRoomDto>({
     mutationFn: (data: UpdateRoomDto) => roomService.updateRoom(data),
     onSuccess: (response) => {
       if (response.success) {
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROOMS.ALL],
+          queryKey: [QUERY_KEYS.ROOMS],
           exact: false,
         });
         toast.success("Room updated successfully");
@@ -54,7 +55,7 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
     },
   });
 
-  const deleteMutation = useMutation<
+  const deleteRoomMutation = useMutation<
     DeleteRoomResponse,
     Error,
     string | number
@@ -63,7 +64,7 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
     onSuccess: (response) => {
       if (response.success) {
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROOMS.ALL],
+          queryKey: [QUERY_KEYS.ROOMS],
           exact: false,
         });
 
@@ -76,19 +77,19 @@ export const useRooms = (search: string = ""): UseRoomsReturn => {
   });
 
   return {
-    rooms: data?.data || [],
+    rooms: RoomData?.data || [],
     loading: isLoading,
     error: error ? error.message : null,
     refetch,
     isRefetching,
 
-    createRoom: (data, options) => createMutation.mutate(data, options),
-    isCreating: createMutation.isPending,
+    createRoom: (data, options) => createRoomMutation.mutate(data, options),
+    isCreating: createRoomMutation.isPending,
 
-    updateRoom: (data, options) => updateMutation.mutate(data, options),
-    isUpdating: updateMutation.isPending,
+    updateRoom: (data, options) => updateRoomMutation.mutate(data, options),
+    isUpdating: updateRoomMutation.isPending,
 
-    deleteRoom: deleteMutation.mutate,
-    isDeleting: deleteMutation.isPending,
+    deleteRoom: deleteRoomMutation.mutate,
+    isDeleting: deleteRoomMutation.isPending,
   };
 };

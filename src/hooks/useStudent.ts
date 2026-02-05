@@ -17,7 +17,7 @@ export const useStudents = (params?: StudentListParams) => {
     StudentListResponse,
     Error
   >({
-    queryKey: [QUERY_KEYS.STUDENTS, params],
+    queryKey: [QUERY_KEYS.STUDENTS.ALL, params],
     queryFn: () => studentService.getStudents(params),
     staleTime: 1000 * 60 * 5,
   });
@@ -29,7 +29,7 @@ export const useStudents = (params?: StudentListParams) => {
   >({
     mutationFn: (data: CreateStudentDto) => studentService.createStudent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
       toast.success("Student muvaffaqiyatli qo'shildi");
     },
     onError: (error: Error) => {

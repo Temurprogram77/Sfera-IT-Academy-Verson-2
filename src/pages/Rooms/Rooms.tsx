@@ -15,7 +15,7 @@ const Rooms = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     rooms,
     loading,
@@ -26,7 +26,7 @@ const Rooms = () => {
     isUpdating,
     deleteRoom,
     isDeleting,
-  } = useRooms(search);
+  } = useRooms({ name: searchTerm});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
@@ -74,8 +74,8 @@ const Rooms = () => {
       <ListHeader
         title={t("rooms")}
         count={rooms.length}
-        searchValue={search}
-        onSearchChange={(value) => setSearch(value)}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchRooms")}
         buttonText={t("addRoom")}
         onButtonClick={() => showModal()}

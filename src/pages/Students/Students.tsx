@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Form, Input, Popconfirm, Select, Upload, Progress, Spin } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
+import { Form, Input, Popconfirm, Select, Progress, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -11,8 +9,8 @@ import { useGroups } from "../../hooks/useGroups";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { Student } from "../../types/student";
 import { PencilIcon, TrashBinIcon } from "../../icons";
-
-const { Dragger } = Upload;
+import NotFoundData from "../OtherPage/NotFoundData";
+import FileUpload from "../../components/Input/FileUpload";
 
 const Students = () => {
   const { t } = useTranslation();
@@ -27,7 +25,6 @@ const Students = () => {
 
   const [form] = Form.useForm();
 
-  // Hooks
   const {
     students,
     loading,
@@ -64,7 +61,15 @@ const Students = () => {
     });
     setIsModalVisible(true);
   };
+  const normalizePhone = (value: string) => {
+    let digits = value.replace(/\D/g, "");
 
+    if (!digits.startsWith("998")) {
+      digits = "998" + digits;
+    }
+
+    return digits;
+  };
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
@@ -80,7 +85,7 @@ const Students = () => {
           {
             id: editingStudent.id,
             fullName: values.fullName,
-            phone: values.phoneNumber.replace(/\s/g, ""),
+            phone: normalizePhone(values.phoneNumber),
             imgUrl: finalImageUrl || "",
           },
           {
@@ -96,9 +101,9 @@ const Students = () => {
         createStudent(
           {
             fullName: values.fullName,
-            phone: values.phoneNumber.replace(/\s/g, ""),
+            phone: normalizePhone(values.phoneNumber),
             password: values.password,
-            parentPhone: values.parentPhone,
+            parentPhone: normalizePhone(values.parentPhone),
             parentName: values.parentName,
             groupId: values.groupId,
             imgUrl: finalImageUrl || "",
@@ -127,16 +132,6 @@ const Students = () => {
     setPageSize(pageSize);
   };
 
-  // File upload props
-  const uploadProps: UploadProps = {
-    multiple: false,
-    beforeUpload: (file) => {
-      setSelectedFile(file);
-      return false;
-    },
-    showUploadList: false,
-  };
-
   // Phone display formatter
   const formatPhoneDisplay = (value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -160,87 +155,92 @@ const Students = () => {
         onButtonClick={openAddModal}
       />
 
-      {loading && (
+      {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip={t("loading")} />
+          <Spin size="large" tip="Yuklanmoqda..." />
         </div>
-      )}
-
-      <TableComponent<Student>
-        data={students}
-        itemName={t("student")}
-        searchKeys={["fulName", "groupName", "phoneNumber"]}
-        columnsConfig={[
-          {
-            key: "student",
-            title: t("student"),
-            render: (record) => (
-              <div className="flex items-center gap-3">
-                {record.imgUrl ? (
-                  <img
-                    src={record.imgUrl}
-                    alt=""
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold"></div>
-                )}
-                <div>
-                  <div className="font-medium">{record.fulName}</div>
-                  <div className="text-xs text-gray-500">
-                    {formatPhoneDisplay(record.phoneNumber)}
+      ) : students.length === 0 ? (
+        <NotFoundData
+          title="O'qituvchilar topilmadi"
+          description="Hozircha hech qanday o'qituvchi qo'shilmagan"
+        />
+      ) : (
+        <TableComponent<Student>
+          data={students}
+          itemName={t("student")}
+          searchKeys={["fulName", "groupName", "phoneNumber"]}
+          columnsConfig={[
+            {
+              key: "student",
+              title: t("student"),
+              render: (record) => (
+                <div className="flex items-center gap-3">
+                  {record.imgUrl ? (
+                    <img
+                      src={record.imgUrl}
+                      alt=""
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold"></div>
+                  )}
+                  <div>
+                    <div className="font-medium">{record.fulName}</div>
+                    <div className="text-xs text-gray-500">
+                      {formatPhoneDisplay(record.phoneNumber)}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ),
-          },
-          {
-            key: "group",
-            title: t("group"),
-            render: (record) => record.groupName,
-          },
-          {
-            key: "phone",
-            title: t("phone"),
-            render: (record) => formatPhoneDisplay(record.phoneNumber),
-          },
-          {
-            key: "actions",
-            title: t("actions"),
-            render: (record) => (
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => openEditModal(record)}
-                  disabled={isUpdating}
-                >
-                  <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
-                </button>
-                <Popconfirm
-                  title={`${t("student")} ${t("confirmDeleteSuffix")}`}
-                  description={`${record.fullName} o'chirilsinmi?`}
-                  onConfirm={() => handleDelete(record.id)}
-                  okText={t("yes")}
-                  cancelText={t("no")}
-                  okButtonProps={{ loading: isDeleting }}
-                >
-                  <button disabled={isDeleting}>
-                    <TrashBinIcon className="w-5 h-5 text-red-600 hover:text-red-700" />
+              ),
+            },
+            {
+              key: "group",
+              title: t("group"),
+              render: (record) => record.groupName,
+            },
+            {
+              key: "phone",
+              title: t("phone"),
+              render: (record) => formatPhoneDisplay(record.phoneNumber),
+            },
+            {
+              key: "actions",
+              title: t("actions"),
+              render: (record) => (
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => openEditModal(record)}
+                    disabled={isUpdating}
+                  >
+                    <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
                   </button>
-                </Popconfirm>
-              </div>
-            ),
-          },
-        ]}
-        pagination={{
-          current: currentPage + 1,
-          pageSize: pageSize,
-          total: pagination.totalElements,
-          onChange: handlePageChange,
-          showSizeChanger: true,
-          showTotal: (total) => `Jami: ${total} ta o'quvchi`,
-          pageSizeOptions: ["10", "20", "50", "100"],
-        }}
-      />
+                  <Popconfirm
+                    title={`${t("student")} ${t("confirmDeleteSuffix")}`}
+                    description={`${record.fullName} o'chirilsinmi?`}
+                    onConfirm={() => handleDelete(record.id)}
+                    okText={t("yes")}
+                    cancelText={t("no")}
+                    okButtonProps={{ loading: isDeleting }}
+                  >
+                    <button disabled={isDeleting}>
+                      <TrashBinIcon className="w-5 h-5 text-red-600 hover:text-red-700" />
+                    </button>
+                  </Popconfirm>
+                </div>
+              ),
+            },
+          ]}
+          pagination={{
+            current: currentPage + 1,
+            pageSize: pageSize,
+            total: pagination.totalElements,
+            onChange: handlePageChange,
+            showSizeChanger: true,
+            showTotal: (total) => `Jami: ${total} ta o'quvchi`,
+            pageSizeOptions: ["10", "20", "50", "100"],
+          }}
+        />
+      )}
 
       <ModalComponent
         open={isModalVisible}
@@ -295,15 +295,18 @@ const Students = () => {
           </Form.Item>
 
           <Form.Item label={t("image")}>
-            <Dragger {...uploadProps} disabled={isUploading}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Rasmni bosing yoki sudrab keling
-              </p>
-              <p className="ant-upload-hint">JPG, PNG, JPEG • Max 5MB</p>
-            </Dragger>
+            <FileUpload
+              onFileSelect={(file) => {
+                setSelectedFile(file);
+              }}
+              uploadedImageUrl={uploadedImageUrl}
+              onRemove={() => {
+                setUploadedImageUrl("");
+                setSelectedFile(null);
+              }}
+              uploadProgress={uploadProgress.percent}
+              isUploading={isUploading}
+            />
 
             {isUploading && (
               <Progress
@@ -311,26 +314,6 @@ const Students = () => {
                 status="active"
                 className="mt-2"
               />
-            )}
-
-            {uploadedImageUrl && (
-              <div className="mt-2 flex items-center gap-2">
-                <img
-                  src={uploadedImageUrl}
-                  alt="Uploaded"
-                  className="w-20 h-20 rounded object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUploadedImageUrl("");
-                    form.setFieldValue("imgUrl", "");
-                  }}
-                  className="text-red-500 text-sm hover:text-red-700"
-                >
-                  Remove
-                </button>
-              </div>
             )}
           </Form.Item>
 

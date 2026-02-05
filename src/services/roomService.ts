@@ -1,9 +1,10 @@
-import { API_ENDPOINTS } from "../constants/apiEndpoints";
+import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import {
   CreateRoomDto,
   CreateRoomResponse,
   DeleteRoomResponse,
+  RoomListParams,
   RoomListResponse,
   RoomResponse,
   UpdateRoomDto,
@@ -11,18 +12,10 @@ import {
 
 class RoomService {
   // Barcha xonanalarni olish
-  async getRooms(search?: string): Promise<RoomListResponse> {
+  async getRooms(params?: RoomListParams): Promise<RoomListResponse> {
     try {
-      const response = await apiClient.get<RoomListResponse>(
-        API_ENDPOINTS.ROOM.LIST,
-        {
-          params: {
-            // Agar backend name paramini kutsa
-            name: search || "",
-          },
-        },
-      );
-
+      const url = buildUrlWithParams(API_ENDPOINTS.ROOM.LIST, params)
+      const response = await apiClient.get<RoomListResponse>(url)
       return response;
     } catch (error) {
       console.error("Get rooms error:", error);

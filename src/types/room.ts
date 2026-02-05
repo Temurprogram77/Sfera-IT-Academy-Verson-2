@@ -53,7 +53,7 @@ export interface DeleteRoomResponse {
   data: string;
 }
 
-export interface RoomListParams {
+export interface RoomListParams extends Record<string, string | number | undefined> {
   page?: number;
   limit?: number;
   search?: string;

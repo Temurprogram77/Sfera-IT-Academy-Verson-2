@@ -14,7 +14,7 @@ class StudentService {
   async getStudents(params?: StudentListParams): Promise<StudentListResponse> {
     try {
       const url = buildUrlWithParams(API_ENDPOINTS.STUDENT.LIST, params);
-      const response = await apiClient.get<StudentListResponse>(url)
+      const response = await apiClient.get<StudentListResponse>(url);
       return response;
     } catch (error) {
       console.error("Get students error:", error);
@@ -39,7 +39,7 @@ class StudentService {
     try {
       const response = await apiClient.post<StudentActionResponse>(
         API_ENDPOINTS.STUDENT.CREATE_STUDENT,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -53,7 +53,7 @@ class StudentService {
     try {
       const response = await apiClient.put<StudentActionResponse>(
         API_ENDPOINTS.STUDENT.UPDATE,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -63,7 +63,9 @@ class StudentService {
   }
 
   // DELETE /student/:id - Delete student
-  async deleteStudent(studentId: string | number): Promise<StudentActionResponse> {
+  async deleteStudent(
+    studentId: string | number,
+  ): Promise<StudentActionResponse> {
     try {
       const url = API_ENDPOINTS.STUDENT.DELETE(studentId);
       const response = await apiClient.delete<StudentActionResponse>(url);

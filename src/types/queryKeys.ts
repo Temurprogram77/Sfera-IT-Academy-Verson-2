@@ -8,6 +8,9 @@ export const QUERY_KEYS = {
   },
   GROUPS: {
     ALL: ["groups"],
+    ALL_LIST: ["groups", "all"],
+    DETAIL: (id: string | number) => ["groups", id] as const,
+    DAYS: ["groups", "days"],
   },
   AUTH: {
     USER: ["auth", "user"] as const,
@@ -16,7 +19,10 @@ export const QUERY_KEYS = {
     ALL: ["students"] as const,
     DETAIL: (id: string | number) => ["students", id] as const,
   },
-  TEACHERS:{
-    CREATE:"teachers"
-  }
+  TEACHERS: {
+    CREATE: "teachers",
+  },
+  ADMIN: {
+    ALL: ["admin"],
+  },
 } as const;

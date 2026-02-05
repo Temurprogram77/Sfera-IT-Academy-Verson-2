@@ -156,6 +156,16 @@ export default function App() {
             fullPanelBg: theme === "dark" ? "#1f2937" : "#ffffff",
             itemActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
           },
+          Input: {
+            colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
+            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
+            colorTextPlaceholder: theme === "dark" ? "#9ca3af" : "#6b7280",
+
+            activeBorderColor: theme === "dark" ? "#3b82f6" : "#1890ff",
+
+            hoverBorderColor: theme === "dark" ? "#60a5fa" : "#40a9ff",
+          },
         },
       }}
     >

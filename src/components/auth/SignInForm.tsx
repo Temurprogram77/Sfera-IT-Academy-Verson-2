@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Label from "../form/Label";
-import { Button } from "antd";
+import { Button, ConfigProvider } from "antd";
 import { useLogin } from "../../hooks/useAuth";
 import { useMaskito } from "@maskito/react";
 import { maskitoPhoneOptionsGenerator } from "@maskito/phone";
@@ -82,7 +82,7 @@ export default function SignInForm() {
       console.error("Login error:", error);
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message || error?.message || t("loginError")
+          error?.response?.data?.message || error?.message || t("loginError"),
         );
       } else {
         toast.error(t("loginError"));
@@ -91,54 +91,71 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-        <div className="mb-5 sm:mb-8">
-          <h1 className="mb-2 font-semibold text-gray-800 text-title-sm sm:text-title-md">
-            {t("login")}
-          </h1>
-          <p className="text-sm text-gray-500">{t("enterCredentials")}</p>
-        </div>
+    <ConfigProvider
+      theme={{
+        components: {
+          Input: {
+            colorBgContainer: "#ffffff",
+            colorText: "#111827",
+            colorBorder: "#d1d5db",
+            colorTextPlaceholder: "#6b7280",
 
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-6">
-            <div>
-              <Label>
-                {t("phone")} <span className="text-error-500">*</span>
-              </Label>
-              <PhoneInput
-                ref={inputRef}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+998 90 123 45 67"
-                disabled={loginMutation.isPending}
-              />
-            </div>
+            activeBorderColor: "#00A67D",
 
-            <div>
-              <Label>
-                {t("password")} <span className="text-error-500">*</span>
-              </Label>
-              <PasswordInput
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("password")}
-                disabled={loginMutation.isPending}
-              />
-            </div>
-
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full !bg-[#032E15] hover:!bg-[#032E15]"
-              loading={loginMutation.isPending}
-              size="large"
-            >
-              {loginMutation.isPending ? `${t("login")}...` : t("login")}
-            </Button>
+            hoverBorderColor:  "#00A67D",
+          },
+        },
+      }}
+    >
+      <div className="flex flex-col flex-1">
+        <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+          <div className="mb-5 sm:mb-8">
+            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm sm:text-title-md">
+              {t("login")}
+            </h1>
+            <p className="text-sm text-gray-500">{t("enterCredentials")}</p>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-6">
+              <div>
+                <Label>
+                  {t("phone")} <span className="text-error-500">*</span>
+                </Label>
+                <PhoneInput
+                  ref={inputRef}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+998 90 123 45 67"
+                  disabled={loginMutation.isPending}
+                />
+              </div>
+
+              <div>
+                <Label>
+                  {t("password")} <span className="text-error-500">*</span>
+                </Label>
+                <PasswordInput
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={t("password")}
+                  disabled={loginMutation.isPending}
+                />
+              </div>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-full !bg-[#032E15] hover:!bg-[#032E15]"
+                loading={loginMutation.isPending}
+                size="large"
+              >
+                {loginMutation.isPending ? `${t("login")}...` : t("login")}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 }
