@@ -330,7 +330,7 @@ const Parents = () => {
                       "parentPhone",
                       formatPhoneDisplay(e.target.value),
                     )
-                  }
+                  } 
                 />
               </Form.Item>
             </>

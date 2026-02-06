@@ -232,7 +232,7 @@ const Students = () => {
           ]}
           pagination={{
             current: currentPage + 1,
-            pageSize: pageSize,
+            pageSize: pageSize, 
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,

@@ -44,13 +44,13 @@ const Groups = () => {
   } = useGroups({ name: searchTerm, page: currentPage, size: pageSize });
 
   const weekDaysOptions = [
-    { value: WeekDay.MONDAY, label: "Dushanba", color: "blue" },
-    { value: WeekDay.TUESDAY, label: "Seshanba", color: "green" },
-    { value: WeekDay.WEDNESDAY, label: "Chorshanba", color: "orange" },
-    { value: WeekDay.THURSDAY, label: "Payshanba", color: "purple" },
-    { value: WeekDay.FRIDAY, label: "Juma", color: "cyan" },
-    { value: WeekDay.SATURDAY, label: "Shanba", color: "magenta" },
-    { value: WeekDay.SUNDAY, label: "Yakshanba", color: "red" },
+    { value: WeekDay.MONDAY, label: t("monday"), color: "blue" },
+    { value: WeekDay.TUESDAY, label: t("tuesday"), color: "green" },
+    { value: WeekDay.WEDNESDAY, label: t("wednesday"), color: "orange" },
+    { value: WeekDay.THURSDAY, label: t("thursday"), color: "purple" },
+    { value: WeekDay.FRIDAY, label: t("friday"), color: "cyan" },
+    { value: WeekDay.SATURDAY, label: t("saturday"), color: "magenta" },
+    { value: WeekDay.SUNDAY, label: t("sunday"), color: "red" },
   ];
 
   const getWeekDayColor = (day: string) => {
@@ -111,7 +111,7 @@ const Groups = () => {
               setIsModalVisible(false);
               form.resetFields();
             },
-          }
+          },
         );
       } else {
         createGroup(groupData, {
@@ -185,7 +185,7 @@ const Groups = () => {
                           <div className="flex items-center gap-2 mt-1">
                             <TeamOutlined className="text-gray-400 text-xs" />
                             <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {record.studentCount} ta o'quvchi
+                              {record.studentCount} {t("unit")} {t("student").toLowerCase()}
                             </span>
                           </div>
                         </div>
@@ -210,7 +210,9 @@ const Groups = () => {
                       ) : (
                         <div className="flex items-center gap-2 text-gray-400">
                           <UserOutlined />
-                          <span className="text-sm">O'qituvchi biriktirilmagan</span>
+                          <span className="text-sm">
+                            {t("teacherNotAssigned")}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -244,7 +246,7 @@ const Groups = () => {
                           {record.studentCount}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          O'quvchilar
+                          {t("students")}
                         </div>
                       </div>
                     </div>
@@ -263,8 +265,8 @@ const Groups = () => {
                         <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700 dark:text-blue-400" />
                       </button>
                       <Popconfirm
-                        title="Guruhni o'chirish"
-                        description={`"${record.name}" guruhi o'chirilsinmi?`}
+                        title={t("deleteGroup")}
+                        description={`"${record.name}" ${t("confirmDeleteGroup")}`}
                         onConfirm={() => handleDelete(record.id)}
                         okText={t("yes")}
                         cancelText={t("no")}
@@ -289,7 +291,10 @@ const Groups = () => {
                 showSizeChanger: true,
                 showTotal: (total) => (
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Jami: <span className="font-bold text-blue-600">{total}</span> ta guruh
+                    {t("total")}:{" "}
+                    <span className="font-bold text-blue-600">{total} </span>
+                    <span className="font-bold text-blue-600"> {t("unit")} </span>
+                     {t("group").toLowerCase()}
                   </span>
                 ),
                 pageSizeOptions: ["10", "20", "50", "100"],
@@ -306,7 +311,7 @@ const Groups = () => {
                 <TeamOutlined className="text-white text-lg" />
               </div>
               <span className="text-xl font-semibold">
-                {isEditMode ? "Guruhni tahrirlash" : "Yangi guruh qo'shish"}
+                {isEditMode ? t("editGroup") : t("addNewGroup")}
               </span>
             </div>
           }
@@ -326,18 +331,18 @@ const Groups = () => {
                 name="name"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Guruh nomi
+                    {t("groupName")}
                   </span>
                 }
                 rules={[
-                  { required: true, message: "Guruh nomini kiriting" },
+                  { required: true, message: t("enterGroupName") },
                   { min: 2, message: "Kamida 2 ta belgi kiriting" },
                 ]}
                 className="mb-0"
               >
                 <Input
                   size="large"
-                  placeholder="Masalan: Bootcamp 1"
+                  placeholder={t("groupNameExample")}
                   prefix={<TeamOutlined className="text-gray-400" />}
                   className="rounded-lg"
                 />
@@ -347,22 +352,22 @@ const Groups = () => {
                 name="categoryId"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Kurs yo'nalishi
+                    {t("courseDirection")}
                   </span>
                 }
-                rules={[{ required: true, message: "Kursni tanlang" }]}
+                rules={[{ required: true, message: t("selectCourse") }]}
                 className="mb-0"
               >
                 <Select
                   size="large"
-                  placeholder="Kursni tanlang"
+                  placeholder={t("selectCourse")}
                   className="rounded-lg"
                   suffixIcon={<BookOutlined className="text-gray-400" />}
                 >
-                  <Option value={1}>Frontend</Option>
-                  <Option value={2}>Backend</Option>
-                  <Option value={3}>Mobile</Option>
-                  <Option value={4}>Design</Option>
+                  <Option value={1}>{t("frontend")}</Option>
+                  <Option value={2}>{t("backend")}</Option>
+                  <Option value={3}>{t("mobile")}</Option>
+                  <Option value={4}>{t("design")}</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -372,15 +377,15 @@ const Groups = () => {
                 name="teacherId"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    O'qituvchi
+                    {t("teacher")}
                   </span>
                 }
-                rules={[{ required: true, message: "O'qituvchini tanlang" }]}
+                rules={[{ required: true, message: t("selectTeacher") }]}
                 className="mb-0"
               >
                 <Select
                   size="large"
-                  placeholder="O'qituvchini tanlang"
+                  placeholder={t("selectTeacher")}
                   className="rounded-lg"
                   suffixIcon={<UserOutlined className="text-gray-400" />}
                   showSearch
@@ -390,9 +395,9 @@ const Groups = () => {
                       .includes(input.toLowerCase())
                   }
                 >
-                  <Option value={1}>Sardorbek Sayfullayev</Option>
-                  <Option value={2}>Javohir Elmurodov</Option>
-                  <Option value={3}>Dilshod Mirzayev</Option>
+                  <Option value={1}>{t("teacherSardorbek")}</Option>
+                  <Option value={2}>{t("teacherJavohir")}</Option>
+                  <Option value={3}>{t("teacherDilshod")}</Option>
                 </Select>
               </Form.Item>
 
@@ -400,7 +405,7 @@ const Groups = () => {
                 name="roomId"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Xona
+                    {t("room")}
                   </span>
                 }
                 rules={[{ required: true, message: "Xonani tanlang" }]}
@@ -412,10 +417,10 @@ const Groups = () => {
                   className="rounded-lg"
                   suffixIcon={<HomeOutlined className="text-gray-400" />}
                 >
-                  <Option value={1}>101-xona</Option>
-                  <Option value={2}>102-xona</Option>
-                  <Option value={3}>103-xona</Option>
-                  <Option value={4}>201-xona</Option>
+                  <Option value={1}>101-{t("room").toLowerCase()}</Option>
+                  <Option value={2}>102-{t("room").toLowerCase()}</Option>
+                  <Option value={3}>103-{t("room").toLowerCase()}</Option>
+                  <Option value={4}>201-{t("room").toLowerCase()}</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -425,10 +430,10 @@ const Groups = () => {
                 name="startTime"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Boshlanish vaqti
+                    {t("startTime")}
                   </span>
                 }
-                rules={[{ required: true, message: "Boshlanish vaqtini kiriting" }]}
+                rules={[{ required: true, message: t("enterStartTime") }]}
                 className="mb-0"
               >
                 <TimePicker
@@ -444,11 +449,11 @@ const Groups = () => {
                 name="endTime"
                 label={
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Tugash vaqti
+                    {t("endTime")}
                   </span>
                 }
                 rules={[
-                  { required: true, message: "Tugash vaqtini kiriting" },
+                  { required: true, message: t("enterEndTime") },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       const startTime = getFieldValue("startTime");
@@ -459,7 +464,7 @@ const Groups = () => {
                         return Promise.resolve();
                       }
                       return Promise.reject(
-                        new Error("Tugash vaqti boshlanish vaqtidan katta bo'lishi kerak")
+                        new Error(t("endTimeMustBeAfterStartTime")),
                       );
                     },
                   }),
@@ -481,18 +486,16 @@ const Groups = () => {
               label={
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <CalendarOutlined />
-                  Dars kunlari
+                  {t("lessonDays")}
                 </span>
               }
-              rules={[
-                { required: true, message: "Kamida bitta kunni tanlang" },
-              ]}
+              rules={[{ required: true, message: t("selectAtLeastOneDay") }]}
               className="mt-4"
             >
               <Select
                 mode="multiple"
                 size="large"
-                placeholder="Dars kunlarini tanlang"
+                placeholder={t("selectAtLeastOneDay")}
                 className="rounded-lg"
                 maxTagCount="responsive"
                 tagRender={(props) => {
@@ -525,11 +528,8 @@ const Groups = () => {
                   <span className="text-white text-xs font-bold">i</span>
                 </div>
                 <div className="text-sm text-blue-800 dark:text-blue-200">
-                  <p className="font-semibold mb-1">Eslatma:</p>
-                  <p>
-                    Guruh ma'lumotlarini to'liq to'ldiring. Barcha maydonlar
-                    majburiy hisoblanadi.
-                  </p>
+                  <p className="font-semibold mb-1">{t("noteTitle")}</p>
+                  <p>{t("noteContent")}</p>
                 </div>
               </div>
             </div>
