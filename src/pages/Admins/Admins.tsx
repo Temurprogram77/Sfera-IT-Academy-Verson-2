@@ -135,7 +135,6 @@ const Admins = () => {
       return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5)}`;
     return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5, 8)}-${digits.slice(8)}`;
   };
-
   return (
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
@@ -204,7 +203,7 @@ const Admins = () => {
                   </button>
                   <Popconfirm
                     title={`${t("student")} ${t("confirmDeleteSuffix")}`}
-                    description={`${record.fullName} o'chirilsinmi?`}
+                    description={`${record.fullName} ${t("confirmDeletes").toLowerCase()}`}
                     onConfirm={() => handleDelete(record.id)}
                     okText={t("yes")}
                     cancelText={t("no")}
@@ -224,7 +223,7 @@ const Admins = () => {
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
-            showTotal: (total) => `Jami: ${total} ta admin`,
+            showTotal: (total) => `${t("total")}: ${total} ${t("unit")} ${t('admin').toLowerCase()}`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
         />
@@ -232,7 +231,7 @@ const Admins = () => {
 
       <ModalComponent
         open={isModalVisible}
-        title={editingStudent ? t("editStudent") : t("addStudent")}
+        title={editingStudent ? t("editAdmin") : t("addAdmin")}
         onOk={handleSave}
         onCancel={() => {
           setIsModalVisible(false);
@@ -247,15 +246,15 @@ const Admins = () => {
           <Form.Item
             name="fullName"
             label={t("full_name")}
-            rules={[{ required: true, message: "Please enter full name" }]}
+            rules={[{ required: true, message: t("enterFullName") }]}
           >
-            <Input placeholder="Enter full name" />
+            <Input placeholder={t("enterFullName")} />
           </Form.Item>
 
           <Form.Item
             name="phone"
             label={t("phone")}
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[{ required: true, message: t("phone") }]}
           >
             <Input
               placeholder="+998 90-123-45-67"
@@ -264,6 +263,7 @@ const Admins = () => {
               }
             />
           </Form.Item>
+
           {isEditMode && (
             <Form.Item label={t("image")}>
               <FileUpload
@@ -285,7 +285,7 @@ const Admins = () => {
                 />
               )}
 
-              <Form.Item name="imgUrl" label="Yoki URL kiriting">
+              <Form.Item name="imgUrl" label={t("orEnterUrl")}>
                 <Input
                   placeholder="https://example.com/image.jpg"
                   disabled={isUploading}
@@ -296,15 +296,13 @@ const Admins = () => {
           )}
 
           {!editingStudent && (
-            <>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
-              >
-                <Input.Password placeholder="Enter password" />
-              </Form.Item>
-            </>
+            <Form.Item
+              name="password"
+              label={t("password")}
+              rules={[{ required: true, message: t("enterPassword") }]}
+            >
+              <Input.Password placeholder={t("enterPassword")} />
+            </Form.Item>
           )}
         </Form>
       </ModalComponent>

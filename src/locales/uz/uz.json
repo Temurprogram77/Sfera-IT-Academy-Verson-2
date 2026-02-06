@@ -184,5 +184,14 @@
   "confirmDeleteGroup": "Guruh o‘chirilsinmi?",
   "total": "Jami",
   "unit": "ta",
-  "teacherNotAssigned": "O‘qituvchi biriktirilmagan"
+  "teacherNotAssigned": "O‘qituvchi biriktirilmagan",
+  "enterPassword": "Iltimos, parolni kiriting",
+  "enterFullName": "Iltimos, to‘liq ismni kiriting",
+  "image": "Rasm",
+  "orEnterUrl": "Yoki URL kiriting",
+  "editAdmin": "Administratorni tahrirlash",
+  "dragImageText": "Rasmni bosing yoki sudrab keling",
+  "dragImageHint": "JPG, PNG, JPEG • Max 5MB",
+  "remove": "O‘chirish",
+  "confirmDeletes": "O‘chirilsinmi?"
 }

@@ -182,6 +182,16 @@
   "confirmDeleteGroup": "Гуруҳ ўчирилсинми?",
   "total": "Жами",
   "unit": "та",
-  "teacherNotAssigned": "Ўқитувчи бириктирилмаган"
+  "teacherNotAssigned": "Ўқитувчи бириктирилмаган",
+  "adminsCount": "Админлар сони",
+  "enterPassword": "Илтимос, паролни киритинг",
+  "enterFullName": "Илтимос, тўлиқ исмни киритинг",
+  "image": "Расм",
+  "orEnterUrl": "Ёки URL киритинг",
+  "editAdmin": "Администраторни таҳрирлаш",
+  "dragImageText": "Расмни босинг ёки судраб келинг",
+  "dragImageHint": "JPG, PNG, JPEG • Max 5MB",
+  "remove": "Ўчириш",
+  "confirmDeletes": "Ўчирилсинми?"
 }
  

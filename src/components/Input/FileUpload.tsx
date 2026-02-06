@@ -3,6 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { useState } from "react";
 import { FileUploadProps } from "../../types/fileUpload";
+import { useTranslation } from "react-i18next";
 
 const { Dragger } = Upload;
 
@@ -41,23 +42,19 @@ const FileUpload = ({
     onFileSelect(null);
     onRemove?.();
   };
-
+   const {t}=useTranslation()
   return (
     <div>
       <Dragger {...uploadProps}>
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">Rasmni bosing yoki sudrab keling</p>
-        <p className="ant-upload-hint">JPG, PNG, JPEG • Max 5MB</p>
+        <p className="ant-upload-text">{t("dragImageText")}</p>
+        <p className="ant-upload-hint">{t("dragImageHint")}</p>
       </Dragger>
 
       {isUploading && (
-        <Progress
-          percent={uploadProgress}
-          status="active"
-          className="mt-2"
-        />
+        <Progress percent={uploadProgress} status="active" className="mt-2" />
       )}
 
       {(previewUrl || uploadedImageUrl) && !isUploading && (
@@ -72,7 +69,7 @@ const FileUpload = ({
             onClick={handleRemove}
             className="text-red-500 text-sm hover:text-red-700 font-medium"
           >
-            O'chirish
+            {t("remove")}
           </button>
         </div>
       )}

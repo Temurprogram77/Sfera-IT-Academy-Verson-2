@@ -237,7 +237,7 @@ const Parents = () => {
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
-            showTotal: (total) => `Jami: ${total} ta o'quvchi`,
+            showTotal: (total) => `${t("total")}: ${total} ${t("unit")} ${t("student").toLowerCase()}`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
         />
@@ -301,9 +301,9 @@ const Parents = () => {
               <Form.Item
                 name="password"
                 label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
+                rules={[{ required: true, message: t("enterPassword")}]}
               >
-                <Input placeholder="Enter password" />
+                <Input placeholder={t("enterPassword")} />
               </Form.Item>
 
               <Form.Item
