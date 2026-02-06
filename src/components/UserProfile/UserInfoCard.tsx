@@ -1,35 +1,11 @@
 import { useModal } from "../../hooks/useModal";
 import Modal from "../Modal/Modal";
-
-import { useProfile } from "../../hooks/useProfile";
 import { formatPhone } from "../../utils/phoneFormatter";
-
-import { Spin } from "antd";
 import { useTranslation } from "react-i18next";
 
-export default function UserInfoCard() {
+export default function UserInfoCard({ user }: { user: any }) {
   const { isOpen, closeModal } = useModal();
-  const { user, loading, error } = useProfile();
   const { t } = useTranslation();
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <Spin size="large" tip={t("loading")} />
-      </div>
-    );
-  }
-
-  /* =========================
-      ERROR
-  ========================== */
-  if (error) {
-    return <p className="text-red-500">Xatolik: {error}</p>;
-  }
-
-  /* =========================
-      ROLE FORMAT
-  ========================== */
   const renderRole = () => {
     const role = user?.role;
 
@@ -55,14 +31,12 @@ export default function UserInfoCard() {
           PROFILE INFO
       ========================== */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
             {t("personalInformation")}
           </h4>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-
             {/* ROLE */}
             <div>
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
@@ -95,7 +69,6 @@ export default function UserInfoCard() {
                 {formatPhone(user?.phone)}
               </p>
             </div>
-
           </div>
         </div>
       </div>
@@ -104,12 +77,9 @@ export default function UserInfoCard() {
           MODAL
       ========================== */}
       <Modal open={isOpen} onCancel={closeModal} title={"Modal"}>
-
         <div className="no-scrollbar w-full rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-
           {/* HEADER */}
           <div className="px-2 pr-14 mb-6">
-
             <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
               {t("editPersonalInformation")}
             </h4>
@@ -117,7 +87,6 @@ export default function UserInfoCard() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {t("updateProfileDetails")}
             </p>
-
           </div>
         </div>
       </Modal>

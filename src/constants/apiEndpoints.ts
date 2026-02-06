@@ -42,6 +42,13 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (id: number | string) => `/group/${id}`,
     GET_DAYS: "/group/getDays",
   },
+  PARENT: {
+    LIST: "/parent",
+    CREATE: "/parent",
+    UPDATE: "/parent",
+    GET_BY_ID: (parentId: string | number) => `/parent/${parentId}`,
+    DELETE: (parentId: string | number) => `/parent/${parentId}`,
+  },
   FILE: {
     UPLOAD: "/api/v1/files/upload",
   },

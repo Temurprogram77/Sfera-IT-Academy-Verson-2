@@ -25,4 +25,8 @@ export const QUERY_KEYS = {
   ADMIN: {
     ALL: ["admin"],
   },
+  PARENTS: {
+    ALL: ["parents"] as const,
+    DETAIL: (id: string | number) => ["parents", id] as const,
+  },
 } as const;

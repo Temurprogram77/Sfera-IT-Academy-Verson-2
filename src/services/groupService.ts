@@ -3,7 +3,6 @@ import { apiClient } from "../lib/api/client";
 import {
   GroupActionResponse,
   GroupAllResponse,
-  GroupDaysParams,
   GroupDaysResponse,
   GroupDetailResponse,
   GroupListParams,
@@ -47,7 +46,7 @@ class GroupService {
     }
   }
 
-  async getGroupDays(params: GroupDaysParams): Promise<GroupDaysResponse> {
+  async getGroupDays(params: GroupListParams): Promise<GroupDaysResponse> {
     try {
       const url = buildUrlWithParams(API_ENDPOINTS.GROUP.GET_DAYS, params);
       const response = await apiClient.get<GroupDaysResponse>(url);

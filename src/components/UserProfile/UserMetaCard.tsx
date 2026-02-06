@@ -1,7 +1,6 @@
 import { useModal } from "../../hooks/useModal";
-import { useProfile } from "../../hooks/useProfile";
 import { useTranslation } from "react-i18next";
-import { Form, Spin } from "antd";
+import { Form } from "antd";
 import { formatPhone } from "../../utils/phoneFormatter";
 import IconButton from "../IconButton/IconButton";
 import ModalComponent from "../Modal/Modal";
@@ -10,13 +9,11 @@ import InputComponent from "../Input/Input";
 import { useEffect } from "react";
 import { EditFilled } from "@ant-design/icons";
 
-export default function UserMetaCard() {
+export default function UserMetaCard({ user }: { user: any }) {
   const { isOpen, openModal, closeModal } = useModal();
   const { t } = useTranslation();
-  const { user, loading, error } = useProfile();
   const [form] = Form.useForm();
 
-  // ===== HOOKS har doim yuqorida chaqiriladi =====
   useEffect(() => {
     if (user) {
       form.setFieldsValue({
@@ -25,20 +22,6 @@ export default function UserMetaCard() {
       });
     }
   }, [user, form]);
-
-  // ===== LOADING =====
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  // ===== ERROR =====
-  if (error) {
-    return <p>Xatolik: {error}</p>;
-  }
 
   const handleSubmit = (values: any) => {
     console.log("Saved:", values);
