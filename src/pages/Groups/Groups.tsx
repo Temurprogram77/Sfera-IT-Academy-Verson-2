@@ -175,8 +175,8 @@ const Groups = () => {
                   render: (record) => (
                     <div className="py-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                          {record.name.charAt(0).toUpperCase()}
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                          <img src="../../../public/images/images.png" alt="" className="rounded-full" />
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900 dark:text-white text-base">
