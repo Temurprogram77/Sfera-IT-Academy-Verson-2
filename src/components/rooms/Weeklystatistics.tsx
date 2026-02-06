@@ -7,7 +7,7 @@ export default function WeeklyStatistics() {
     <Card
       title={
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Weekly Statistics</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Weekly Statistics</h2>
           <p className="text-sm text-slate-500 mt-1">Busy and free hours across the week</p>
         </div>
       }

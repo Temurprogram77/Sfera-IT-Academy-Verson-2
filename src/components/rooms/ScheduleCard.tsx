@@ -28,8 +28,9 @@ export default function ScheduleCard({ schedule }: ScheduleProps) {
         </div>
         <div className="text-right">
           <Badge 
+            
             count={schedule.count} 
-            style={{ backgroundColor: '#e0e7ff', color: '#4f46e5' }} 
+            style={{ backgroundColor: '#e0e7ff', color: '#4f46e5' }}
           />
         </div>
       </div>
