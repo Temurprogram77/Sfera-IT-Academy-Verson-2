@@ -28,6 +28,7 @@
   "save": "Saqlash",
   "cancel": "Bekor qilish",
   "select_status": "Holatini tanlang",
+  "parentsCount": "Ota-onalar soni",
   "parent_added": "Yangi ota-ona qo‘shildi!",
   "parent_updated": "Ota-ona ma'lumotlari yangilandi!",
   "parent_deleted": "Ota-ona o‘chirildi!",

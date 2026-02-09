@@ -9,6 +9,9 @@ import NotFoundData from "../OtherPage/NotFoundData";
 import { Teacher as TeacherType } from "../../types/teacher";
 import FileUpload from "../../components/Input/FileUpload";
 import { useFileUpload } from "../../hooks/useFileUpload";
+import { formatPhoneDisplay } from "../../utils/phone";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import PhoneInput from "../../components/Input/PhoneInput";
 
 const Teacher = () => {
   const [search, setSearch] = useState("");
@@ -170,7 +173,7 @@ const Teacher = () => {
                       {record.fullName}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {record.phone}
+                      {formatPhoneDisplay(record.phone)}
                     </div>
                   </div>
                 </div>
@@ -212,7 +215,7 @@ const Teacher = () => {
         confirmLoading={isCreating || isUpdating || isUploading}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
+          <FormWrapper.Item
             name="fullName"
             label="To'liq ism"
             rules={[
@@ -221,9 +224,9 @@ const Teacher = () => {
             ]}
           >
             <InputComponent placeholder="To'liq ismni kiriting" />
-          </Form.Item>
+          </FormWrapper.Item>
 
-          <Form.Item
+          <FormWrapper.Item
             name="phone"
             label="Telefon"
             rules={[
@@ -234,8 +237,8 @@ const Teacher = () => {
               },
             ]}
           >
-            <InputComponent placeholder="998681663648" />
-          </Form.Item>
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
 
           {/* CREATE MODE - Faqat Password */}
           {!isEditMode && (

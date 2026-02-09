@@ -10,6 +10,7 @@ import { Admin } from "../../types/admin";
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
+import { formatPhoneDisplay } from "../../utils/phone";
 
 const Admins = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const Admins = () => {
   const [form] = Form.useForm();
 
   const {
+    data,
     admins,
     loading,
     pagination,
@@ -125,21 +127,11 @@ const Admins = () => {
     setPageSize(pageSize);
   };
 
-  // Phone display formatter
-  const formatPhoneDisplay = (value: string) => {
-    const digits = value.replace(/\D/g, "");
-    if (!digits) return "";
-    if (digits.length <= 3) return `+${digits}`;
-    if (digits.length <= 5) return `+${digits.slice(0, 3)} ${digits.slice(3)}`;
-    if (digits.length <= 8)
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5)}`;
-    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5, 8)}-${digits.slice(8)}`;
-  };
   return (
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
         title={t("adminsCount")}
-        count={admins.length}
+        count={data}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchAdmin")}
@@ -174,7 +166,9 @@ const Admins = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold"></div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                      {record.fullName.charAt(0).toUpperCase()}
+                    </div>
                   )}
                   <div>
                     <div className="font-medium">{record.fullName}</div>
@@ -203,7 +197,7 @@ const Admins = () => {
                   </button>
                   <Popconfirm
                     title={`${t("student")} ${t("confirmDeleteSuffix")}`}
-                    description={`${record.fullName} ${t("confirmDeletes").toLowerCase()}`}
+                    description={`${record.fullName} o'chirilsinmi?`}
                     onConfirm={() => handleDelete(record.id)}
                     okText={t("yes")}
                     cancelText={t("no")}
@@ -223,7 +217,7 @@ const Admins = () => {
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
-            showTotal: (total) => `${t("total")}: ${total} ${t("unit")} ${t('admin').toLowerCase()}`,
+            showTotal: (total) => `Jami: ${total} ta admin`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
         />
@@ -231,7 +225,7 @@ const Admins = () => {
 
       <ModalComponent
         open={isModalVisible}
-        title={editingStudent ? t("editAdmin") : t("addAdmin")}
+        title={editingStudent ? t("editStudent") : t("addStudent")}
         onOk={handleSave}
         onCancel={() => {
           setIsModalVisible(false);
@@ -246,15 +240,15 @@ const Admins = () => {
           <Form.Item
             name="fullName"
             label={t("full_name")}
-            rules={[{ required: true, message: t("enterFullName") }]}
+            rules={[{ required: true, message: "Please enter full name" }]}
           >
-            <Input placeholder={t("enterFullName")} />
+            <Input placeholder="Enter full name" />
           </Form.Item>
 
           <Form.Item
             name="phone"
             label={t("phone")}
-            rules={[{ required: true, message: t("phone") }]}
+            rules={[{ required: true, message: "Please enter phone number" }]}
           >
             <Input
               placeholder="+998 90-123-45-67"
@@ -263,7 +257,6 @@ const Admins = () => {
               }
             />
           </Form.Item>
-
           {isEditMode && (
             <Form.Item label={t("image")}>
               <FileUpload
@@ -285,7 +278,7 @@ const Admins = () => {
                 />
               )}
 
-              <Form.Item name="imgUrl" label={t("orEnterUrl")}>
+              <Form.Item name="imgUrl" label="Yoki URL kiriting">
                 <Input
                   placeholder="https://example.com/image.jpg"
                   disabled={isUploading}
@@ -296,13 +289,15 @@ const Admins = () => {
           )}
 
           {!editingStudent && (
-            <Form.Item
-              name="password"
-              label={t("password")}
-              rules={[{ required: true, message: t("enterPassword") }]}
-            >
-              <Input.Password placeholder={t("enterPassword")} />
-            </Form.Item>
+            <>
+              <Form.Item
+                name="password"
+                label="Password"
+                rules={[{ required: true, message: "Please enter password" }]}
+              >
+                <Input.Password placeholder="Enter password" />
+              </Form.Item>
+            </>
           )}
         </Form>
       </ModalComponent>

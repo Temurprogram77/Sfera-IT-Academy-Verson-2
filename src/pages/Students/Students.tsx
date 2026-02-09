@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Form, Input, Popconfirm, Select, Progress, Spin } from "antd";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import InputComponent from "../../components/Input/Input";
+import { Popconfirm, Select, Progress, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -11,6 +13,8 @@ import { Student } from "../../types/student";
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
+import { formatPhoneDisplay } from "../../utils/phone";
+import PhoneInput from "../../components/Input/PhoneInput";
 
 const Students = () => {
   const { t } = useTranslation();
@@ -23,9 +27,10 @@ const Students = () => {
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
 
   const {
+    data,
     students,
     loading,
     pagination,
@@ -132,22 +137,11 @@ const Students = () => {
     setPageSize(pageSize);
   };
 
-  // Phone display formatter
-  const formatPhoneDisplay = (value: string) => {
-    const digits = value.replace(/\D/g, "");
-    if (!digits) return "";
-    if (digits.length <= 3) return `+${digits}`;
-    if (digits.length <= 5) return `+${digits.slice(0, 3)} ${digits.slice(3)}`;
-    if (digits.length <= 8)
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5)}`;
-    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5, 8)}-${digits.slice(8)}`;
-  };
-
   return (
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
         title={t("studentsCount")}
-        count={students.length}
+        count={data}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchStudent")}
@@ -182,7 +176,9 @@ const Students = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold"></div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                      {record.fulName.charAt(0).toUpperCase()}
+                    </div>
                   )}
                   <div>
                     <div className="font-medium">{record.fulName}</div>
@@ -255,46 +251,46 @@ const Students = () => {
         cancelText={t("cancel")}
         confirmLoading={isCreating || isUpdating}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
+        <FormWrapper form={form} layout="vertical">
+          <FormWrapper.Item
             name="fullName"
             label={t("full_name")}
             rules={[{ required: true, message: "Please enter full name" }]}
           >
-            <Input placeholder="Enter full name" />
-          </Form.Item>
+            <InputComponent placeholder="Enter full name" />
+          </FormWrapper.Item>
 
-          <Form.Item
+          <FormWrapper.Item
             name="phoneNumber"
             label={t("phone")}
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              {
+                pattern: /^998\d{9}$/,
+                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+              },
+            ]}
           >
-            <Input
-              placeholder="+998 90-123-45-67"
-              onChange={(e) =>
-                form.setFieldValue(
-                  "phoneNumber",
-                  formatPhoneDisplay(e.target.value),
-                )
-              }
-            />
-          </Form.Item>
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
 
-          <Form.Item
-            name="groupId"
-            label={t("group")}
-            rules={[{ required: true, message: "Please select a group" }]}
-          >
-            <Select
-              placeholder="Select a group"
-              loading={groupsLoading}
-              showSearch
-              optionFilterProp="children"
-              options={groups.map((g) => ({ value: g.id, label: g.name }))}
-            />
-          </Form.Item>
+          {!editingStudent && (
+            <FormWrapper.Item
+              name="groupId"
+              label={t("group")}
+              rules={[{ required: true, message: "Please select a group" }]}
+            >
+              <Select
+                placeholder="Guruhni tanlang"
+                loading={groupsLoading}
+                // showSearch
+                optionFilterProp="children"
+                options={groups.map((g) => ({ value: g.id, label: g.name }))}
+              />
+            </FormWrapper.Item>
+          )}
 
-          <Form.Item label={t("image")}>
+          <FormWrapper.Item label={t("image")}>
             <FileUpload
               onFileSelect={(file) => {
                 setSelectedFile(file);
@@ -305,66 +301,42 @@ const Students = () => {
                 setSelectedFile(null);
               }}
               uploadProgress={uploadProgress.percent}
-              isUploading={isUploading}
+              // isUploading={isUploading}
             />
-
-            {isUploading && (
-              <Progress
-                percent={uploadProgress.percent}
-                status="active"
-                className="mt-2"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item name="imgUrl" label="Yoki URL kiriting">
-            <Input
-              placeholder="https://example.com/image.jpg"
-              disabled={isUploading}
-              onChange={(e) => setUploadedImageUrl(e.target.value)}
-            />
-          </Form.Item>
+          </FormWrapper.Item>
 
           {!editingStudent && (
-            <>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
-              >
-                <Input.Password placeholder="Enter password" />
-              </Form.Item>
-
-              <Form.Item
-                name="parentName"
-                label="Parent Name"
-                rules={[
-                  { required: true, message: "Please enter parent name" },
-                ]}
-              >
-                <Input placeholder="Enter parent name" />
-              </Form.Item>
-
-              <Form.Item
-                name="parentPhone"
-                label="Parent Phone"
-                rules={[
-                  { required: true, message: "Please enter parent phone" },
-                ]}
-              >
-                <Input
-                  placeholder="+998 90-123-45-67"
-                  onChange={(e) =>
-                    form.setFieldValue(
-                      "parentPhone",
-                      formatPhoneDisplay(e.target.value),
-                    )
-                  }
-                />
-              </Form.Item>
-            </>
+            <FormWrapper.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please enter password" }]}
+            >
+              <InputComponent variant="password" placeholder="Enter password" />
+            </FormWrapper.Item>
           )}
-        </Form>
+
+          <FormWrapper.Item
+            name="parentName"
+            label="Parent Name"
+            rules={[{ required: true, message: "Please enter parent name" }]}
+          >
+            <InputComponent placeholder="Enter parent name" />
+          </FormWrapper.Item>
+
+          <FormWrapper.Item
+            name="parentPhone"
+            label="Parent Phone"
+            rules={[
+              { required: true, message: "Please enter parent phone" },
+              {
+                pattern: /^998\d{9}$/,
+                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+              },
+            ]}
+          >
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
+        </FormWrapper>
       </ModalComponent>
     </div>
   );

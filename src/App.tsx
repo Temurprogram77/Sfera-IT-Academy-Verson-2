@@ -46,6 +46,7 @@ import { useAuthContext } from "./context/AuthContext";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
 import { ConfigProvider, theme as antdTheme } from "antd";
+import GroupsDetail from "./pages/groupsDetail/groupsDetail";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -265,6 +266,7 @@ export default function App() {
 
             {/* Groups & Rooms */}
             <Route path="groups" element={<Groups />} />
+            <Route path="groups/:id" element={<GroupsDetail />} />
             <Route path="rooms" element={<Rooms />} />
             <Route path="room/:id" element={<RoomsID />} />
 

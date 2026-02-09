@@ -80,6 +80,7 @@ export const useAdmins = (params?: AdminListParams) => {
   });
 
   return {
+    data: AdminData?.data.totalElements,
     admins: AdminData?.data?.body || [],
     pagination: {
       page: AdminData?.data?.page || 0,
