@@ -69,6 +69,7 @@ export const useStudents = (params?: StudentListParams) => {
   });
 
   return {
+    data: StudentData?.data?.totalElements,
     students: StudentData?.data?.body || [],
     pagination: {
       page: StudentData?.data?.page || 0,

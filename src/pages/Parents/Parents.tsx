@@ -11,6 +11,7 @@ import { Parent } from "../../types/parent";
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
+import { formatPhoneDisplay } from "../../utils/phone";
 
 const Parents = () => {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ const Parents = () => {
   const openEditModal = (student: Parent) => {
     setIsEditMode(true);
     setEditingStudent(student);
-    setUploadedImageUrl(student.imgUrl || "");
+    setUploadedImageUrl(student.imageUrl || "");
     setSelectedFile(null);
     form.setFieldsValue({
       fullName: student.fullName,
@@ -104,9 +105,6 @@ const Parents = () => {
             fullName: values.fullName,
             phone: normalizePhone(values.phone),
             password: values.password,
-            parentPhone: normalizePhone(values.parentPhone),
-            parentName: values.parentName,
-            groupId: values.groupId,
             imgUrl: finalImageUrl || "",
           },
           {
@@ -133,21 +131,10 @@ const Parents = () => {
     setPageSize(pageSize);
   };
 
-  // Phone display formatter
-  const formatPhoneDisplay = (value: string) => {
-    const digits = value.replace(/\D/g, "");
-    if (!digits) return "";
-    if (digits.length <= 3) return `+${digits}`;
-    if (digits.length <= 5) return `+${digits.slice(0, 3)} ${digits.slice(3)}`;
-    if (digits.length <= 8)
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5)}`;
-    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)}-${digits.slice(5, 8)}-${digits.slice(8)}`;
-  };
-
   return (
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
-        title={t("studentsCount")}
+        title={t("parentsCount")}
         count={data}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
@@ -183,7 +170,9 @@ const Parents = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold"></div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                      {record.fullName.charAt(0).toUpperCase()}
+                    </div>
                   )}
                   <div>
                     <div className="font-medium">{record.fullName}</div>
@@ -193,11 +182,6 @@ const Parents = () => {
                   </div>
                 </div>
               ),
-            },
-            {
-              key: "group",
-              title: t("group"),
-              render: (record) => record.groupName,
             },
             {
               key: "phone",
@@ -237,7 +221,7 @@ const Parents = () => {
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
-            showTotal: (total) => `${t("total")}: ${total} ${t("unit")} ${t("student").toLowerCase()}`,
+            showTotal: (total) => `Jami: ${total} ta ota-ona`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
         />
@@ -301,9 +285,9 @@ const Parents = () => {
               <Form.Item
                 name="password"
                 label="Password"
-                rules={[{ required: true, message: t("enterPassword")}]}
+                rules={[{ required: true, message: "Please enter password" }]}
               >
-                <Input placeholder={t("enterPassword")} />
+                <Input placeholder="Enter password" />
               </Form.Item>
 
               <Form.Item
@@ -330,7 +314,7 @@ const Parents = () => {
                       "parentPhone",
                       formatPhoneDisplay(e.target.value),
                     )
-                  } 
+                  }
                 />
               </Form.Item>
             </>

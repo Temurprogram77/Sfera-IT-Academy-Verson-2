@@ -43,9 +43,6 @@ export interface CreateParentDto {
   phone: string;
   imgUrl?: string;
   password: string;
-  groupId: number;
-  parentPhone: string;
-  parentName: string;
 }
 
 export interface UpdateParentDto {
