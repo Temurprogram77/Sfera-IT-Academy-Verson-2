@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Form, Popconfirm, Spin } from "antd";
-import Input from "../../components/Input/Input";
+import { Popconfirm, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -12,6 +11,9 @@ import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
+import PhoneInput from "../../components/Input/PhoneInput";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import InputComponent from "../../components/Input/Input";
 
 const Parents = () => {
   const { t } = useTranslation();
@@ -19,12 +21,12 @@ const Parents = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Parent | null>(null);
+  const [editingParent, setEditingParent] = useState<Parent | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
 
   const {
     data,
@@ -44,21 +46,21 @@ const Parents = () => {
   // Modal functions
   const openAddModal = () => {
     setIsEditMode(false);
-    setEditingStudent(null);
+    setEditingParent(null);
     setUploadedImageUrl("");
     setSelectedFile(null);
     form.resetFields();
     setIsModalVisible(true);
   };
 
-  const openEditModal = (student: Parent) => {
+  const openEditModal = (parents: Parent) => {
     setIsEditMode(true);
-    setEditingStudent(student);
-    setUploadedImageUrl(student.imageUrl || "");
+    setEditingParent(parents);
+    setUploadedImageUrl(parents.imageUrl || "");
     setSelectedFile(null);
     form.setFieldsValue({
-      fullName: student.fullName,
-      phone: student.phone,
+      fullName: parents.fullName,
+      phone: parents.phone,
     });
     setIsModalVisible(true);
   };
@@ -81,13 +83,13 @@ const Parents = () => {
         if (uploadedUrl) finalImageUrl = uploadedUrl;
       }
 
-      if (isEditMode && editingStudent) {
+      if (isEditMode && editingParent) {
         updateParent(
           {
-            id: editingStudent.id,
+            id: editingParent.id,
             fullName: values.fullName,
             phone: normalizePhone(values.phone),
-            imgUrl: finalImageUrl || "",
+            imageUrl: finalImageUrl || "",
           },
           {
             onSuccess: () => {
@@ -105,7 +107,7 @@ const Parents = () => {
             fullName: values.fullName,
             phone: normalizePhone(values.phone),
             password: values.password,
-            imgUrl: finalImageUrl || "",
+            imageUrl: finalImageUrl || "",
           },
           {
             onSuccess: () => {
@@ -138,14 +140,14 @@ const Parents = () => {
         count={data}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
-        searchPlaceholder={t("searchStudent")}
-        buttonText={t("addStudent")}
+        searchPlaceholder={t("searchParent")}
+        buttonText={t("addParent")}
         onButtonClick={openAddModal}
       />
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large" />
         </div>
       ) : parents.length === 0 ? (
         <NotFoundData
@@ -155,17 +157,17 @@ const Parents = () => {
       ) : (
         <TableComponent<Parent>
           data={parents}
-          itemName={t("student")}
+          itemName={t("parent")}
           searchKeys={["fullName", "phone"]}
           columnsConfig={[
             {
-              key: "student",
-              title: t("student"),
+              key: "parent",
+              title: t("parent"),
               render: (record) => (
                 <div className="flex items-center gap-3">
-                  {record.imgUrl ? (
+                  {record.imageUrl ? (
                     <img
-                      src={record.imgUrl}
+                      src={record.imageUrl}
                       alt=""
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -200,7 +202,7 @@ const Parents = () => {
                     <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
                   </button>
                   <Popconfirm
-                    title={`${t("student")} ${t("confirmDeleteSuffix")}`}
+                    title={`${t("parent")} ${t("confirmDeleteSuffix")}`}
                     description={`${record.fullName} o'chirilsinmi?`}
                     onConfirm={() => handleDelete(record.id)}
                     okText={t("yes")}
@@ -229,7 +231,7 @@ const Parents = () => {
 
       <ModalComponent
         open={isModalVisible}
-        title={editingStudent ? t("editStudent") : t("addStudent")}
+        title={editingParent ? t("editParent") : t("addParent")}
         onOk={handleSave}
         onCancel={() => {
           setIsModalVisible(false);
@@ -239,32 +241,33 @@ const Parents = () => {
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isCreating || isUpdating || isUploading}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
+        <FormWrapper form={form} layout="vertical">
+          <FormWrapper.Item
             name="fullName"
             label={t("full_name")}
             rules={[{ required: true, message: "Please enter full name" }]}
           >
-            <Input placeholder="Enter full name" />
-          </Form.Item>
+            <InputComponent placeholder="Enter full name" />
+          </FormWrapper.Item>
 
-          <Form.Item
+          <FormWrapper.Item
             name="phone"
             label={t("phone")}
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              {
+                pattern: /^998\d{9}$/,
+                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+              },
+            ]}
           >
-            <Input
-              placeholder="+998 90-123-45-67"
-              onChange={(e) =>
-                form.setFieldValue("phone", formatPhoneDisplay(e.target.value))
-              }
-            />
-          </Form.Item>
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
 
           {isEditMode && (
-            <Form.Item label={t("image")}>
+            <FormWrapper.Item label={t("image")}>
               <FileUpload
                 onFileSelect={(file) => {
                   setSelectedFile(file);
@@ -277,49 +280,19 @@ const Parents = () => {
                 uploadProgress={uploadProgress.percent}
                 isUploading={isUploading}
               />
-            </Form.Item>
+            </FormWrapper.Item>
           )}
 
-          {!editingStudent && (
-            <>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
-              >
-                <Input placeholder="Enter password" />
-              </Form.Item>
-
-              <Form.Item
-                name="parentName"
-                label="Parent Name"
-                rules={[
-                  { required: true, message: "Please enter parent name" },
-                ]}
-              >
-                <Input placeholder="Enter parent name" />
-              </Form.Item>
-
-              <Form.Item
-                name="parentPhone"
-                label="Parent Phone"
-                rules={[
-                  { required: true, message: "Please enter parent phone" },
-                ]}
-              >
-                <Input
-                  placeholder="+998 90-123-45-67"
-                  onChange={(e) =>
-                    form.setFieldValue(
-                      "parentPhone",
-                      formatPhoneDisplay(e.target.value),
-                    )
-                  }
-                />
-              </Form.Item>
-            </>
+          {!editingParent && (
+            <FormWrapper.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please enter password" }]}
+            >
+              <InputComponent variant="password" placeholder="Enter password" />
+            </FormWrapper.Item>
           )}
-        </Form>
+        </FormWrapper>
       </ModalComponent>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Input, Popconfirm, Progress, Spin } from "antd";
+import { Popconfirm, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -11,6 +11,9 @@ import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import InputComponent from "../../components/Input/Input";
+import PhoneInput from "../../components/Input/PhoneInput";
 
 const Admins = () => {
   const { t } = useTranslation();
@@ -18,12 +21,12 @@ const Admins = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Admin | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
 
   const {
     data,
@@ -42,7 +45,7 @@ const Admins = () => {
   // Modal functions
   const openAddModal = () => {
     setIsEditMode(false);
-    setEditingStudent(null);
+    setEditingAdmin(null);
     setUploadedImageUrl("");
     setSelectedFile(null);
     form.resetFields();
@@ -51,7 +54,7 @@ const Admins = () => {
 
   const openEditModal = (admin: Admin) => {
     setIsEditMode(true);
-    setEditingStudent(admin);
+    setEditingAdmin(admin);
     setUploadedImageUrl(admin?.imageUrl || "");
     setSelectedFile(null);
     form.setFieldsValue({
@@ -79,10 +82,10 @@ const Admins = () => {
         if (uploadedUrl) finalImageUrl = uploadedUrl;
       }
 
-      if (isEditMode && editingStudent) {
+      if (isEditMode && editingAdmin) {
         updateAdmin(
           {
-            id: editingStudent.id,
+            id: editingAdmin.id,
             fullName: values.fullName,
             phone: normalizePhone(values.phone),
             imageUrl: finalImageUrl || "",
@@ -141,7 +144,7 @@ const Admins = () => {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large" />
         </div>
       ) : admins.length === 0 ? (
         <NotFoundData
@@ -196,7 +199,7 @@ const Admins = () => {
                     <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
                   </button>
                   <Popconfirm
-                    title={`${t("student")} ${t("confirmDeleteSuffix")}`}
+                    title={`${t("admin")} ${t("confirmDeleteSuffix")}`}
                     description={`${record.fullName} o'chirilsinmi?`}
                     onConfirm={() => handleDelete(record.id)}
                     okText={t("yes")}
@@ -225,7 +228,7 @@ const Admins = () => {
 
       <ModalComponent
         open={isModalVisible}
-        title={editingStudent ? t("editStudent") : t("addStudent")}
+        title={editingAdmin ? t("editAdmin") : t("addAdmin")}
         onOk={handleSave}
         onCancel={() => {
           setIsModalVisible(false);
@@ -234,31 +237,32 @@ const Admins = () => {
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isCreating || isUpdating || isUploading}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
+        <FormWrapper form={form} layout="vertical">
+          <FormWrapper.Item
             name="fullName"
             label={t("full_name")}
             rules={[{ required: true, message: "Please enter full name" }]}
           >
-            <Input placeholder="Enter full name" />
-          </Form.Item>
+            <InputComponent placeholder="Enter full name" />
+          </FormWrapper.Item>
 
-          <Form.Item
+          <FormWrapper.Item
             name="phone"
             label={t("phone")}
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              {
+                pattern: /^998\d{9}$/,
+                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+              },
+            ]}
           >
-            <Input
-              placeholder="+998 90-123-45-67"
-              onChange={(e) =>
-                form.setFieldValue("phone", formatPhoneDisplay(e.target.value))
-              }
-            />
-          </Form.Item>
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
           {isEditMode && (
-            <Form.Item label={t("image")}>
+            <FormWrapper.Item label={t("image")}>
               <FileUpload
                 onFileSelect={(file) => setSelectedFile(file)}
                 uploadedImageUrl={uploadedImageUrl}
@@ -269,37 +273,19 @@ const Admins = () => {
                 uploadProgress={uploadProgress.percent}
                 isUploading={isUploading}
               />
-
-              {isUploading && (
-                <Progress
-                  percent={uploadProgress.percent}
-                  status="active"
-                  className="mt-2"
-                />
-              )}
-
-              <Form.Item name="imgUrl" label="Yoki URL kiriting">
-                <Input
-                  placeholder="https://example.com/image.jpg"
-                  disabled={isUploading}
-                  onChange={(e) => setUploadedImageUrl(e.target.value)}
-                />
-              </Form.Item>
-            </Form.Item>
+            </FormWrapper.Item>
           )}
 
-          {!editingStudent && (
-            <>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
-              >
-                <Input.Password placeholder="Enter password" />
-              </Form.Item>
-            </>
+          {!editingAdmin && (
+            <FormWrapper.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please enter password" }]}
+            >
+              <InputComponent variant="password" placeholder="Enter password" />
+            </FormWrapper.Item>
           )}
-        </Form>
+        </FormWrapper>
       </ModalComponent>
     </div>
   );

@@ -13,10 +13,13 @@ import { QUERY_KEYS } from "../types/queryKeys";
 export const useStudents = (params?: StudentListParams) => {
   const queryClient = useQueryClient();
 
-  const { data: StudentData, isLoading, error, refetch, isRefetching } = useQuery<
-    StudentListResponse,
-    Error
-  >({
+  const {
+    data: StudentData,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery<StudentListResponse, Error>({
     queryKey: [QUERY_KEYS.STUDENTS.ALL, params],
     queryFn: () => studentService.getStudents(params),
     staleTime: 1000 * 60 * 5,
@@ -34,7 +37,7 @@ export const useStudents = (params?: StudentListParams) => {
     },
     onError: (error: Error) => {
       toast.error("Student qo'shishda xatolik yuz berdi");
-      console.error("Create student error:", error)
+      console.error("Create student error:", error);
     },
   });
 
@@ -45,11 +48,12 @@ export const useStudents = (params?: StudentListParams) => {
   >({
     mutationFn: (data: UpdateStudentDto) => studentService.updateStudent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
       toast.success("Student updated successfully");
     },
     onError: (error: Error) => {
-      toast.error("Student yangilashda xatolik yuz berdi.");console.error("Update student error:", error);
+      toast.error("Student yangilashda xatolik yuz berdi.");
+      console.error("Update student error:", error);
     },
   });
 
@@ -58,13 +62,15 @@ export const useStudents = (params?: StudentListParams) => {
     Error,
     number | string
   >({
-    mutationFn: (studentId: number | string) => studentService.deleteStudent(studentId),
+    mutationFn: (studentId: number | string) =>
+      studentService.deleteStudent(studentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS.ALL });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
       toast.success("Student muvaffaqiyatli o'chirildi");
     },
     onError: (error: Error) => {
-      toast.error("Student o'chirishda xatolik yuz berdi");console.error("Delete student error:", error);
+      toast.error("Student o'chirishda xatolik yuz berdi");
+      console.error("Delete student error:", error);
     },
   });
 

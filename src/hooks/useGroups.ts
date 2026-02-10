@@ -128,12 +128,12 @@ export const useGroupDetails = (groupId: string | number) => {
   const { data, isLoading, error } = useQuery<GroupDetailResponse, Error>({
     queryKey: [QUERY_KEYS.GROUPS.DETAIL(groupId)],
     queryFn: () => groupService.getGroupById(groupId),
-    enabled: !!groupId,
+    enabled: !!groupId && !isNaN(Number(groupId)),
     staleTime: 1000 * 60 * 5,
   });
 
   return {
-    group: data?.data || null,
+    group: data?.data || null, // sening responseda data ichida to'g'ridan-to'g'ri guruh ma'lumotlari
     loading: isLoading,
     error,
   };

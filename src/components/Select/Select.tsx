@@ -1,25 +1,35 @@
+// src/components/Select/SelectComponent.tsx
 import React from "react";
 import { Select } from "antd";
-import { SelectComponentProps } from "../../types/select";
+import type { SelectProps } from "antd";
+
+interface SelectComponentProps extends Omit<SelectProps, "options"> {
+  options?: { label: string; value: string | number }[];
+  placeholder?: string;
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+  popupClassName?: string;
+}
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
-  value,
-  onChange,
-  options = [
-    { label: "Faol", value: "Faol" },
-    { label: "Ta'tilda", value: "Ta'tilda" },
-  ],
-  placeholder = "Holatni tanlang",
-  style = { width: "100%" },
+  options = [],
+  placeholder = "Tanlang",
+  loading = false,
+  disabled = false,
+  className = "",
+  popupClassName = "dark-select-dropdown",
+  ...rest
 }) => {
-
   return (
     <Select
-      popupClassName="dark-select-dropdown"
-      value={value}
-      onChange={onChange}
+      popupClassName={popupClassName}
       placeholder={placeholder}
-      style={style}
+      loading={loading}
+      disabled={disabled}
+      className={className}
+      optionFilterProp="children"
+      {...rest}
     >
       {options.map((opt) => (
         <Select.Option key={opt.value} value={opt.value}>

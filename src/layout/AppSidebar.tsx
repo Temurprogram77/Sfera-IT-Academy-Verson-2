@@ -43,12 +43,26 @@ const AppSidebar: React.FC = () => {
     items: nav.subItems!.map((sub) => ({
       key: sub.path,
       label: (
-        <Link to={sub.path} className="block px-3 py-1">
+        <Link
+          to={sub.path}
+          className={`block px-3 py-1 rounded ${
+            theme === "dark"
+              ? "hover:bg-[#03906d] hover:text-white text-gray-200"
+              : "hover:bg-[#ecf3ff] hover:text-[#25ab61] text-gray-800"
+          }`}
+        >
           {sub.name}
         </Link>
       ),
     })),
+    style: {
+      backgroundColor: theme === "dark" ? "#111827" : "#ffffff",
+      color: theme === "dark" ? "#e5e7eb" : "#111827",
+      borderColor: theme === "dark" ? "#374151" : "#d1d5db",
+      paddingBlock: 4,
+    },
   });
+
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {

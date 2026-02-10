@@ -2,13 +2,15 @@ import { ReactNode } from "react";
 
 export interface InputComponentProps {
   name?: string;
-  label?: ReactNode;
+  label?: React.ReactNode;
   rules?: any[];
   placeholder?: string;
-  prefix?: ReactNode;
+  prefix?: React.ReactNode;
   className?: string;
   value?: string | number;
-  variant?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  variant?: "default" | "password" | "textarea";
+  onChange?:
+    | ((e: React.ChangeEvent<HTMLInputElement>) => void)
+    | ((e: React.ChangeEvent<HTMLTextAreaElement>) => void);
   type?: "text" | "number" | "email" | "password";
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Spin } from "antd";
+import { Spin } from "antd";
 import { useTeacher } from "../../hooks/useTeacher";
 import InputComponent from "../../components/Input/Input";
 import ModalComponent from "../../components/Modal/Modal";
@@ -24,7 +24,7 @@ const Teacher = () => {
   );
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
 
   const { uploadFile, uploadProgress, isUploading } = useFileUpload();
 
@@ -138,7 +138,7 @@ const Teacher = () => {
 
       {isLoading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large" />
         </div>
       ) : teachers.length === 0 ? (
         <NotFoundData
@@ -157,7 +157,7 @@ const Teacher = () => {
               dataIndex: "fullName",
               render: (_: any, record: TeacherType) => (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold overflow-hidden">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold overflow-hidden">
                     {record.imageUrl && record.imageUrl.trim() !== "" ? (
                       <img
                         src={record.imageUrl}
@@ -214,7 +214,7 @@ const Teacher = () => {
         }}
         confirmLoading={isCreating || isUpdating || isUploading}
       >
-        <Form form={form} layout="vertical">
+        <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
             name="fullName"
             label="To'liq ism"
@@ -242,7 +242,7 @@ const Teacher = () => {
 
           {/* CREATE MODE - Faqat Password */}
           {!isEditMode && (
-            <Form.Item
+            <FormWrapper.Item
               name="password"
               label="Parol"
               rules={[
@@ -254,12 +254,12 @@ const Teacher = () => {
               ]}
             >
               <InputComponent type="password" placeholder="Parolni kiriting" />
-            </Form.Item>
+            </FormWrapper.Item>
           )}
 
           {/* EDIT MODE - Faqat File Upload */}
           {isEditMode && (
-            <Form.Item label="Rasm">
+            <FormWrapper.Item label="Rasm">
               <FileUpload
                 onFileSelect={(file) => {
                   setSelectedFile(file);
@@ -272,9 +272,9 @@ const Teacher = () => {
                 uploadProgress={uploadProgress.percent}
                 isUploading={isUploading}
               />
-            </Form.Item>
+            </FormWrapper.Item>
           )}
-        </Form>
+        </FormWrapper>
       </ModalComponent>
     </div>
   );

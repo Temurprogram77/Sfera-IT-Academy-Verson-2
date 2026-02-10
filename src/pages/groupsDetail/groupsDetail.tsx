@@ -1,7 +1,6 @@
 // src/pages/groups/GroupsDetail.tsx
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   Spin,
   Card,
@@ -20,36 +19,32 @@ import {
   Divider,
 } from "antd";
 import {
-  // TeamOutlined,
   UserOutlined,
-  // BookOutlined,
   ClockCircleOutlined,
   CalendarOutlined,
-  // HomeOutlined,
   ArrowLeftOutlined,
   EditOutlined,
 } from "@ant-design/icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import { useGroupDetails } from "../../hooks/useGroups";
-import { useStudents } from "../../hooks/useStudent"; // Student hook import
+import { useStudents } from "../../hooks/useStudent";
 
 const { Title, Text } = Typography;
 
-const PRIMARY_COLOR = "#00A67D";
-const BUSY_COLOR = "#000000";
-const FREE_COLOR = "#67E0A3";
-const WARNING_COLOR = "#FF4D4F";
+const PRIMARY_COLOR   = "#00A67D";
+const SECONDARY_COLOR = "#10B981";   // gradient uchun qo'shildi (yashilning ochroq varianti)
+const BUSY_COLOR      = "#000000";
+const FREE_COLOR      = "#67E0A3";
+const WARNING_COLOR   = "#FF4D4F";
 
 const GroupsDetail = () => {
-  // const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const { group, loading: groupLoading, error: groupError } = useGroupDetails(id || "");
 
-  // O'quvchilarni guruh ID bo'yicha olish (params orqali filter)
   const { students, loading: studentsLoading, error: studentsError } = useStudents({
-    groupId: Number(id), // Backend qo'llab-quvvatlashi kerak
+    groupId: Number(id),
   });
 
   useEffect(() => {
@@ -62,7 +57,6 @@ const GroupsDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <Spin size="large" />
-        <p className="ml-4 text-lg text-gray-600 dark:text-gray-300">Yuklanmoqda...</p>
       </div>
     );
   }
@@ -71,7 +65,7 @@ const GroupsDetail = () => {
     return <NotFoundData title="Guruh topilmadi" description="Ma'lumot yuklanmadi yoki xato yuz berdi." />;
   }
 
-  // Default statistika (API bog'lanmagan)
+  // Mock statistika (keyinchalik real API dan olinadi)
   const weeklyStats = {
     totalBusyHours: 17.0,
     totalFreeHours: 67.0,
@@ -82,7 +76,6 @@ const GroupsDetail = () => {
     totalSchedules: 3,
   };
 
-  // Mock kunlar bo'yicha bar chart data
   const barData = [
     { day: "MON", busy: 12, free: 0 },
     { day: "TUE", busy: 3, free: 0 },
@@ -93,7 +86,6 @@ const GroupsDetail = () => {
     { day: "SUN", busy: 12, free: 0 },
   ];
 
-  // Mock class distribution
   const classDistribution = [
     { name: "Frontend 16", days: 3 },
     { name: "Bootcamp 1", days: 3 },
@@ -130,7 +122,7 @@ const GroupsDetail = () => {
           </Col>
           <Col>
             <Space>
-              <Title level={3} className="m-0">
+              <Title level={3} className="m-0 dark:text-white">
                 {group.name}
               </Title>
               <Tooltip title="Tahrirlash">
@@ -138,16 +130,16 @@ const GroupsDetail = () => {
                   type="primary"
                   icon={<EditOutlined />}
                   style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
-                  onClick={() => navigate(`/groups/${id}/edit`)} // Edit yo'naltirish
+                  onClick={() => navigate(`/groups/${id}/edit`)}
                 />
               </Tooltip>
             </Space>
           </Col>
         </Row>
 
-        {/* Schedules (O'quvchilar) va Overview */}
+        {/* O'quvchilar + Umumiy ma'lumot */}
         <Row gutter={[24, 24]}>
-          {/* Left: O'quvchilar ro'yxati */}
+          {/* O'quvchilar ro'yxati */}
           <Col xs={24} md={16}>
             <Card
               title="O'quvchilar"
@@ -160,8 +152,13 @@ const GroupsDetail = () => {
                   <List.Item>
                     <List.Item.Meta
                       avatar={<Avatar icon={<UserOutlined />} style={{ backgroundColor: PRIMARY_COLOR }} />}
-                      title={student.name || "O'quvchi"}
-                      description={`Telefon: ${student.phone || "—"} | Holati: ${student.status || "Faol"}`}
+                      title={student.fulName || student.name || "O'quvchi"}
+                      description={
+                        <span>
+                          Telefon: {student.phoneNumber || student.phone || "—"} |{" "}
+                          Holati: {student.status || "Faol"}
+                        </span>
+                      }
                     />
                   </List.Item>
                 )}
@@ -170,14 +167,14 @@ const GroupsDetail = () => {
             </Card>
           </Col>
 
-          {/* Right: Overview */}
+          {/* Umumiy ma'lumot */}
           <Col xs={24} md={8}>
             <Card title="Umumiy ko'rinish" className="rounded-lg shadow-md mb-6">
-              <Statistic title="Jami jadval" value={weeklyStats.totalSchedules} suffix="" />
+              <Statistic title="Jami jadval" value={weeklyStats.totalSchedules} />
               <Divider />
-              <Statistic title="Faol kurslar" value={weeklyStats.activeCourses} suffix="" />
+              <Statistic title="Faol kurslar" value={weeklyStats.activeCourses} />
               <Divider />
-              <Statistic title="Haftalik darslar" value={weeklyStats.classSessionsPerWeek} suffix="" />
+              <Statistic title="Haftalik darslar" value={weeklyStats.classSessionsPerWeek} />
               <Divider />
               <Statistic
                 title="Eng band kun"
@@ -186,25 +183,25 @@ const GroupsDetail = () => {
                 valueStyle={{ color: WARNING_COLOR }}
               />
               <Divider />
-              <Statistic title="Haftalik jami soat" value={weeklyStats.totalWeeklyHours} suffix="" />
+              <Statistic title="Haftalik jami soat" value={weeklyStats.totalBusyHours + weeklyStats.totalFreeHours} suffix="soat" />
             </Card>
 
-            {/* O'qituvchi va kunlar/soatlar */}
+            {/* Guruh ma'lumotlari */}
             <Card className="rounded-lg shadow-md">
               <Descriptions column={1} size="small">
                 <Descriptions.Item label={<UserOutlined style={{ color: PRIMARY_COLOR }} />}>
-                  O'qituvchi: {group.teacherName}
+                  O'qituvchi: {group.teacherName || "Belgilanmagan"}
                 </Descriptions.Item>
                 <Descriptions.Item label={<ClockCircleOutlined style={{ color: PRIMARY_COLOR }} />}>
-                  Vaqt: {group.startTime} - {group.endTime}
+                  Vaqt: {group.startTime} – {group.endTime}
                 </Descriptions.Item>
                 <Descriptions.Item label={<CalendarOutlined style={{ color: PRIMARY_COLOR }} />}>
                   <Space wrap>
-                    {group.weekDays.map((day) => (
+                    {group.weekDays?.map((day) => (
                       <Tag key={day} color={PRIMARY_COLOR}>
                         {getDayLabel(day)}
                       </Tag>
-                    ))}
+                    )) || <span>Belgilanmagan</span>}
                   </Space>
                 </Descriptions.Item>
               </Descriptions>
@@ -212,28 +209,35 @@ const GroupsDetail = () => {
           </Col>
         </Row>
 
-        {/* Past: Weekly Statistics va Class Distribution */}
+        {/* Pastki qism: Haftalik statistika va taqsimot */}
         <Row gutter={[24, 24]} className="mt-8">
-          {/* Weekly Statistics */}
+          {/* Haftalik statistika */}
           <Col xs={24} md={16}>
             <Card title="Haftalik statistika" className="rounded-lg shadow-md">
               <Row gutter={16}>
                 <Col span={8}>
-                  <Statistic title="Jami band soat" value={weeklyStats.totalBusyHours} valueStyle={{ color: BUSY_COLOR }} />
+                  <Statistic
+                    title="Jami band soat"
+                    value={weeklyStats.totalBusyHours}
+                    valueStyle={{ color: BUSY_COLOR }}
+                  />
                 </Col>
                 <Col span={8}>
-                  <Statistic title="Jami bo'sh soat" value={weeklyStats.totalFreeHours} valueStyle={{ color: FREE_COLOR }} />
+                  <Statistic
+                    title="Jami bo'sh soat"
+                    value={weeklyStats.totalFreeHours}
+                    valueStyle={{ color: FREE_COLOR }}
+                  />
                 </Col>
               </Row>
               <Divider />
-              {/* Bar chart simulyatsiyasi (Ant Design Progress bilan) */}
-              <Row gutter={8} align="middle">
+              <Row gutter={8} align="middle" justify="center">
                 {barData.map((item) => (
                   <Col span={3} key={item.day} className="text-center">
                     <Tooltip title={`Band: ${item.busy} soat, Bo'sh: ${item.free} soat`}>
                       <Progress
                         type="dashboard"
-                        percent={(item.busy / 12) * 100} // Maks 12 soat faraz
+                        percent={(item.busy / 12) * 100}
                         format={() => ""}
                         strokeColor={BUSY_COLOR}
                         trailColor={FREE_COLOR}
@@ -241,21 +245,21 @@ const GroupsDetail = () => {
                         size={50}
                       />
                     </Tooltip>
-                    <Text className="block mt-2 text-sm">{item.day}</Text>
+                    <Text className="block mt-2 text-sm dark:text-gray-300">{item.day}</Text>
                   </Col>
                 ))}
               </Row>
             </Card>
           </Col>
 
-          {/* Class Distribution */}
+          {/* Guruh taqsimoti */}
           <Col xs={24} md={8}>
             <Card title="Guruh taqsimoti" className="rounded-lg shadow-md">
               {classDistribution.map((item, index) => (
                 <div key={index} className="mb-4">
-                  <Text className="block font-medium">{item.name}</Text>
+                  <Text className="block font-medium dark:text-white">{item.name}</Text>
                   <Progress
-                    percent={(item.days / 3) * 100} // Maks 3 kun faraz
+                    percent={(item.days / 3) * 100}
                     format={() => `${item.days} kun`}
                     status="active"
                     strokeColor={{ '0%': PRIMARY_COLOR, '100%': SECONDARY_COLOR }}

@@ -1,31 +1,29 @@
+// src/pages/Groups/Groups.tsx
 import { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Popconfirm,
-  Select,
-  Spin,
-  TimePicker,
-  Tag,
-  Button,
-  message,
-} from "antd";
+import { Popconfirm, Spin, TimePicker, Tag, message } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
 import { useTranslation } from "react-i18next";
 import { useGroups, useGroupDetails } from "../../hooks/useGroups";
-import { useTeacher } from "../../hooks/useTeacher"; // Teacher hook import
-import { useRooms } from "../../hooks/useRooms"; // Room hook import
-import { Group, WeekDay, CreateGroupDto, UpdateGroupDto } from "../../types/group";
+import { useTeacher } from "../../hooks/useTeacher";
+import { useRooms } from "../../hooks/useRooms";
+import {
+  Group,
+  WeekDay,
+  CreateGroupDto,
+  UpdateGroupDto,
+} from "../../types/group";
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import { EyeOutlined } from "@ant-design/icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import dayjs from "dayjs";
-import {
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import IconButton from "../../components/IconButton/IconButton";
+import InputComponent from "../../components/Input/Input";
+import SelectComponent from "../../components/Select/Select";
 
 const PRIMARY_COLOR = "#00A67D";
 
@@ -38,7 +36,7 @@ const Groups = () => {
   const [editingGroupId, setEditingGroupId] = useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
   const navigate = useNavigate();
 
   const {
@@ -50,13 +48,14 @@ const Groups = () => {
     deleteGroup,
     isCreating,
     isUpdating,
-    isDeleting,
   } = useGroups({ name: searchTerm, page: currentPage, size: pageSize });
 
-  const { teachers, isLoading: teachersLoading } = useTeacher(); // Teacherlarni olish
-  const { rooms, loading: roomsLoading } = useRooms(); // Roomlarni olish
+  const { teachers, isLoading: teachersLoading } = useTeacher();
+  const { rooms, loading: roomsLoading } = useRooms();
 
-  const { group: editingGroup, loading: groupDetailsLoading } = useGroupDetails(editingGroupId || 0); // Edit uchun detail olish
+  const { group: editingGroup, loading: groupDetailsLoading } = useGroupDetails(
+    editingGroupId || 0
+  );
 
   const weekDaysOptions = [
     { value: WeekDay.MONDAY, label: "Dushanba" },
@@ -67,11 +66,6 @@ const Groups = () => {
     { value: WeekDay.SATURDAY, label: "Shanba" },
     { value: WeekDay.SUNDAY, label: "Yakshanba" },
   ];
-
-  const getWeekDayLabel = (day: string) => {
-    const option = weekDaysOptions.find((opt) => opt.value === day);
-    return option?.label || day;
-  };
 
   const openAddModal = () => {
     setIsEditMode(false);
@@ -90,8 +84,12 @@ const Groups = () => {
     if (isEditMode && editingGroup && !groupDetailsLoading) {
       form.setFieldsValue({
         name: editingGroup.name,
-        startTime: editingGroup.startTime ? dayjs(editingGroup.startTime, "HH:mm") : null,
-        endTime: editingGroup.endTime ? dayjs(editingGroup.endTime, "HH:mm") : null,
+        startTime: editingGroup.startTime
+          ? dayjs(editingGroup.startTime, "HH:mm")
+          : null,
+        endTime: editingGroup.endTime
+          ? dayjs(editingGroup.endTime, "HH:mm")
+          : null,
         weekDays: editingGroup.weekDays || [],
         teacherId: editingGroup.teacherId,
         categoryId: editingGroup.categoryId,
@@ -109,18 +107,21 @@ const Groups = () => {
         endTime: values.endTime.format("HH:mm"),
         weekDays: values.weekDays,
         teacherId: values.teacherId,
-        categoryId: values.categoryId || 1, // Default 1
+        categoryId: values.categoryId || 1,
         roomId: values.roomId,
       };
 
       if (isEditMode && editingGroupId) {
-        updateGroup({ id: editingGroupId, ...groupData }, {
-          onSuccess: () => {
-            setIsModalVisible(false);
-            form.resetFields();
-            message.success("Guruh yangilandi");
-          },
-        });
+        updateGroup(
+          { id: editingGroupId, ...groupData },
+          {
+            onSuccess: () => {
+              setIsModalVisible(false);
+              form.resetFields();
+              message.success("Guruh yangilandi");
+            },
+          }
+        );
       } else {
         createGroup(groupData, {
           onSuccess: () => {
@@ -160,13 +161,15 @@ const Groups = () => {
           searchPlaceholder={t("searchGroup")}
           buttonText={t("addGroup")}
           onButtonClick={openAddModal}
-          buttonStyle={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
+          buttonStyle={{
+            backgroundColor: PRIMARY_COLOR,
+            borderColor: PRIMARY_COLOR,
+          }}
         />
 
         {loading ? (
           <div className="flex justify-center items-center py-32">
             <Spin size="large" />
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Guruhlar yuklanmoqda...</p>
           </div>
         ) : groups.length === 0 ? (
           <NotFoundData
@@ -196,7 +199,7 @@ const Groups = () => {
                           {record.name}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {record.studentCount} o'quvchi
+                          {record.studentCount ?? 0} o'quvchi
                         </div>
                       </div>
                     </div>
@@ -208,7 +211,9 @@ const Groups = () => {
                   render: (record) => (
                     <div className="flex items-center gap-2">
                       <UserOutlined style={{ color: PRIMARY_COLOR }} />
-                      <span>{record.teacherName || "Belgilanmagan"}</span>
+                      <span className="dark:text-gray-300">
+                        {record.teacherName || "Belgilanmagan"}
+                      </span>
                     </div>
                   ),
                 },
@@ -216,7 +221,7 @@ const Groups = () => {
                   key: "category",
                   title: t("category"),
                   render: (record) => (
-                    <Tag color={PRIMARY_COLOR}>{record.categoryName}</Tag>
+                    <Tag color={PRIMARY_COLOR}>{record.categoryName || "—"}</Tag>
                   ),
                 },
                 {
@@ -224,21 +229,22 @@ const Groups = () => {
                   title: t("actions"),
                   render: (record) => (
                     <div className="flex gap-2">
-                      <Button
+                      <IconButton
                         icon={<EyeOutlined />}
                         onClick={() => handleView(record.id)}
-                        style={{ color: PRIMARY_COLOR }}
                       />
-                      <Button
+                      <IconButton
                         icon={<PencilIcon />}
                         onClick={() => openEditModal(record)}
-                        style={{ color: PRIMARY_COLOR }}
                       />
                       <Popconfirm
                         title="O'chirish"
+                        description="Bu guruhni o'chirmoqchimisiz?"
+                        okText="Ha"
+                        cancelText="Yo'q"
                         onConfirm={() => handleDelete(record.id)}
                       >
-                        <Button icon={<TrashBinIcon />} danger />
+                        <IconButton icon={<TrashBinIcon />} danger />
                       </Popconfirm>
                     </div>
                   ),
@@ -249,6 +255,8 @@ const Groups = () => {
                 pageSize: pageSize,
                 total: pagination.totalElements,
                 onChange: handlePageChange,
+                showSizeChanger: true,
+                pageSizeOptions: ["10", "20", "50", "100"],
               }}
             />
           </div>
@@ -262,49 +270,87 @@ const Groups = () => {
           okButtonProps={{ style: { backgroundColor: PRIMARY_COLOR } }}
           confirmLoading={isCreating || isUpdating || groupDetailsLoading}
         >
-          <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Nomi" rules={[{ required: true }]}>
-              <Input placeholder="Guruh nomi" />
-            </Form.Item>
-            <Form.Item name="startTime" label="Boshlanish vaqti" rules={[{ required: true }]}>
+          <FormWrapper form={form} layout="vertical">
+            <FormWrapper.Item
+              name="name"
+              label="Nomi"
+              rules={[{ required: true, message: "Guruh nomini kiriting" }]}
+            >
+              <InputComponent placeholder="Guruh nomi" />
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="startTime"
+              label="Boshlanish vaqti"
+              rules={[{ required: true, message: "Vaqtni tanlang" }]}
+            >
               <TimePicker format="HH:mm" className="w-full" />
-            </Form.Item>
-            <Form.Item name="endTime" label="Tugash vaqti" rules={[{ required: true }]}>
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="endTime"
+              label="Tugash vaqti"
+              rules={[{ required: true, message: "Vaqtni tanlang" }]}
+            >
               <TimePicker format="HH:mm" className="w-full" />
-            </Form.Item>
-            <Form.Item name="weekDays" label="Kunlar" rules={[{ required: true }]}>
-              <Select mode="multiple" placeholder="Kunlarni tanlang">
-                {weekDaysOptions.map((opt) => (
-                  <Select.Option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="teacherId" label="O'qituvchi" rules={[{ required: true }]}>
-              <Select placeholder="O'qituvchini tanlang" loading={teachersLoading}>
-                {teachers.map((teacher) => (
-                  <Select.Option key={teacher.id} value={teacher.id}>
-                    {teacher.fullName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="categoryId" label="Kategoriya" rules={[{ required: true }]}>
-              <Select placeholder="Kategoriyani tanlang">
-                <Select.Option value={1}>1</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="roomId" label="Xona" rules={[{ required: true }]}>
-              <Select placeholder="Xonani tanlang" loading={roomsLoading}>
-                {rooms.map((room) => (
-                  <Select.Option key={room.id} value={room.id}>
-                    {room.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Form>
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="weekDays"
+              label="Kunlar"
+              rules={[{ required: true, message: "Kunlarni tanlang" }]}
+            >
+              <SelectComponent
+                mode="multiple"
+                placeholder="Kunlarni tanlang"
+                options={weekDaysOptions}
+              />
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="teacherId"
+              label="O'qituvchi"
+              rules={[{ required: true, message: "O'qituvchini tanlang" }]}
+            >
+              <SelectComponent
+                placeholder="O'qituvchini tanlang"
+                loading={teachersLoading}
+                options={teachers.map((teacher) => ({
+                  value: teacher.id,
+                  label: teacher.fullName,
+                }))}
+              />
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="categoryId"
+              label="Kategoriya"
+              rules={[{ required: true, message: "Kategoriyani tanlang" }]}
+            >
+              <SelectComponent
+                placeholder="Kategoriyani tanlang"
+                options={[
+                  { value: 1, label: "1-kategoriya" },
+                  // Agar backenddan kategoriyalar kelsa, shu yerni dinamik qil
+                ]}
+              />
+            </FormWrapper.Item>
+
+            <FormWrapper.Item
+              name="roomId"
+              label="Xona"
+              rules={[{ required: true, message: "Xonani tanlang" }]}
+            >
+              <SelectComponent
+                placeholder="Xonani tanlang"
+                loading={roomsLoading}
+                options={rooms.map((room) => ({
+                  value: room.id,
+                  label: room.name,
+                }))}
+              />
+            </FormWrapper.Item>
+          </FormWrapper>
         </ModalComponent>
       </div>
     </div>

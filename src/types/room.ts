@@ -4,20 +4,36 @@ export interface ApiResponse<T = null> {
   data: T;
 }
 
+export interface Schedule {
+  id: number;
+  name: string;
+  startTime: string;
+  endTime: string;
+  weekDays: string[];
+  teacherId: number;
+  categoryId: number;
+  roomId: number;
+  roomName?: string;
+  teacherName?: string;
+  categoryName?: string;
+}
+
+export interface TimeSlot {
+  start: string; // "12:00:00" formatida
+  end: string;   // "14:00:00" formatida
+}
+
+export interface WeeklyStat {
+  day: string;
+  busy: TimeSlot[];
+  free: TimeSlot[];
+}
+
 export interface Room {
   id: number;
   name: string;
-  schedules: Schedule[] | null;
-}
-
-export interface Schedule {
-  id: number;
-  roomId: number;
-  dayOfWeek: string;
-  startTime: string;
-  endTime: string;
-  createdAt?: string;
-  updatedAt?: string;
+  schedules: Schedule[];
+  weeklyStats: WeeklyStat[];
 }
 
 export interface CreateRoomDto {
@@ -83,19 +99,8 @@ export interface UseRoomsReturn {
 }
 
 export interface UseRoomIdReturn {
-  room: Room;
+  room: Room | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
-}
-export interface Schedule {
-  id: number;
-  subject: string;
-  days: string[];
-  startTime: string;
-  endTime: string;
-  teacher: string;
-  students: string[];
-  room: string;
-  description: string;
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InputComponent from "../../components/Input/Input";
-import { Popconfirm, Select, Progress, Spin } from "antd";
+import { Popconfirm, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -15,6 +15,7 @@ import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
 import PhoneInput from "../../components/Input/PhoneInput";
+import SelectComponent from "../../components/Select/Select";
 
 const Students = () => {
   const { t } = useTranslation();
@@ -151,7 +152,7 @@ const Students = () => {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large"/>
         </div>
       ) : students.length === 0 ? (
         <NotFoundData
@@ -228,7 +229,7 @@ const Students = () => {
           ]}
           pagination={{
             current: currentPage + 1,
-            pageSize: pageSize, 
+            pageSize: pageSize,
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
@@ -249,7 +250,7 @@ const Students = () => {
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isCreating || isUpdating || isUploading}
       >
         <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
@@ -278,14 +279,14 @@ const Students = () => {
             <FormWrapper.Item
               name="groupId"
               label={t("group")}
-              rules={[{ required: true, message: "Please select a group" }]}
+              rules={[{ required: true, message: "Iltimos, guruhni tanlang" }]}
             >
-              <Select
+              <SelectComponent
                 placeholder="Guruhni tanlang"
                 loading={groupsLoading}
-                // showSearch
-                optionFilterProp="children"
                 options={groups.map((g) => ({ value: g.id, label: g.name }))}
+                // showSearch qo'shish xohlasang:
+                // showSearch
               />
             </FormWrapper.Item>
           )}
@@ -315,27 +316,33 @@ const Students = () => {
             </FormWrapper.Item>
           )}
 
-          <FormWrapper.Item
-            name="parentName"
-            label="Parent Name"
-            rules={[{ required: true, message: "Please enter parent name" }]}
-          >
-            <InputComponent placeholder="Enter parent name" />
-          </FormWrapper.Item>
+          {!editingStudent && (
+            <>
+              <FormWrapper.Item
+                name="parentName"
+                label="Parent Name"
+                rules={[
+                  { required: true, message: "Please enter parent name" },
+                ]}
+              >
+                <InputComponent placeholder="Enter parent name" />
+              </FormWrapper.Item>
 
-          <FormWrapper.Item
-            name="parentPhone"
-            label="Parent Phone"
-            rules={[
-              { required: true, message: "Please enter parent phone" },
-              {
-                pattern: /^998\d{9}$/,
-                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
-              },
-            ]}
-          >
-            <PhoneInput placeholder="+998 90 123 45 67" />
-          </FormWrapper.Item>
+              <FormWrapper.Item
+                name="parentPhone"
+                label="Parent Phone"
+                rules={[
+                  { required: true, message: "Please enter parent phone" },
+                  {
+                    pattern: /^998\d{9}$/,
+                    message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+                  },
+                ]}
+              >
+                <PhoneInput placeholder="+998 90 123 45 67" />
+              </FormWrapper.Item>
+            </>
+          )}
         </FormWrapper>
       </ModalComponent>
     </div>
