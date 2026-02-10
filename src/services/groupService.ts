@@ -26,7 +26,7 @@ class GroupService {
   async getAllGroups(): Promise<GroupAllResponse> {
     try {
       const response = await apiClient.get<GroupAllResponse>(
-        API_ENDPOINTS.GROUP.ALL
+        API_ENDPOINTS.GROUP.ALL,
       );
       return response;
     } catch (error) {
@@ -61,7 +61,7 @@ class GroupService {
     try {
       const response = await apiClient.post<GroupActionResponse>(
         API_ENDPOINTS.GROUP.CREATE,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -74,7 +74,7 @@ class GroupService {
     try {
       const response = await apiClient.put<GroupActionResponse>(
         API_ENDPOINTS.GROUP.UPDATE,
-        data
+        data,
       );
       return response;
     } catch (error) {

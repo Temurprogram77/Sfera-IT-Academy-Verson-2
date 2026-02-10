@@ -33,6 +33,9 @@ export const useStudents = (params?: StudentListParams) => {
     mutationFn: (data: CreateStudentDto) => studentService.createStudent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUPS.ALL],
+      });
       toast.success("Student muvaffaqiyatli qo'shildi");
     },
     onError: (error: Error) => {
@@ -66,6 +69,9 @@ export const useStudents = (params?: StudentListParams) => {
       studentService.deleteStudent(studentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUPS.ALL],
+      });
       toast.success("Student muvaffaqiyatli o'chirildi");
     },
     onError: (error: Error) => {
@@ -75,7 +81,6 @@ export const useStudents = (params?: StudentListParams) => {
   });
 
   return {
-    data: StudentData?.data?.totalElements,
     students: StudentData?.data?.body || [],
     pagination: {
       page: StudentData?.data?.page || 0,

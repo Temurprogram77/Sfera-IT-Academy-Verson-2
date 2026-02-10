@@ -56,6 +56,10 @@ export const useGroups = (params?: GroupListParams) => {
         queryKey: [QUERY_KEYS.GROUPS.ALL],
         exact: false,
       });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUPS.DETAIL],
+        exact: false,
+      });
       toast.success("Guruh muvaffaqiyatli yangilandi");
     },
     onError: (error: Error) => {
@@ -125,7 +129,7 @@ export const useAllGroups = () => {
 };
 
 export const useGroupDetails = (groupId: string | number) => {
-  const { data, isLoading, error } = useQuery<GroupDetailResponse, Error>({
+  const { data, isLoading, error, refetch } = useQuery<GroupDetailResponse, Error>({
     queryKey: [QUERY_KEYS.GROUPS.DETAIL(groupId)],
     queryFn: () => groupService.getGroupById(groupId),
     enabled: !!groupId && !isNaN(Number(groupId)),
@@ -133,9 +137,11 @@ export const useGroupDetails = (groupId: string | number) => {
   });
 
   return {
-    group: data?.data || null, // sening responseda data ichida to'g'ridan-to'g'ri guruh ma'lumotlari
+    group: data?.data || null,
+    students: data?.data?.students || [],
     loading: isLoading,
     error,
+    refetch,
   };
 };
 

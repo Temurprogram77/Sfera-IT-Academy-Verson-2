@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Popconfirm, Spin } from "antd";
+import { Image, Popconfirm, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -14,9 +14,13 @@ import { formatPhoneDisplay } from "../../utils/phone";
 import PhoneInput from "../../components/Input/PhoneInput";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InputComponent from "../../components/Input/Input";
+import IconButton from "../../components/IconButton/IconButton";
+import { EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 
 const Parents = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -29,7 +33,6 @@ const Parents = () => {
   const [form] = FormWrapper.useForm();
 
   const {
-    data,
     parents,
     loading,
     pagination,
@@ -41,8 +44,9 @@ const Parents = () => {
     isDeleting,
   } = useParents({ name: searchTerm, page: currentPage, size: pageSize });
   const { uploadFile, isUploading, uploadProgress } = useFileUpload();
-  console.log(data);
-
+  const handleView = (id: number) => {
+    navigate(`/parents/${id}`);
+  };
   // Modal functions
   const openAddModal = () => {
     setIsEditMode(false);
@@ -137,7 +141,7 @@ const Parents = () => {
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
         title={t("parentsCount")}
-        count={data}
+        count={pagination.totalElements}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchParent")}
@@ -151,8 +155,8 @@ const Parents = () => {
         </div>
       ) : parents.length === 0 ? (
         <NotFoundData
-          title="O'qituvchilar topilmadi"
-          description="Hozircha hech qanday o'qituvchi qo'shilmagan"
+          title="Ota-onalar topilmadi"
+          description="Hozircha hech qanday ota-onalar qo'shilmagan"
         />
       ) : (
         <TableComponent<Parent>
@@ -166,16 +170,19 @@ const Parents = () => {
               render: (record) => (
                 <div className="flex items-center gap-3">
                   {record.imageUrl ? (
-                    <img
+                    <Image
                       src={record.imageUrl}
-                      alt=""
-                      className="w-10 h-10 rounded-full object-cover"
+                      width={40}
+                      height={40}
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                      preview={{ mask: "Ko‘rish" }} // hover qilganda yozuv chiqadi, bosilganda kattalashadi
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
                       {record.fullName.charAt(0).toUpperCase()}
                     </div>
                   )}
+
                   <div>
                     <div className="font-medium">{record.fullName}</div>
                     <div className="text-xs text-gray-500">
@@ -195,23 +202,25 @@ const Parents = () => {
               title: t("actions"),
               render: (record) => (
                 <div className="flex justify-end gap-3">
-                  <button
+                  <IconButton
+                    icon={<EyeOutlined />}
+                    onClick={() => handleView(record.id)}
+                  />
+                  <IconButton
+                    icon={<PencilIcon />}
                     onClick={() => openEditModal(record)}
-                    disabled={isUpdating}
-                  >
-                    <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
-                  </button>
+                    warning
+                  />
                   <Popconfirm
-                    title={`${t("parent")} ${t("confirmDeleteSuffix")}`}
-                    description={`${record.fullName} o'chirilsinmi?`}
+                    title="O'chirish"
+                    description="Bu guruhni o'chirmoqchimisiz?"
+                    okText="Ha"
+                    cancelText="Yo'q"
                     onConfirm={() => handleDelete(record.id)}
-                    okText={t("yes")}
-                    cancelText={t("no")}
-                    okButtonProps={{ loading: isDeleting }}
                   >
-                    <button disabled={isDeleting}>
-                      <TrashBinIcon className="w-5 h-5 text-red-600 hover:text-red-700" />
-                    </button>
+                    <span>
+                      <IconButton icon={<TrashBinIcon />} danger />
+                    </span>
                   </Popconfirm>
                 </div>
               ),

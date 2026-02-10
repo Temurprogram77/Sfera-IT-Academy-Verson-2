@@ -69,7 +69,6 @@ export const useParents = (params?: ParentListParams) => {
   });
 
   return {
-    data: ParentData?.data?.totalElements,
     parents: ParentData?.data?.body || [],
     pagination: {
       page: ParentData?.data?.page || 0,

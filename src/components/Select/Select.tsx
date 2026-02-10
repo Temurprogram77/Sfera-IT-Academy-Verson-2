@@ -1,15 +1,22 @@
 // src/components/Select/SelectComponent.tsx
+
 import React from "react";
 import { Select } from "antd";
 import type { SelectProps } from "antd";
+import { useTheme } from "../../context/ThemeContext"; // pathni tekshiring
 
-interface SelectComponentProps extends Omit<SelectProps, "options"> {
-  options?: { label: string; value: string | number }[];
+interface OptionType {
+  label: string;
+  value: string | number;
+}
+
+interface SelectComponentProps
+  extends Omit<SelectProps, "options"> {
+  options?: OptionType[];
   placeholder?: string;
   loading?: boolean;
   disabled?: boolean;
   className?: string;
-  popupClassName?: string;
 }
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
@@ -18,12 +25,18 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
   loading = false,
   disabled = false,
   className = "",
-  popupClassName = "dark-select-dropdown",
   ...rest
 }) => {
+  const { theme } = useTheme(); // 🔥 theme olish
+
+  const popupClass =
+    theme === "dark"
+      ? "dark-select-dropdown"
+      : "light-select-dropdown";
+
   return (
     <Select
-      popupClassName={popupClassName}
+      popupClassName={popupClass}
       placeholder={placeholder}
       loading={loading}
       disabled={disabled}
@@ -32,7 +45,10 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       {...rest}
     >
       {options.map((opt) => (
-        <Select.Option key={opt.value} value={opt.value}>
+        <Select.Option
+          key={opt.value}
+          value={opt.value}
+        >
           {opt.label}
         </Select.Option>
       ))}

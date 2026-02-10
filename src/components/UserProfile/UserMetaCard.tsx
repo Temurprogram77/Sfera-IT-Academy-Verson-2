@@ -24,7 +24,6 @@ export default function UserMetaCard({ user }: { user: any }) {
   }, [user, form]);
 
   const handleSubmit = (values: any) => {
-    console.log("Saved:", values);
     closeModal();
   };
 

@@ -47,6 +47,10 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
 import { ConfigProvider, theme as antdTheme } from "antd";
 import GroupsDetail from "./pages/groupsDetail/groupsDetail";
+import StudentsDetail from "./pages/StudentsDetail/StudentsDetail";
+import TeachersDetail from "./pages/TeachersDetail/TeachersDetail";
+import AdminsDetail from "./pages/AdminsDetail/AdminsDetail";
+import ParentsDetail from "./pages/ParentsDetail/ParentsDetail";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -288,9 +292,13 @@ export default function App() {
 
             {/* Users */}
             <Route path="teachers" element={<Teachers />} />
+            <Route path="teachers/:id" element={<TeachersDetail />} />
             <Route path="admins" element={<Admins />} />
+            <Route path="admins/:id" element={<AdminsDetail />} />
             <Route path="students" element={<Students />} />
+            <Route path="students/:id" element={<StudentsDetail />} />
             <Route path="parents" element={<Parents />} />
+            <Route path="parents/:id" element={<ParentsDetail />} />
 
             {/* Messages & Grades */}
             <Route path="messages" element={<Messages />} />

@@ -1,4 +1,4 @@
-import { Upload, Progress } from "antd";
+import { Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { useState } from "react";
@@ -12,7 +12,6 @@ const FileUpload = ({
   uploadedImageUrl,
   onRemove,
   disabled = false,
-  uploadProgress = 0,
   isUploading = false,
 }: FileUploadProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -52,10 +51,6 @@ const FileUpload = ({
         <p className="ant-upload-text">{t("dragImageText")}</p>
         <p className="ant-upload-hint">{t("dragImageHint")}</p>
       </Dragger>
-
-      {isUploading && (
-        <Progress percent={uploadProgress} status="active" className="mt-2" />
-      )}
 
       {(previewUrl || uploadedImageUrl) && !isUploading && (
         <div className="mt-2 flex items-center gap-2">

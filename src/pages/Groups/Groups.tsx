@@ -54,7 +54,7 @@ const Groups = () => {
   const { rooms, loading: roomsLoading } = useRooms();
 
   const { group: editingGroup, loading: groupDetailsLoading } = useGroupDetails(
-    editingGroupId || 0
+    editingGroupId || 0,
   );
 
   const weekDaysOptions = [
@@ -118,21 +118,18 @@ const Groups = () => {
             onSuccess: () => {
               setIsModalVisible(false);
               form.resetFields();
-              message.success("Guruh yangilandi");
             },
-          }
+          },
         );
       } else {
         createGroup(groupData, {
           onSuccess: () => {
             setIsModalVisible(false);
             form.resetFields();
-            message.success("Yangi guruh qo'shildi");
           },
         });
       }
     } catch (error) {
-      message.error("Ma'lumotlar to'liq emas yoki xato");
       console.error("Validation error:", error);
     }
   };
@@ -151,7 +148,7 @@ const Groups = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
         <ListHeader
           title={t("groupsCount")}
@@ -221,7 +218,9 @@ const Groups = () => {
                   key: "category",
                   title: t("category"),
                   render: (record) => (
-                    <Tag color={PRIMARY_COLOR}>{record.categoryName || "—"}</Tag>
+                    <Tag color={PRIMARY_COLOR}>
+                      {record.categoryName || "—"}
+                    </Tag>
                   ),
                 },
                 {
@@ -236,6 +235,7 @@ const Groups = () => {
                       <IconButton
                         icon={<PencilIcon />}
                         onClick={() => openEditModal(record)}
+                        warning
                       />
                       <Popconfirm
                         title="O'chirish"
@@ -244,7 +244,9 @@ const Groups = () => {
                         cancelText="Yo'q"
                         onConfirm={() => handleDelete(record.id)}
                       >
-                        <IconButton icon={<TrashBinIcon />} danger />
+                        <span>
+                          <IconButton icon={<TrashBinIcon />} danger />
+                        </span>
                       </Popconfirm>
                     </div>
                   ),

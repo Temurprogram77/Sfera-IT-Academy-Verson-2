@@ -14,18 +14,28 @@ export interface Group {
   studentCount: number;
 }
 
+export interface GroupStudent {
+  id: number;
+  fulName: string;
+  imgUrl: string;
+  phoneNumber: string;
+  groupId: number;
+  groupName: string;
+}
+
 export interface GroupDetail {
   id: number;
   name: string;
   startTime: string;
   endTime: string;
   weekDays: string[];
-  teacherId: number;
+  teacherId: number | null;
   categoryId: number;
-  roomId: number;
-  teacherName?: string;
+  roomId: number | null;
+  teacherName?: string | null;
   categoryName?: string;
-  roomName?: string;
+  roomName?: string | null;
+  students?: GroupStudent[];
 }
 
 export interface GroupListParams extends Record<string, string | number | undefined> {
@@ -34,6 +44,11 @@ export interface GroupListParams extends Record<string, string | number | undefi
   categoryId?: number;
   page?: number;
   size?: number;
+}
+
+export interface GroupDaysParams {
+  groupId: number;
+  yearMonth: string; // Format: YYYY-MM
 }
 
 export interface GroupListResponse {
@@ -85,11 +100,6 @@ export interface UpdateGroupDto {
   teacherId: number;
   categoryId: number;
   roomId: number;
-}
-
-export interface GroupDaysParams {
-  groupId: number;
-  yearMonth: string; // Format: YYYY-MM
 }
 
 // Week days enum for better type safety

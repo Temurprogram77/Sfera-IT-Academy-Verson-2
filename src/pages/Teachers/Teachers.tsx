@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Spin } from "antd";
+import { Image, Spin } from "antd";
 import { useTeacher } from "../../hooks/useTeacher";
 import InputComponent from "../../components/Input/Input";
 import ModalComponent from "../../components/Modal/Modal";
@@ -157,17 +157,25 @@ const Teacher = () => {
               dataIndex: "fullName",
               render: (_: any, record: TeacherType) => (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold overflow-hidden">
-                    {record.imageUrl && record.imageUrl.trim() !== "" ? (
-                      <img
-                        src={record.imageUrl}
-                        alt={record.fullName}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      record.fullName.charAt(0).toUpperCase()
-                    )}
-                  </div>
+                  {record.imageUrl ? (
+                    <Image
+                      src={record.imageUrl}
+                      width={40}
+                      height={40}
+                      style={{
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                      preview={{
+                        mask: "Ko‘rish", // ustiga hover qilganda yozuv chiqadi
+                      }}
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                      {record.fullName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+
                   <div>
                     <div className="font-medium text-gray-900 dark:text-gray-100">
                       {record.fullName}
