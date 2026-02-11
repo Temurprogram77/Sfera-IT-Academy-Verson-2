@@ -41,7 +41,7 @@ export interface ParentActionResponse {
 export interface CreateParentDto {
   fullName: string;
   phone: string;
-  imgUrl?: string;
+  imageUrl?: string;
   password: string;
 }
 
@@ -49,5 +49,5 @@ export interface UpdateParentDto {
   id: number;
   fullName: string;
   phone: string;
-  imgUrl: string;
+  imageUrl: string;
 }

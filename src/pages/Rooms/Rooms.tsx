@@ -26,7 +26,7 @@ const Rooms = () => {
     isUpdating,
     deleteRoom,
     isDeleting,
-  } = useRooms({ name: searchTerm});
+  } = useRooms({ name: searchTerm });
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 

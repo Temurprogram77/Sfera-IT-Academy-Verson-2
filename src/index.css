@@ -793,3 +793,13 @@ body.ant-modal-open {
   background-color: #111827 !important;
   color: #e5e7eb !important;
 }
+.warning-btn {
+  background-color: #faad14 !important;
+  border-color: #faad14 !important;
+  color: white !important;
+}
+
+.warning-btn:hover {
+  background-color: #d89614 !important;
+  border-color: #d89614 !important;
+}

@@ -17,7 +17,7 @@ class TeacherService {
       const response = await apiClient.get<TeacherListResponse>(url);
       return response;
     } catch (error) {
-      console.log("Get teachers error", error);
+      console.error("Get teachers error", error);
       throw error;
     }
   }
@@ -31,7 +31,7 @@ class TeacherService {
       );
       return response;
     } catch (error) {
-      console.log("Create teacher error", error);
+      console.error("Create teacher error", error);
       throw error;
     }
   }
@@ -45,7 +45,7 @@ class TeacherService {
       );
       return response;
     } catch (error) {
-      console.log("Update teacher error", error);
+      console.error("Update teacher error", error);
       throw error;
     }
   }
@@ -58,7 +58,7 @@ class TeacherService {
       );
       return response;
     } catch (error) {
-      console.log("Delete teacher error", error);
+      console.error("Delete teacher error", error);
       throw error;
     }
   }

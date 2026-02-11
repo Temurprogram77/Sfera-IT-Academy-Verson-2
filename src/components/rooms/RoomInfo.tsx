@@ -2,16 +2,16 @@
 
 import { Card, Row, Col, Statistic, Badge } from 'antd'
 import { HomeOutlined, TeamOutlined, ClockCircleOutlined } from '@ant-design/icons'
-import { RoomData } from '../../types/index2'
+import { Room } from '../../types/room'
 
 interface RoomInfoProps {
-  room: RoomData
+  room: Room
 }
 
 export default function RoomInfo({ room }: RoomInfoProps) {
-  const totalSchedules = room.schedules.length
+  const totalSchedules = room.schedules?.length || 0
   const daysWithSchedules = new Set(
-    room.schedules.flatMap((s) => s.weekDays)
+    (room.schedules || []).flatMap((s) => s.weekDays)
   ).size
 
   return (
@@ -49,7 +49,7 @@ export default function RoomInfo({ room }: RoomInfoProps) {
             <Card className="text-center border-0">
               <Statistic
                 title="Xonaning Holati"
-                value={daysWithSchedules > 0 ? 'Band' : 'Bo\'sh'}
+                value={daysWithSchedules > 0 ? 'Band' : "Bo'sh"}
                 valueStyle={{ color: daysWithSchedules > 0 ? '#ff4d4f' : '#52c41a' }}
                 prefix={<ClockCircleOutlined />}
               />

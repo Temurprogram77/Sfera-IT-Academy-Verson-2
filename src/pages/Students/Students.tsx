@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InputComponent from "../../components/Input/Input";
-import { Popconfirm, Select, Progress, Spin } from "antd";
+import { Image, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -10,11 +10,11 @@ import { useStudents } from "../../hooks/useStudent";
 import { useGroups } from "../../hooks/useGroups";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { Student } from "../../types/student";
-import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
 import PhoneInput from "../../components/Input/PhoneInput";
+import SelectComponent from "../../components/Select/Select";
 
 const Students = () => {
   const { t } = useTranslation();
@@ -30,7 +30,6 @@ const Students = () => {
   const [form] = FormWrapper.useForm();
 
   const {
-    data,
     students,
     loading,
     pagination,
@@ -141,7 +140,7 @@ const Students = () => {
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
         title={t("studentsCount")}
-        count={data}
+        count={pagination.totalElements}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchStudent")}
@@ -151,12 +150,12 @@ const Students = () => {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large" />
         </div>
       ) : students.length === 0 ? (
         <NotFoundData
-          title="O'qituvchilar topilmadi"
-          description="Hozircha hech qanday o'qituvchi qo'shilmagan"
+          title="O'quvchilar topilmadi"
+          description="Hozircha hech qanday o'quvchi qo'shilmagan"
         />
       ) : (
         <TableComponent<Student>
@@ -170,16 +169,24 @@ const Students = () => {
               render: (record) => (
                 <div className="flex items-center gap-3">
                   {record.imgUrl ? (
-                    <img
+                    <Image
                       src={record.imgUrl}
-                      alt=""
-                      className="w-10 h-10 rounded-full object-cover"
+                      width={40}
+                      height={40}
+                      preview={{
+                        mask: "Ko‘rish",
+                      }}
+                      style={{
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
                       {record.fulName.charAt(0).toUpperCase()}
                     </div>
                   )}
+
                   <div>
                     <div className="font-medium">{record.fulName}</div>
                     <div className="text-xs text-gray-500">
@@ -199,42 +206,26 @@ const Students = () => {
               title: t("phone"),
               render: (record) => formatPhoneDisplay(record.phoneNumber),
             },
+          ]}
+          modalFields={[
             {
-              key: "actions",
-              title: t("actions"),
-              render: (record) => (
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => openEditModal(record)}
-                    disabled={isUpdating}
-                  >
-                    <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
-                  </button>
-                  <Popconfirm
-                    title={`${t("student")} ${t("confirmDeleteSuffix")}`}
-                    description={`${record.fullName} o'chirilsinmi?`}
-                    onConfirm={() => handleDelete(record.id)}
-                    okText={t("yes")}
-                    cancelText={t("no")}
-                    okButtonProps={{ loading: isDeleting }}
-                  >
-                    <button disabled={isDeleting}>
-                      <TrashBinIcon className="w-5 h-5 text-red-600 hover:text-red-700" />
-                    </button>
-                  </Popconfirm>
-                </div>
-              ),
+              name: "fullName",
+              label: "To'liq ism",
+              component: <InputComponent />,
+              rules: [{ required: true }],
             },
           ]}
           pagination={{
             current: currentPage + 1,
-            pageSize: pageSize, 
+            pageSize: pageSize,
             total: pagination.totalElements,
             onChange: handlePageChange,
             showSizeChanger: true,
             showTotal: (total) => `Jami: ${total} ta o'quvchi`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
+          onEdit={openEditModal}
+          onDelete={handleDelete}
         />
       )}
 
@@ -249,7 +240,7 @@ const Students = () => {
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isCreating || isUpdating || isUploading}
       >
         <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
@@ -278,14 +269,14 @@ const Students = () => {
             <FormWrapper.Item
               name="groupId"
               label={t("group")}
-              rules={[{ required: true, message: "Please select a group" }]}
+              rules={[{ required: true, message: "Iltimos, guruhni tanlang" }]}
             >
-              <Select
+              <SelectComponent
                 placeholder="Guruhni tanlang"
                 loading={groupsLoading}
-                // showSearch
-                optionFilterProp="children"
                 options={groups.map((g) => ({ value: g.id, label: g.name }))}
+                // showSearch qo'shish xohlasang:
+                // showSearch
               />
             </FormWrapper.Item>
           )}
@@ -315,14 +306,19 @@ const Students = () => {
             </FormWrapper.Item>
           )}
 
-          <FormWrapper.Item
-            name="parentName"
-            label="Parent Name"
-            rules={[{ required: true, message: "Please enter parent name" }]}
-          >
-            <InputComponent placeholder="Enter parent name" />
-          </FormWrapper.Item>
-
+          {!editingStudent && (
+            <>
+              <FormWrapper.Item
+                name="parentName"
+                label="Parent Name"
+                rules={[
+                  { required: true, message: "Please enter parent name" },
+                ]}
+              >
+                <InputComponent placeholder="Enter parent name" />
+              </FormWrapper.Item>
+            </>
+          )}
           <FormWrapper.Item
             name="parentPhone"
             label="Parent Phone"

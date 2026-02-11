@@ -1,7 +1,6 @@
 // src/pages/groups/GroupsDetail.tsx
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   Spin,
   Card,
@@ -11,94 +10,60 @@ import {
   Avatar,
   Row,
   Col,
-  Statistic,
-  Progress,
   List,
-  Space,
   Typography,
-  Tooltip,
   Divider,
+  Empty,
+  Alert,
 } from "antd";
 import {
-  // TeamOutlined,
   UserOutlined,
-  // BookOutlined,
   ClockCircleOutlined,
   CalendarOutlined,
-  // HomeOutlined,
   ArrowLeftOutlined,
   EditOutlined,
+  TeamOutlined,
+  BookOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import NotFoundData from "../OtherPage/NotFoundData";
-import { useGroupDetails } from "../../hooks/useGroups";
-import { useStudents } from "../../hooks/useStudent"; // Student hook import
+import { useGroupDetails, useGroupDays } from "../../hooks/useGroups";
+import type { GroupStudent } from "../../types/group";
 
 const { Title, Text } = Typography;
 
 const PRIMARY_COLOR = "#00A67D";
-const BUSY_COLOR = "#000000";
-const FREE_COLOR = "#67E0A3";
-const WARNING_COLOR = "#FF4D4F";
 
 const GroupsDetail = () => {
-  // const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { group, loading: groupLoading, error: groupError } = useGroupDetails(id || "");
+  const {
+    group,
+    students,
+    loading: groupLoading,
+    error: groupError,
+  } = useGroupDetails(id || "");
 
-  // O'quvchilarni guruh ID bo'yicha olish (params orqali filter)
-  const { students, loading: studentsLoading, error: studentsError } = useStudents({
-    groupId: Number(id), // Backend qo'llab-quvvatlashi kerak
-  });
+  // Joriy oy uchun guruh kunlarini olish
+  const currentYearMonth = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  }, []);
 
-  useEffect(() => {
-    if (groupError || studentsError) {
-      console.error("Xato yuz berdi:", groupError || studentsError);
-    }
-  }, [groupError, studentsError]);
-
-  if (groupLoading || studentsLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <Spin size="large" />
-        <p className="ml-4 text-lg text-gray-600 dark:text-gray-300">Yuklanmoqda...</p>
-      </div>
-    );
-  }
-
-  if (groupError || studentsError || !group) {
-    return <NotFoundData title="Guruh topilmadi" description="Ma'lumot yuklanmadi yoki xato yuz berdi." />;
-  }
-
-  // Default statistika (API bog'lanmagan)
-  const weeklyStats = {
-    totalBusyHours: 17.0,
-    totalFreeHours: 67.0,
-    busiestDay: "THU",
-    busiestDayHours: 5.0,
-    classSessionsPerWeek: 7,
-    activeCourses: 3,
-    totalSchedules: 3,
-  };
-
-  // Mock kunlar bo'yicha bar chart data
-  const barData = [
-    { day: "MON", busy: 12, free: 0 },
-    { day: "TUE", busy: 3, free: 0 },
-    { day: "WED", busy: 9, free: 0 },
-    { day: "THU", busy: 12, free: 0 },
-    { day: "FRI", busy: 6, free: 0 },
-    { day: "SAT", busy: 3, free: 0 },
-    { day: "SUN", busy: 12, free: 0 },
-  ];
-
-  // Mock class distribution
-  const classDistribution = [
-    { name: "Frontend 16", days: 3 },
-    { name: "Bootcamp 1", days: 3 },
-    { name: "Bootcamp 1", days: 1 },
-  ];
+  const {
+    days: groupDays,
+    loading: daysLoading,
+    error: daysError,
+  } = useGroupDays(
+    {
+      groupId: Number(id),
+      yearMonth: currentYearMonth,
+    },
+    !!id && !groupLoading
+  );
 
   const getDayLabel = (day: string) => {
     const labels: Record<string, string> = {
@@ -113,156 +78,269 @@ const GroupsDetail = () => {
     return labels[day] || day;
   };
 
+  // Loading state
+  if (groupLoading || daysLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <Spin size="large" tip="Ma'lumotlar yuklanmoqda..." />
+      </div>
+    );
+  }
+
+  // Error state
+  if (groupError || !group) {
+    return (
+      <NotFoundData
+        title="Guruh topilmadi"
+        description="Ma'lumot yuklanmadi yoki xato yuz berdi."
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <Row justify="space-between" align="middle" className="mb-6">
-          <Col>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate(-1)}
-              type="text"
-              className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
-            >
-              Orqaga
-            </Button>
-          </Col>
-          <Col>
-            <Space>
-              <Title level={3} className="m-0">
+
+        {/* Guruh nomi va tahrirlash tugmasi */}
+        <Card className="mb-6! rounded-lg shadow-md">
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Title level={2} className="m-0 dark:text-white">
+                <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 12 }} />
                 {group.name}
               </Title>
-              <Tooltip title="Tahrirlash">
-                <Button
-                  type="primary"
-                  icon={<EditOutlined />}
-                  style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
-                  onClick={() => navigate(`/groups/${id}/edit`)} // Edit yo'naltirish
-                />
-              </Tooltip>
-            </Space>
-          </Col>
-        </Row>
+              {group.categoryName && (
+                <Tag color={PRIMARY_COLOR} className="mt-2">
+                  {group.categoryName}
+                </Tag>
+              )}
+            </Col>
+            <Col>
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                size="large"
+                style={{
+                  backgroundColor: PRIMARY_COLOR,
+                  borderColor: PRIMARY_COLOR,
+                }}
+                onClick={() => navigate(`/groups/${id}/edit`)}
+              >
+                Tahrirlash
+              </Button>
+            </Col>
+          </Row>
+        </Card>
 
-        {/* Schedules (O'quvchilar) va Overview */}
+        {/* Asosiy kontent */}
         <Row gutter={[24, 24]}>
-          {/* Left: O'quvchilar ro'yxati */}
-          <Col xs={24} md={16}>
+          {/* Chap tomon - O'quvchilar ro'yxati */}
+          <Col xs={24} lg={16}>
             <Card
-              title="O'quvchilar"
-              extra={<Tag color={PRIMARY_COLOR}>{students.length} ta</Tag>}
+              title={
+                <span>
+                  <UserOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                  O'quvchilar
+                </span>
+              }
+              extra={
+                <Tag color={PRIMARY_COLOR} style={{ fontSize: 14, padding: "4px 12px" }}>
+                  {students.length} ta
+                </Tag>
+              }
               className="rounded-lg shadow-md"
+              style={{ minHeight: 400 }}
             >
-              <List
-                dataSource={students}
-                renderItem={(student: any) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={<Avatar icon={<UserOutlined />} style={{ backgroundColor: PRIMARY_COLOR }} />}
-                      title={student.name || "O'quvchi"}
-                      description={`Telefon: ${student.phone || "—"} | Holati: ${student.status || "Faol"}`}
-                    />
-                  </List.Item>
-                )}
-                locale={{ emptyText: "Hozircha o'quvchilar yo'q" }}
-              />
+              {students.length > 0 ? (
+                <List
+                  dataSource={students}
+                  renderItem={(student: GroupStudent) => (
+                    <List.Item>
+                      <List.Item.Meta
+                        avatar={
+                          student.imgUrl ? (
+                            <Avatar size={48} src={student.imgUrl} />
+                          ) : (
+                            <Avatar
+                              size={48}
+                              icon={<UserOutlined />}
+                              style={{ backgroundColor: PRIMARY_COLOR }}
+                            />
+                          )
+                        }
+                        title={
+                          <Text strong className="dark:text-white">
+                            {student.fulName}
+                          </Text>
+                        }
+                        description={
+                          <span className="dark:text-gray-400">
+                            📞 {student.phoneNumber}
+                          </span>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <Empty
+                  description="Hozircha o'quvchilar yo'q"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              )}
             </Card>
           </Col>
 
-          {/* Right: Overview */}
-          <Col xs={24} md={8}>
-            <Card title="Umumiy ko'rinish" className="rounded-lg shadow-md mb-6">
-              <Statistic title="Jami jadval" value={weeklyStats.totalSchedules} suffix="" />
-              <Divider />
-              <Statistic title="Faol kurslar" value={weeklyStats.activeCourses} suffix="" />
-              <Divider />
-              <Statistic title="Haftalik darslar" value={weeklyStats.classSessionsPerWeek} suffix="" />
-              <Divider />
-              <Statistic
-                title="Eng band kun"
-                value={weeklyStats.busiestDay}
-                suffix={`${weeklyStats.busiestDayHours} soat`}
-                valueStyle={{ color: WARNING_COLOR }}
-              />
-              <Divider />
-              <Statistic title="Haftalik jami soat" value={weeklyStats.totalWeeklyHours} suffix="" />
-            </Card>
+          <Col xs={24} lg={8}>
+            <Card
+              title={
+                <span>
+                  <BookOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                  Guruh ma'lumotlari
+                </span>
+              }
+              className="rounded-lg shadow-md mb-6"
+            >
+              <Descriptions column={1} bordered size="small">
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <UserOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      O'qituvchi
+                    </span>
+                  }
+                >
+                  <Text className="dark:text-white">
+                    {group.teacherName || "Belgilanmagan"}
+                  </Text>
+                </Descriptions.Item>
 
-            {/* O'qituvchi va kunlar/soatlar */}
-            <Card className="rounded-lg shadow-md">
-              <Descriptions column={1} size="small">
-                <Descriptions.Item label={<UserOutlined style={{ color: PRIMARY_COLOR }} />}>
-                  O'qituvchi: {group.teacherName}
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <BookOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      Kategoriya
+                    </span>
+                  }
+                >
+                  <Text className="dark:text-white">
+                    {group.categoryName || "Belgilanmagan"}
+                  </Text>
                 </Descriptions.Item>
-                <Descriptions.Item label={<ClockCircleOutlined style={{ color: PRIMARY_COLOR }} />}>
-                  Vaqt: {group.startTime} - {group.endTime}
+
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <HomeOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      Xona
+                    </span>
+                  }
+                >
+                  <Text className="dark:text-white">
+                    {group.roomName || "Belgilanmagan"}
+                  </Text>
                 </Descriptions.Item>
-                <Descriptions.Item label={<CalendarOutlined style={{ color: PRIMARY_COLOR }} />}>
-                  <Space wrap>
-                    {group.weekDays.map((day) => (
-                      <Tag key={day} color={PRIMARY_COLOR}>
-                        {getDayLabel(day)}
-                      </Tag>
-                    ))}
-                  </Space>
+
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <ClockCircleOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      Dars vaqti
+                    </span>
+                  }
+                >
+                  <Text className="dark:text-white">
+                    {group.startTime} – {group.endTime}
+                  </Text>
+                </Descriptions.Item>
+
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <CalendarOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      Dars kunlari
+                    </span>
+                  }
+                >
+                  <div>
+                    {group.weekDays && group.weekDays.length > 0 ? (
+                      group.weekDays.map((day) => (
+                        <Tag key={day} color={PRIMARY_COLOR} style={{ marginBottom: 4 }}>
+                          {getDayLabel(day)}
+                        </Tag>
+                      ))
+                    ) : (
+                      <Text className="dark:text-white">Belgilanmagan</Text>
+                    )}
+                  </div>
+                </Descriptions.Item>
+
+                <Descriptions.Item
+                  label={
+                    <span>
+                      <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      O'quvchilar soni
+                    </span>
+                  }
+                >
+                  <Text strong style={{ color: PRIMARY_COLOR }}>
+                    {students.length} ta
+                  </Text>
                 </Descriptions.Item>
               </Descriptions>
             </Card>
-          </Col>
-        </Row>
 
-        {/* Past: Weekly Statistics va Class Distribution */}
-        <Row gutter={[24, 24]} className="mt-8">
-          {/* Weekly Statistics */}
-          <Col xs={24} md={16}>
-            <Card title="Haftalik statistika" className="rounded-lg shadow-md">
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Statistic title="Jami band soat" value={weeklyStats.totalBusyHours} valueStyle={{ color: BUSY_COLOR }} />
-                </Col>
-                <Col span={8}>
-                  <Statistic title="Jami bo'sh soat" value={weeklyStats.totalFreeHours} valueStyle={{ color: FREE_COLOR }} />
-                </Col>
-              </Row>
-              <Divider />
-              {/* Bar chart simulyatsiyasi (Ant Design Progress bilan) */}
-              <Row gutter={8} align="middle">
-                {barData.map((item) => (
-                  <Col span={3} key={item.day} className="text-center">
-                    <Tooltip title={`Band: ${item.busy} soat, Bo'sh: ${item.free} soat`}>
-                      <Progress
-                        type="dashboard"
-                        percent={(item.busy / 12) * 100} // Maks 12 soat faraz
-                        format={() => ""}
-                        strokeColor={BUSY_COLOR}
-                        trailColor={FREE_COLOR}
-                        gapDegree={0}
-                        size={50}
-                      />
-                    </Tooltip>
-                    <Text className="block mt-2 text-sm">{item.day}</Text>
-                  </Col>
-                ))}
-              </Row>
-            </Card>
-          </Col>
-
-          {/* Class Distribution */}
-          <Col xs={24} md={8}>
-            <Card title="Guruh taqsimoti" className="rounded-lg shadow-md">
-              {classDistribution.map((item, index) => (
-                <div key={index} className="mb-4">
-                  <Text className="block font-medium">{item.name}</Text>
-                  <Progress
-                    percent={(item.days / 3) * 100} // Maks 3 kun faraz
-                    format={() => `${item.days} kun`}
-                    status="active"
-                    strokeColor={{ '0%': PRIMARY_COLOR, '100%': SECONDARY_COLOR }}
+            {!daysLoading && (
+              <Card
+                title={
+                  <span>
+                    <CalendarOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                    {currentYearMonth} - dars kunlari
+                  </span>
+                }
+                className="rounded-lg shadow-md mt-4!"
+              >
+                {daysError ? (
+                  <Alert
+                    message="Xatolik"
+                    description="Dars kunlarini yuklashda xatolik yuz berdi"
+                    type="error"
+                    showIcon
                   />
-                </div>
-              ))}
-            </Card>
+                ) : groupDays.length > 0 ? (
+                  <>
+                    <Text strong className="dark:text-white" style={{ display: "block", marginBottom: 12 }}>
+                      Jami: {groupDays.length} kun
+                    </Text>
+                    <Divider style={{ margin: "12px 0" }} />
+                    <div style={{ maxHeight: 300, overflowY: "auto" }}>
+                      {groupDays.map((day, index) => (
+                        <Tag
+                          key={index}
+                          color="blue"
+                          style={{
+                            marginBottom: 8,
+                            padding: "4px 12px",
+                            fontSize: 13,
+                          }}
+                        >
+                          📅 {new Date(day).toLocaleDateString("uz-UZ", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </Tag>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Empty
+                    description="Bu oyda dars kunlari yo'q"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  />
+                )}
+              </Card>
+            )}
           </Col>
         </Row>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Input, Popconfirm, Progress, Spin } from "antd";
+import { Image, Popconfirm, Spin } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -11,22 +11,28 @@ import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
+import FormWrapper from "../../components/FormWrapper/FormWrapper";
+import InputComponent from "../../components/Input/Input";
+import PhoneInput from "../../components/Input/PhoneInput";
+import IconButton from "../../components/IconButton/IconButton";
+import { EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 
 const Admins = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Admin | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [form] = Form.useForm();
+  const [form] = FormWrapper.useForm();
 
   const {
-    data,
     admins,
     loading,
     pagination,
@@ -42,7 +48,7 @@ const Admins = () => {
   // Modal functions
   const openAddModal = () => {
     setIsEditMode(false);
-    setEditingStudent(null);
+    setEditingAdmin(null);
     setUploadedImageUrl("");
     setSelectedFile(null);
     form.resetFields();
@@ -51,7 +57,7 @@ const Admins = () => {
 
   const openEditModal = (admin: Admin) => {
     setIsEditMode(true);
-    setEditingStudent(admin);
+    setEditingAdmin(admin);
     setUploadedImageUrl(admin?.imageUrl || "");
     setSelectedFile(null);
     form.setFieldsValue({
@@ -69,6 +75,11 @@ const Admins = () => {
 
     return digits;
   };
+
+  const handleView = (id: number) => {
+    navigate(`/admins/${id}`);
+  };
+
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
@@ -79,10 +90,10 @@ const Admins = () => {
         if (uploadedUrl) finalImageUrl = uploadedUrl;
       }
 
-      if (isEditMode && editingStudent) {
+      if (isEditMode && editingAdmin) {
         updateAdmin(
           {
-            id: editingStudent.id,
+            id: editingAdmin.id,
             fullName: values.fullName,
             phone: normalizePhone(values.phone),
             imageUrl: finalImageUrl || "",
@@ -131,7 +142,7 @@ const Admins = () => {
     <div className="p-4 bg-white dark:bg-gray-900">
       <ListHeader
         title={t("adminsCount")}
-        count={data}
+        count={pagination.totalElements}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchAdmin")}
@@ -141,7 +152,7 @@ const Admins = () => {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Spin size="large" tip="Yuklanmoqda..." />
+          <Spin size="large" />
         </div>
       ) : admins.length === 0 ? (
         <NotFoundData
@@ -160,16 +171,24 @@ const Admins = () => {
               render: (record) => (
                 <div className="flex items-center gap-3">
                   {record.imageUrl ? (
-                    <img
+                    <Image
                       src={record.imageUrl}
-                      alt=""
-                      className="w-10 h-10 rounded-full object-cover"
+                      width={40}
+                      height={40}
+                      preview={{
+                        mask: "Ko‘rish", // ustiga hover qilganda yozuv chiqadi
+                      }}
+                      style={{
+                        borderRadius: "50%", // avatar shaklida
+                        objectFit: "cover",
+                      }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
                       {record.fullName.charAt(0).toUpperCase()}
                     </div>
                   )}
+
                   <div>
                     <div className="font-medium">{record.fullName}</div>
                     <div className="text-xs text-gray-500">
@@ -189,23 +208,25 @@ const Admins = () => {
               title: t("actions"),
               render: (record) => (
                 <div className="flex justify-end gap-3">
-                  <button
+                  <IconButton
+                    icon={<EyeOutlined />}
+                    onClick={() => handleView(record.id)}
+                  />
+                  <IconButton
+                    icon={<PencilIcon />}
                     onClick={() => openEditModal(record)}
-                    disabled={isUpdating}
-                  >
-                    <PencilIcon className="w-5 h-5 text-blue-600 hover:text-blue-700" />
-                  </button>
+                    warning
+                  />
                   <Popconfirm
-                    title={`${t("student")} ${t("confirmDeleteSuffix")}`}
-                    description={`${record.fullName} o'chirilsinmi?`}
+                    title="O'chirish"
+                    description="Bu guruhni o'chirmoqchimisiz?"
+                    okText="Ha"
+                    cancelText="Yo'q"
                     onConfirm={() => handleDelete(record.id)}
-                    okText={t("yes")}
-                    cancelText={t("no")}
-                    okButtonProps={{ loading: isDeleting }}
                   >
-                    <button disabled={isDeleting}>
-                      <TrashBinIcon className="w-5 h-5 text-red-600 hover:text-red-700" />
-                    </button>
+                    <span>
+                      <IconButton icon={<TrashBinIcon />} danger />
+                    </span>
                   </Popconfirm>
                 </div>
               ),
@@ -225,7 +246,7 @@ const Admins = () => {
 
       <ModalComponent
         open={isModalVisible}
-        title={editingStudent ? t("editStudent") : t("addStudent")}
+        title={editingAdmin ? t("editAdmin") : t("addAdmin")}
         onOk={handleSave}
         onCancel={() => {
           setIsModalVisible(false);
@@ -234,31 +255,32 @@ const Admins = () => {
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isCreating || isUpdating || isUploading}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
+        <FormWrapper form={form} layout="vertical">
+          <FormWrapper.Item
             name="fullName"
             label={t("full_name")}
             rules={[{ required: true, message: "Please enter full name" }]}
           >
-            <Input placeholder="Enter full name" />
-          </Form.Item>
+            <InputComponent placeholder="Enter full name" />
+          </FormWrapper.Item>
 
-          <Form.Item
+          <FormWrapper.Item
             name="phone"
             label={t("phone")}
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              {
+                pattern: /^998\d{9}$/,
+                message: "To'g'ri formatda kiriting! (998XXXXXXXXX)",
+              },
+            ]}
           >
-            <Input
-              placeholder="+998 90-123-45-67"
-              onChange={(e) =>
-                form.setFieldValue("phone", formatPhoneDisplay(e.target.value))
-              }
-            />
-          </Form.Item>
+            <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
           {isEditMode && (
-            <Form.Item label={t("image")}>
+            <FormWrapper.Item label={t("image")}>
               <FileUpload
                 onFileSelect={(file) => setSelectedFile(file)}
                 uploadedImageUrl={uploadedImageUrl}
@@ -269,37 +291,19 @@ const Admins = () => {
                 uploadProgress={uploadProgress.percent}
                 isUploading={isUploading}
               />
-
-              {isUploading && (
-                <Progress
-                  percent={uploadProgress.percent}
-                  status="active"
-                  className="mt-2"
-                />
-              )}
-
-              <Form.Item name="imgUrl" label="Yoki URL kiriting">
-                <Input
-                  placeholder="https://example.com/image.jpg"
-                  disabled={isUploading}
-                  onChange={(e) => setUploadedImageUrl(e.target.value)}
-                />
-              </Form.Item>
-            </Form.Item>
+            </FormWrapper.Item>
           )}
 
-          {!editingStudent && (
-            <>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please enter password" }]}
-              >
-                <Input.Password placeholder="Enter password" />
-              </Form.Item>
-            </>
+          {!editingAdmin && (
+            <FormWrapper.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please enter password" }]}
+            >
+              <InputComponent variant="password" placeholder="Enter password" />
+            </FormWrapper.Item>
           )}
-        </Form>
+        </FormWrapper>
       </ModalComponent>
     </div>
   );

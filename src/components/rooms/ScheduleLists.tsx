@@ -1,7 +1,7 @@
 'use client'
 
 import { Table, Tag, Card, Empty } from 'antd'
-import { Schedule } from '../../types/index2'
+import { Schedule } from '../../types/room'
 
 interface ScheduleListProps {
   schedules: Schedule[]
@@ -39,7 +39,7 @@ export default function ScheduleList({ schedules }: ScheduleListProps) {
       render: (text: string) => <span className="font-semibold">{text}</span>,
     },
     {
-      title: 'Bosh Vaqti',
+      title: "Bosh Vaqti",
       dataIndex: 'startTime',
       key: 'startTime',
       render: (text: string) => <span className="font-mono text-blue-600">{text}</span>,
@@ -65,16 +65,16 @@ export default function ScheduleList({ schedules }: ScheduleListProps) {
       ),
     },
     {
-      title: 'Instructor ID',
-      dataIndex: 'teacherId',
-      key: 'teacherId',
-      align: 'center' as const,
+      title: "O'qituvchi",
+      dataIndex: 'teacherName',
+      key: 'teacherName',
+      render: (text: string) => text || '-',
     },
     {
-      title: 'Kategoriya ID',
-      dataIndex: 'categoryId',
-      key: 'categoryId',
-      align: 'center' as const,
+      title: 'Kategoriya',
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      render: (text: string) => text || '-',
     },
   ]
 

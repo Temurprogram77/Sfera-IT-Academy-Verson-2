@@ -47,6 +47,10 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
 import { ConfigProvider, theme as antdTheme } from "antd";
 import GroupsDetail from "./pages/groupsDetail/groupsDetail";
+import StudentsDetail from "./pages/StudentsDetail/StudentsDetail";
+import TeachersDetail from "./pages/TeachersDetail/TeachersDetail";
+import AdminsDetail from "./pages/AdminsDetail/AdminsDetail";
+import ParentsDetail from "./pages/ParentsDetail/ParentsDetail";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -146,6 +150,12 @@ export default function App() {
             colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
             colorPrimary: theme === "dark" ? "##101828" : "#1890ff",
           },
+          Popconfirm: {
+            colorBgElevated: theme === "dark" ? "#1f2937" : "#ffffff",
+            colorText: theme === "dark" ? "#f9fafb" : "#111827",
+            colorBorder: theme === "dark" ? "#4b5563" : "#d1d5db",
+            borderRadiusLG: 8,
+          },
           Dropdown: {
             paddingBlock: 4,
             colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
@@ -156,6 +166,33 @@ export default function App() {
             fullBg: theme === "dark" ? "#111827" : "#ffffff",
             fullPanelBg: theme === "dark" ? "#1f2937" : "#ffffff",
             itemActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
+          },
+          Menu: {
+            colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
+            itemBg: theme === "dark" ? "#111827" : "#ffffff",
+            itemSelectedBg: theme === "dark" ? "#1d4ed8" : "#e6f7ff",
+            itemSelectedColor: theme === "dark" ? "#ffffff" : "#1890ff",
+            itemHoverBg: theme === "dark" ? "#1f2937" : "#f5f5f5",
+            itemHoverColor: theme === "dark" ? "#60a5fa" : "#40a9ff",
+
+            itemActiveBg: theme === "dark" ? "#1e40af" : "#bae6fd",
+
+            popupBg: theme === "dark" ? "#1f2937" : "#ffffff",
+            subMenuItemBg: theme === "dark" ? "#111827" : "#fafafa",
+
+            colorBorder: theme === "dark" ? "#374151" : "#f0f0f0",
+            colorBorderSecondary: theme === "dark" ? "#4b5563" : "#e8e8e8",
+
+            itemColor: theme === "dark" ? "#d1d5db" : "#000000",
+            itemDisabledColor: theme === "dark" ? "#6b7280" : "#bfbfbf",
+            groupTitleColor: theme === "dark" ? "#9ca3af" : "#8c8c8c",
+          },
+          Select: {
+            colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
+            colorBgElevated: theme === "dark" ? "#374151" : "#ffffff",
+            colorText: theme === "dark" ? "#e5e7eb" : "#000000",
+            colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
+            colorIcon: theme === "dark" ? "#9ca3af" : "#8c8c8c",
           },
           Input: {
             colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
@@ -255,9 +292,13 @@ export default function App() {
 
             {/* Users */}
             <Route path="teachers" element={<Teachers />} />
+            <Route path="teachers/:id" element={<TeachersDetail />} />
             <Route path="admins" element={<Admins />} />
+            <Route path="admins/:id" element={<AdminsDetail />} />
             <Route path="students" element={<Students />} />
+            <Route path="students/:id" element={<StudentsDetail />} />
             <Route path="parents" element={<Parents />} />
+            <Route path="parents/:id" element={<ParentsDetail />} />
 
             {/* Messages & Grades */}
             <Route path="messages" element={<Messages />} />

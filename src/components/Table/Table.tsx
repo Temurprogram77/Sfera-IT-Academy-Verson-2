@@ -6,6 +6,9 @@ import ModalComponent from "../Modal/Modal";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { TableComponentProps } from "../../types/table";
+import IconButton from "../IconButton/IconButton";
+import { EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 
 const TableComponent = <T extends { id: number }>({
   data,
@@ -18,7 +21,7 @@ const TableComponent = <T extends { id: number }>({
   onDelete,
 }: TableComponentProps<T>) => {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const [items, setItems] = useState<T[]>(data);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
@@ -47,7 +50,9 @@ const TableComponent = <T extends { id: number }>({
 
     setIsModalVisible(true);
   };
-
+  const handleView = (id: number) => {
+    navigate(`/groups/${id}`);
+  };
   const handleEdit = (record: T) => {
     // Agar onEdit funksiyasi berilgan bo'lsa, uni chaqir va ichki modalni ochma
     if (onEdit) {
@@ -94,9 +99,15 @@ const TableComponent = <T extends { id: number }>({
       key: "actions",
       render: (_: unknown, record: T) => (
         <div className="flex justify-end gap-3">
-          <button onClick={() => handleEdit(record)}>
-            <PencilIcon className="w-5 h-5 text-blue-600" />
-          </button>
+          <IconButton
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record.id)}
+          />
+          <IconButton
+            icon={<PencilIcon />}
+            onClick={() => handleEdit(record)}
+            warning
+          />
 
           <Popconfirm
             title={`${itemName}${t("confirmDeleteSuffix")}`}
@@ -104,9 +115,9 @@ const TableComponent = <T extends { id: number }>({
             okText={t("yes")}
             cancelText={t("no")}
           >
-            <button>
-              <TrashBinIcon className="w-5 h-5 text-red-600" />
-            </button>
+            <span>
+              <IconButton icon={<TrashBinIcon />} danger />
+            </span>
           </Popconfirm>
         </div>
       ),
