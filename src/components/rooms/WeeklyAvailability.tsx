@@ -1,15 +1,9 @@
 "use client";
 
-<<<<<<< HEAD
-import { Card, Collapse, Tag, Empty, Row, Col } from 'antd'
-import { CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons'
-import { Column, Line, Pie } from '@ant-design/plots'
-import { WeeklyStat, TimeSlot } from '../../types/index2'
-=======
-import { Card, Collapse, Tag, Empty } from "antd";
+import { Card, Collapse, Tag, Empty, Row, Col } from "antd";
 import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { Column, Line, Pie } from "@ant-design/plots";
 import { WeeklyStat, TimeSlot } from "../../types/room";
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
 
 interface WeeklyAvailabilityProps {
   weeklyStats: WeeklyStat[];
@@ -26,7 +20,6 @@ const dayNameMap: Record<string, string> = {
 };
 
 const formatTime = (timeStr: string): string => {
-  // "12:00:00" -> "12:00"
   return timeStr.substring(0, 5);
 };
 
@@ -39,9 +32,6 @@ const calculateHours = (timeStr: string): number => {
   return hours;
 };
 
-<<<<<<< HEAD
-export default function WeeklyAvailability({ weeklyStats }: WeeklyAvailabilityProps) {
-=======
 const getDayColor = (index: number): string => {
   const colors = [
     "blue",
@@ -58,84 +48,80 @@ const getDayColor = (index: number): string => {
 export default function WeeklyAvailability({
   weeklyStats,
 }: WeeklyAvailabilityProps) {
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
-  if (weeklyStats.length === 0) {
+  if (!weeklyStats || weeklyStats.length === 0) {
     return (
       <Card className="border-0 shadow-sm">
         <Empty description="Haftaviy jadval ma'lumotlari mavjud emas" />
       </Card>
     );
   }
+
+  // 🔹 Haftalik umumiy statistika
   const weeklyData = weeklyStats.map((stat) => {
-    const busyHours = stat.busy.reduce(
-      (acc, slot) => acc + (slot.end.hour - slot.start.hour),
-      0
-    )
-
-    return {
-      day: dayNameMap[stat.day] || stat.day,
-      busy: busyHours,
-      free: 24 - busyHours,
-    }
-  })
-  const columnConfig = {
-    data: weeklyData,
-    xField: 'day',
-    yField: 'busy',
-    height: 250,
-    color: '#ff4d4f',
-  }
-  const lineConfig = {
-    data: weeklyData,
-    xField: 'day',
-    yField: 'free',
-    height: 250,
-    color: '#52c41a',
-    point: { size: 5 },
-  }
-
-  const items = weeklyStats.map((stat, index) => {
-<<<<<<< HEAD
-    const busyHours = stat.busy.reduce(
-      (acc, slot) => acc + (slot.end.hour - slot.start.hour),
-      0
-    )
-
-    const pieData = [
-      { type: 'Band', value: busyHours },
-      { type: 'Bo‘sh', value: 24 - busyHours },
-    ]
-=======
-    const dayName = dayNameMap[stat.day] || stat.day;
     const busyHours = stat.busy.reduce((acc, slot) => {
       const startHour = calculateHours(slot.start);
       const endHour = calculateHours(slot.end);
       return acc + (endHour - startHour);
     }, 0);
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
+
+    return {
+      day: dayNameMap[stat.day] || stat.day,
+      busy: busyHours,
+      free: 24 - busyHours,
+    };
+  });
+
+  // 🔹 Bar chart (Band)
+  const columnConfig = {
+    data: weeklyData,
+    xField: "day",
+    yField: "busy",
+    height: 250,
+    color: "#ff4d4f",
+  };
+
+  // 🔹 Line chart (Bo'sh)
+  const lineConfig = {
+    data: weeklyData,
+    xField: "day",
+    yField: "free",
+    height: 250,
+    color: "#52c41a",
+    point: { size: 5 },
+  };
+
+  const items = weeklyStats.map((stat, index) => {
+    const dayName = dayNameMap[stat.day] || stat.day;
+
+    const busyHours = stat.busy.reduce((acc, slot) => {
+      const startHour = calculateHours(slot.start);
+      const endHour = calculateHours(slot.end);
+      return acc + (endHour - startHour);
+    }, 0);
+
+    const pieData = [
+      { type: "Band", value: busyHours },
+      { type: "Bo'sh", value: 24 - busyHours },
+    ];
 
     return {
       key: stat.day,
       label: (
-<<<<<<< HEAD
-        <div className="flex justify-between w-full pr-4">
-          <span className="font-semibold">
-            {dayNameMap[stat.day] || stat.day}
-          </span>
-          <Tag color="blue">Band: {busyHours} soat</Tag>
-=======
         <div className="flex items-center justify-between w-full pr-4">
           <span className="font-semibold">{dayName}</span>
           <div className="flex gap-2">
-            <Tag color={getDayColor(index)}>Band: {busyHours}h</Tag>
-            <Tag color="green">Bo'sh: {12 - busyHours}h</Tag>
+            <Tag color={getDayColor(index)}>
+              Band: {busyHours} soat
+            </Tag>
+            <Tag color="green">
+              Bo'sh: {24 - busyHours} soat
+            </Tag>
           </div>
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
         </div>
       ),
       children: (
         <div className="space-y-6">
-<<<<<<< HEAD
+          {/* 🔹 Donut chart */}
           <Pie
             data={pieData}
             angleField="value"
@@ -143,18 +129,14 @@ export default function WeeklyAvailability({
             innerRadius={0.6}
             height={250}
           />
-=======
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
+
+          {/* Band vaqtlar */}
           <div>
             <h4 className="font-semibold text-red-600 mb-3 flex items-center gap-2">
               <ClockCircleOutlined />
               Band Vaqtlar
             </h4>
-<<<<<<< HEAD
-            {stat.busy.map((slot, idx) => (
-              <div key={idx} className="p-2 bg-red-50 rounded mb-2">
-                {formatTime(slot)}
-=======
+
             {stat.busy.length > 0 ? (
               <div className="space-y-2">
                 {stat.busy.map((slot, idx) => (
@@ -168,24 +150,19 @@ export default function WeeklyAvailability({
                     </span>
                   </div>
                 ))}
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
               </div>
-            ))}
+            ) : (
+              <p className="text-gray-500">Band vaqt yo'q</p>
+            )}
           </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
+          {/* Bo'sh vaqtlar */}
           <div>
             <h4 className="font-semibold text-green-600 mb-3 flex items-center gap-2">
               <CheckCircleOutlined />
               Bo'sh Vaqtlar
             </h4>
-<<<<<<< HEAD
-            {stat.free.map((slot, idx) => (
-              <div key={idx} className="p-2 bg-green-50 rounded mb-2">
-                {formatTime(slot)}
-=======
+
             {stat.free.length > 0 ? (
               <div className="space-y-2">
                 {stat.free.map((slot, idx) => (
@@ -199,9 +176,10 @@ export default function WeeklyAvailability({
                     </span>
                   </div>
                 ))}
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
               </div>
-            ))}
+            ) : (
+              <p className="text-gray-500">Bo'sh vaqt yo'q</p>
+            )}
           </div>
         </div>
       ),
@@ -210,10 +188,11 @@ export default function WeeklyAvailability({
 
   return (
     <Card className="border-0 shadow-sm">
-<<<<<<< HEAD
       <h2 className="text-lg font-semibold mb-6">
         Haftaviy Statistika
       </h2>
+
+      {/* Yuqoridagi umumiy diagrammalar */}
       <Row gutter={[24, 24]} className="mb-8">
         <Col xs={24} md={12}>
           <Column {...columnConfig} />
@@ -222,15 +201,13 @@ export default function WeeklyAvailability({
           <Line {...lineConfig} />
         </Col>
       </Row>
-      <Collapse accordion items={items} defaultActiveKey={[weeklyStats[0]?.day]} />
-=======
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold">
-          Haftaviy Band va Bo'sh Vaqtlar
-        </h2>
-      </div>
-      <Collapse items={items} defaultActiveKey={[weeklyStats[0]?.day]} />
->>>>>>> 7255d39e71032d43d59fd2e2194ccd4fc26aa5e6
+
+      {/* Collapse */}
+      <Collapse
+        accordion
+        items={items}
+        defaultActiveKey={weeklyStats[0]?.day}
+      />
     </Card>
   );
 }
