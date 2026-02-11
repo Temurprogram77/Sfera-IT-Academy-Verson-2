@@ -21,7 +21,6 @@ export default function RoomInfo({ room }: RoomInfoProps) {
           <HomeOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
           <div>
             <h1 className="text-3xl font-bold m-0">{room.name}</h1>
-            <p className="text-gray-500 m-0">Xona ID: {room.id}</p>
           </div>
         </div>
 
@@ -29,7 +28,7 @@ export default function RoomInfo({ room }: RoomInfoProps) {
           <Col xs={24} sm={12} md={8}>
             <Card className="text-center border-0">
               <Statistic
-                title="Jadvallashtirilgan Guruhlar"
+                title="Xonadagi Guruhlar Soni"
                 value={totalSchedules}
                 prefix={<TeamOutlined />}
                 valueStyle={{ color: '#1890ff' }}
