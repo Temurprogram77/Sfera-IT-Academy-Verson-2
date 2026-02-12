@@ -33,4 +33,5 @@ export interface TableComponentProps<T extends { id: number }> {
       };
   onEdit?: (record: T) => void;
   onDelete?: (id: number) => void;
+  viewPath?: (id: number) => string;
 }

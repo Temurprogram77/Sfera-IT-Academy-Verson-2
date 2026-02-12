@@ -163,11 +163,12 @@ const Parents = () => {
           data={parents}
           itemName={t("parent")}
           searchKeys={["fullName", "phone"]}
+          viewPath={(id) => `/parents/${id}`} // Ko‘rish tugmasi ishlashi uchun
           columnsConfig={[
             {
               key: "parent",
               title: t("parent"),
-              render: (record) => (
+              render: (_: any, record: Parent) => (
                 <div className="flex items-center gap-3">
                   {record.imageUrl ? (
                     <Image
@@ -175,7 +176,7 @@ const Parents = () => {
                       width={40}
                       height={40}
                       style={{ borderRadius: "50%", objectFit: "cover" }}
-                      preview={{ mask: "Ko‘rish" }} // hover qilganda yozuv chiqadi, bosilganda kattalashadi
+                      preview={{ mask: "Ko‘rish" }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
@@ -197,35 +198,9 @@ const Parents = () => {
               title: t("phone"),
               render: (record) => formatPhoneDisplay(record.phone),
             },
-            {
-              key: "actions",
-              title: t("actions"),
-              render: (record) => (
-                <div className="flex justify-end gap-3">
-                  <IconButton
-                    icon={<EyeOutlined />}
-                    onClick={() => handleView(record.id)}
-                  />
-                  <IconButton
-                    icon={<PencilIcon />}
-                    onClick={() => openEditModal(record)}
-                    warning
-                  />
-                  <Popconfirm
-                    title="O'chirish"
-                    description="Bu guruhni o'chirmoqchimisiz?"
-                    okText="Ha"
-                    cancelText="Yo'q"
-                    onConfirm={() => handleDelete(record.id)}
-                  >
-                    <span>
-                      <IconButton icon={<TrashBinIcon />} danger />
-                    </span>
-                  </Popconfirm>
-                </div>
-              ),
-            },
           ]}
+          onEdit={openEditModal} // Tahrirlash tugmasi ishlashi uchun
+          onDelete={handleDelete} // O‘chirish tugmasi ishlashi uchun
           pagination={{
             current: currentPage + 1,
             pageSize: pageSize,
