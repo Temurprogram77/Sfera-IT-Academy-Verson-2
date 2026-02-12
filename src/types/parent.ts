@@ -1,3 +1,4 @@
+// types/parent.ts
 export interface PaginatedResponse<T> {
   page: number;
   size: number;
@@ -11,6 +12,7 @@ export interface Parent {
   fullName: string;
   phone: string;
   imageUrl: string;
+  role: string; // Bu qatorni qo'shing
 }
 
 export interface ParentListParams extends Record<string, string | number | undefined> {
@@ -50,4 +52,11 @@ export interface UpdateParentDto {
   fullName: string;
   phone: string;
   imageUrl: string;
+}
+
+// Password change uchun
+export interface ChangePasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }

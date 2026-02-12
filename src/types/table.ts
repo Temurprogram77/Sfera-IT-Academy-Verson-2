@@ -1,8 +1,8 @@
 import { Form } from "antd";
 
 export type ColumnConfig<T> = {
-  key: string;
-  title: string;
+  key?: string;
+  title?: string;
   dataIndex?: string;
   render?: (value: any, record: T) => React.ReactNode;
 };

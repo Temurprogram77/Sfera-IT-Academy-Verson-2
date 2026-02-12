@@ -8,6 +8,7 @@ import {
   UpdateTeacherDto,
   UpdateTeacherResponse,
   DeleteTeacherResponse,
+  TeacherDetailResponse,
 } from "../types/teacher";
 
 class TeacherService {
@@ -22,12 +23,26 @@ class TeacherService {
     }
   }
 
+  async getTeacherById(
+    teacherId: string | number,
+  ): Promise<TeacherDetailResponse> {
+    try {
+      const response = await apiClient.get<TeacherDetailResponse>(
+        API_ENDPOINTS.TEACHER.GET_BY_ID(teacherId),
+      );
+      return response;
+    } catch (error) {
+      console.error("Get teacher detail error", error);
+      throw error;
+    }
+  }
+
   // Yangi teacher qo'shish
   async createTeacher(data: CreateTeacherDto): Promise<CreateTeacherResponse> {
     try {
       const response = await apiClient.post<CreateTeacherResponse>(
         API_ENDPOINTS.TEACHER.CREATE_TEACHER,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -41,7 +56,7 @@ class TeacherService {
     try {
       const response = await apiClient.put<UpdateTeacherResponse>(
         API_ENDPOINTS.TEACHER.UPDATE,
-        data
+        data,
       );
       return response;
     } catch (error) {
@@ -54,7 +69,7 @@ class TeacherService {
   async deleteTeacher(teacherId: number): Promise<DeleteTeacherResponse> {
     try {
       const response = await apiClient.delete<DeleteTeacherResponse>(
-        API_ENDPOINTS.TEACHER.DELETE(teacherId)
+        API_ENDPOINTS.TEACHER.DELETE(teacherId),
       );
       return response;
     } catch (error) {

@@ -162,6 +162,7 @@ const Students = () => {
           data={students}
           itemName={t("student")}
           searchKeys={["fulName", "groupName", "phoneNumber"]}
+          viewPath={(id) => `/students/${id}`}
           columnsConfig={[
             {
               key: "student",
@@ -205,14 +206,6 @@ const Students = () => {
               key: "phone",
               title: t("phone"),
               render: (record) => formatPhoneDisplay(record.phoneNumber),
-            },
-          ]}
-          modalFields={[
-            {
-              name: "fullName",
-              label: "To'liq ism",
-              component: <InputComponent />,
-              rules: [{ required: true }],
             },
           ]}
           pagination={{
