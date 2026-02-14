@@ -18,7 +18,7 @@ export default function Page() {
   if (loading) {
     return (
       <Layout className="min-h-screen">
-        <Content className="p-8 bg-[#F9FAFB]">
+        <Content className="p-8 bg-[#F9FAFB] dark:bg-[#101828]">
           <div className="max-w-6xl mx-auto flex justify-center items-center min-h-[400px]">
             <Spin size="large" />
           </div>
@@ -64,7 +64,7 @@ export default function Page() {
 
   return (
     <Layout className="min-h-screen">
-      <Content className="p-8 bg-[#fff]">
+      <Content className="p-8 bg-[#fff] dark:bg-[#101828]">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultActiveKey="info" items={items} />
         </div>
