@@ -104,3 +104,25 @@ export interface UseRoomIdReturn {
   error: string | null;
   refetch: () => void;
 }
+
+export interface TimeSlot {
+  start: string;
+  end: string;
+}
+
+export interface WeeklyStat {
+  day: string;
+  busy: TimeSlot[];
+  free: TimeSlot[];
+}
+
+export interface ChartDataPoint {
+  name: string;
+  busy: number;
+  free: number;
+}
+
+export interface PieDataPoint {
+  name: string;
+  value: number;
+}

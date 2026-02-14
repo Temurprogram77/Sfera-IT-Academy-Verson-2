@@ -4,7 +4,7 @@ import { Layout, Tabs, Spin, Alert } from 'antd'
 import { useParams } from 'react-router-dom'
 import RoomInfo from '../../components/rooms/RoomInfo'
 import ScheduleList from '../../components/rooms/ScheduleLists'
-import WeeklyAvailability from '../../components/rooms/WeeklyAvailability'
+import WeeklyAvailability from '../../components/rooms/WeeklyStatisticsDashboard'
 import { useRoomId } from '../../hooks/useRoomsId'
 
 const { Content } = Layout
@@ -52,7 +52,7 @@ export default function Page() {
     },
     {
       key: 'schedule',
-      label: 'Jadval (Jadvallashtirilgan Guruhlar)',
+      label: 'Xonadagi Guruhlar',
       children: <ScheduleList schedules={room.schedules || []} />,
     },
     {

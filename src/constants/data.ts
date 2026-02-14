@@ -82,3 +82,4 @@ export const DAY_COLORS: Record<string, string> = {
   THU: '#8b5cf6',
   SAT: '#ec4899',
 }
+

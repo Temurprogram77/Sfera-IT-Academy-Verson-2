@@ -39,7 +39,7 @@ export default function ScheduleList({ schedules }: ScheduleListProps) {
       render: (text: string) => <span className="font-semibold">{text}</span>,
     },
     {
-      title: "Bosh Vaqti",
+      title: "Boshlanish Vaqti",
       dataIndex: 'startTime',
       key: 'startTime',
       render: (text: string) => <span className="font-mono text-blue-600">{text}</span>,
@@ -89,7 +89,7 @@ export default function ScheduleList({ schedules }: ScheduleListProps) {
   return (
     <Card className="border-0 shadow-sm">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold">Barcha Jadvallashtirilgan Guruhlar</h2>
+        <h2 className="text-lg font-semibold">Bu xonadagi barcha guruhlar</h2>
       </div>
       <Table
         dataSource={schedules}
