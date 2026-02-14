@@ -20,7 +20,7 @@ export const StatisticsCards = ({
             title="Umumiy Band"
             value={totalBusy}
             suffix="soat"
-            valueStyle={{ color: '#1890ff' }}
+            styles={{ content: { color: "#1890ff" } }}
           />
         </Card>
       </Col>
@@ -31,7 +31,7 @@ export const StatisticsCards = ({
             title="Umumiy Bo'sh"
             value={totalFree}
             suffix="soat"
-            valueStyle={{ color: '#52c41a' }}
+            styles={{ content: { color: '#52c41a'} }}
           />
         </Card>
       </Col>
@@ -42,7 +42,7 @@ export const StatisticsCards = ({
             title="Umumiy Soat"
             value={totalHours}
             suffix="soat"
-            valueStyle={{ color: '#531dab' }}
+            styles={{ content: { color: '#531dab'} }}
           />
         </Card>
       </Col>
@@ -53,7 +53,7 @@ export const StatisticsCards = ({
             title="Utilizatsiya"
             value={utilization.toFixed(1)}
             suffix="%"
-            valueStyle={{ color: '#78ccbe' }}
+            styles={{ content: { color: '#78ccbe'} }}
           />
         </Card>
       </Col>
