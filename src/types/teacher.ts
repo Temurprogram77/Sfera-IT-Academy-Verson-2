@@ -63,3 +63,49 @@ export interface TeacherListResponse {
   message: string;
   data: PaginationData<Teacher>;
 }
+
+// Student inside teacher detail
+export interface TeacherStudent {
+  id: number;
+  fulName: string;
+  imgUrl: string;
+  phoneNumber: string;
+  groupId: number;
+  groupName: string;
+  parentId: number;
+  parentName: string;
+  parentPhone: string;
+}
+
+// Group inside teacher detail
+export interface TeacherGroup {
+  id: number;
+  name: string;
+  startTime: string;
+  endTime: string;
+  weekDays: string[];
+  teacherId: number;
+  categoryId: number;
+  roomId: number;
+  roomName: string;
+  teacherName: string;
+  categoryName: string;
+}
+
+// Teacher detail main object
+export interface TeacherDetail {
+  id: number;
+  fullName: string;
+  phone: string;
+  imageUrl: string;
+  studentList: TeacherStudent[];
+  groupList: TeacherGroup[];
+}
+
+// API response
+export interface TeacherDetailResponse {
+  success: boolean;
+  message: string;
+  data: TeacherDetail;
+}
+

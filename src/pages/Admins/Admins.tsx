@@ -76,10 +76,6 @@ const Admins = () => {
     return digits;
   };
 
-  const handleView = (id: number) => {
-    navigate(`/admins/${id}`);
-  };
-
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
@@ -164,6 +160,7 @@ const Admins = () => {
           data={admins}
           itemName={t("admins")}
           searchKeys={["fullName", "phone"]}
+          viewPath={(id) => `/admins/${id}`}
           columnsConfig={[
             {
               key: "admins",
@@ -175,20 +172,14 @@ const Admins = () => {
                       src={record.imageUrl}
                       width={40}
                       height={40}
-                      preview={{
-                        mask: "Ko‘rish", // ustiga hover qilganda yozuv chiqadi
-                      }}
-                      style={{
-                        borderRadius: "50%", // avatar shaklida
-                        objectFit: "cover",
-                      }}
+                      preview={{ mask: "Ko‘rish" }}
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
                       {record.fullName.charAt(0).toUpperCase()}
                     </div>
                   )}
-
                   <div>
                     <div className="font-medium">{record.fullName}</div>
                     <div className="text-xs text-gray-500">
@@ -203,35 +194,9 @@ const Admins = () => {
               title: t("phone"),
               render: (record) => formatPhoneDisplay(record.phone),
             },
-            {
-              key: "actions",
-              title: t("actions"),
-              render: (record) => (
-                <div className="flex justify-end gap-3">
-                  <IconButton
-                    icon={<EyeOutlined />}
-                    onClick={() => handleView(record.id)}
-                  />
-                  <IconButton
-                    icon={<PencilIcon />}
-                    onClick={() => openEditModal(record)}
-                    warning
-                  />
-                  <Popconfirm
-                    title="O'chirish"
-                    description="Bu guruhni o'chirmoqchimisiz?"
-                    okText="Ha"
-                    cancelText="Yo'q"
-                    onConfirm={() => handleDelete(record.id)}
-                  >
-                    <span>
-                      <IconButton icon={<TrashBinIcon />} danger />
-                    </span>
-                  </Popconfirm>
-                </div>
-              ),
-            },
           ]}
+          onEdit={openEditModal}
+          onDelete={handleDelete}
           pagination={{
             current: currentPage + 1,
             pageSize: pageSize,

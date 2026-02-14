@@ -15,7 +15,6 @@ export const API_ENDPOINTS = {
   STUDENT: {
     LIST: "/student",
     CREATE_STUDENT: "/student/saveStudent",
-    CREATE_PARENT: "/student/saveParent",
     GET_BY_ID: (studentId: string | number) => `/student/${studentId}`,
     UPDATE: "/student",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
@@ -25,6 +24,7 @@ export const API_ENDPOINTS = {
     CREATE_TEACHER: "/teacher/saveUser",
     UPDATE: "/teacher",
     DELETE: (teacherId: string | number) => `/teacher/${teacherId}`,
+    GET_BY_ID: (teacherId: string | number) => `/teacher/${teacherId}`,
   },
   ADMIN: {
     LIST: "/admin",

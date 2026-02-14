@@ -150,6 +150,7 @@ const Teacher = () => {
           data={teachers}
           itemName="O'qituvchi"
           searchKeys={["fullName", "phone"]}
+          viewPath={(id) => `/teachers/${id}`} // "Ko‘rish" tugmasi ishlashi uchun
           columnsConfig={[
             {
               key: "fullName",
@@ -162,13 +163,8 @@ const Teacher = () => {
                       src={record.imageUrl}
                       width={40}
                       height={40}
-                      style={{
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
-                      preview={{
-                        mask: "Ko‘rish", // ustiga hover qilganda yozuv chiqadi
-                      }}
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                      preview={{ mask: "Ko‘rish" }}
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
@@ -187,6 +183,11 @@ const Teacher = () => {
                 </div>
               ),
             },
+            {
+              key: "phone",
+              title: "Telefon",
+              render: (record) => formatPhoneDisplay(record.phone),
+            },
           ]}
           modalFields={[
             {
@@ -196,6 +197,8 @@ const Teacher = () => {
               rules: [{ required: true }],
             },
           ]}
+          onEdit={openEditModal} // "Tahrirlash" tugmasi ishlashi uchun
+          onDelete={handleDelete} // "O‘chirish" tugmasi ishlashi uchun
           pagination={{
             current: currentPage + 1,
             pageSize: pageSize,
@@ -205,8 +208,6 @@ const Teacher = () => {
             showTotal: (total) => `Jami: ${total} ta o'qituvchi`,
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
-          onEdit={openEditModal}
-          onDelete={handleDelete}
         />
       )}
 

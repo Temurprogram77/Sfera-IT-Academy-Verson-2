@@ -19,6 +19,7 @@ const TableComponent = <T extends { id: number }>({
   pagination = { pageSize: 10 },
   onEdit,
   onDelete,
+  viewPath,
 }: TableComponentProps<T>) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -51,8 +52,11 @@ const TableComponent = <T extends { id: number }>({
     setIsModalVisible(true);
   };
   const handleView = (id: number) => {
-    navigate(`/groups/${id}`);
+    if (viewPath) {
+      navigate(viewPath(id));
+    }
   };
+
   const handleEdit = (record: T) => {
     // Agar onEdit funksiyasi berilgan bo'lsa, uni chaqir va ichki modalni ochma
     if (onEdit) {
@@ -94,31 +98,37 @@ const TableComponent = <T extends { id: number }>({
         : (_: any, record: T) => String(record[col.key as keyof T]),
     })),
 
-    modalFields.length > 0 && {
+    // modalFields.length > 0 && { ... }  👇 bu qatorni o'zgartiramiz
+    {
       title: t("actions"),
       key: "actions",
       render: (_: unknown, record: T) => (
         <div className="flex justify-end gap-3">
-          <IconButton
-            icon={<EyeOutlined />}
-            onClick={() => handleView(record.id)}
-          />
-          <IconButton
-            icon={<PencilIcon />}
-            onClick={() => handleEdit(record)}
-            warning
-          />
-
-          <Popconfirm
-            title={`${itemName}${t("confirmDeleteSuffix")}`}
-            onConfirm={() => handleDelete(record.id)}
-            okText={t("yes")}
-            cancelText={t("no")}
-          >
-            <span>
-              <IconButton icon={<TrashBinIcon />} danger />
-            </span>
-          </Popconfirm>
+          {viewPath && (
+            <IconButton
+              icon={<EyeOutlined />}
+              onClick={() => handleView(record.id)}
+            />
+          )}
+          {onEdit && (
+            <IconButton
+              icon={<PencilIcon />}
+              onClick={() => handleEdit(record)}
+              warning
+            />
+          )}
+          {onDelete && (
+            <Popconfirm
+              title={`${itemName} ${t("confirmDeleteSuffix")}`}
+              onConfirm={() => handleDelete(record.id)}
+              okText={t("yes")}
+              cancelText={t("no")}
+            >
+              <span>
+                <IconButton icon={<TrashBinIcon />} danger />
+              </span>
+            </Popconfirm>
+          )}
         </div>
       ),
     },

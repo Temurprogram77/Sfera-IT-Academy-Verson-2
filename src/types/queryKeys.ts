@@ -17,16 +17,20 @@ export const QUERY_KEYS = {
   },
   STUDENTS: {
     ALL: ["students"] as const,
-    DETAIL: (id: string | number) => ["students", id] as const,
+    DETAIL: "student-detail",
+    // DETAIL: (id: string | number) => ["students", id] as const,
   },
   TEACHERS: {
     CREATE: "teachers",
+    DETAIL: (id: string | number) => ["teachers", id] as const,
   },
   ADMIN: {
     ALL: ["admin"],
+    DETAIL: "admin-detail",
   },
   PARENTS: {
     ALL: ["parents"],
-    DETAIL: (id: string | number) => ["parents", id] as const,
+    DETAIL: "parent-detail",
+    // DETAIL: (id: string | number) => ["parents", id] as const,
   },
 } as const;

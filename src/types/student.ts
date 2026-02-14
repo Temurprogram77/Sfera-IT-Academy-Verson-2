@@ -1,3 +1,5 @@
+// types/student.ts
+
 // ============= PAGINATION =============
 export interface PaginatedResponse<T> {
   page: number;
@@ -8,14 +10,26 @@ export interface PaginatedResponse<T> {
 }
 
 // ============= STUDENT TYPE (from API GET) =============
-// API qaytaradi: fulName, phoneNumber, imgUrl, groupId, groupName
 export interface Student {
   id: number;
   fulName: string;
   phoneNumber: string;
-  imgUrl: string; // API returns imgUrl (empty string if no image)
+  imgUrl: string;
   groupId: number;
   groupName: string;
+}
+
+// ============= STUDENT DETAIL TYPE (from API GET by ID) =============
+export interface StudentDetail {
+  id: number;
+  fulName: string;
+  imgUrl: string;
+  phoneNumber: string;
+  groupId: number;
+  groupName: string;
+  parentId: number;
+  parentName: string;
+  parentPhone: string;
 }
 
 export interface StudentListParams extends Record<string, string | number | undefined> {
@@ -35,7 +49,7 @@ export interface StudentListResponse {
 export interface StudentResponse {
   success: boolean;
   message: string;
-  data: Student;
+  data: StudentDetail; // Detail uchun StudentDetail ishlatamiz
 }
 
 export interface StudentActionResponse {
@@ -45,9 +59,6 @@ export interface StudentActionResponse {
 }
 
 // ============= DTOs (Request Bodies) =============
-
-// POST /student/saveStudent
-// API kutadi: fullName, phone, imgUrl, password, groupId, parentPhone, parentName
 export interface CreateStudentDto {
   fullName: string;
   phone: string;
@@ -58,11 +69,16 @@ export interface CreateStudentDto {
   parentName: string;
 }
 
-// PUT /student
-// API kutadi: id, fullName, phone, imgUrl
 export interface UpdateStudentDto {
   id: number;
   fullName: string;
   phone: string;
   imgUrl: string;
+}
+
+// Password change uchun
+export interface ChangePasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }

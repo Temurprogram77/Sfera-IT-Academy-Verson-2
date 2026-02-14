@@ -51,3 +51,18 @@ export interface UpdateAdminDto {
   phone: string;
   imageUrl: string;
 }
+
+// types/admin.ts
+export interface Admin {
+  id: number;
+  fullName: string;
+  phone: string;
+  imageUrl: string;
+  role: string;
+}
+
+export interface ChangePasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

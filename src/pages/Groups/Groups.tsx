@@ -224,8 +224,6 @@ const Groups = () => {
                   ),
                 },
                 {
-                  key: "actions",
-                  title: t("actions"),
                   render: (record) => (
                     <div className="flex gap-2">
                       <IconButton
