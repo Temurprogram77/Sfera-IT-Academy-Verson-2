@@ -1,9 +1,4 @@
 import { Card, Col, Row, Statistic } from "antd";
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-} from "@ant-design/icons";
-
 interface StatisticsCardsProps {
   totalBusy: number;
   totalFree: number;
@@ -25,7 +20,7 @@ export const StatisticsCards = ({
             title="Umumiy Band"
             value={totalBusy}
             suffix="soat"
-            prefix={<ClockCircleOutlined />}
+            valueStyle={{ color: '#1890ff' }}
           />
         </Card>
       </Col>
@@ -36,7 +31,7 @@ export const StatisticsCards = ({
             title="Umumiy Bo'sh"
             value={totalFree}
             suffix="soat"
-            prefix={<CheckCircleOutlined />}
+            valueStyle={{ color: '#52c41a' }}
           />
         </Card>
       </Col>
@@ -47,6 +42,7 @@ export const StatisticsCards = ({
             title="Umumiy Soat"
             value={totalHours}
             suffix="soat"
+            valueStyle={{ color: '#531dab' }}
           />
         </Card>
       </Col>
@@ -57,6 +53,7 @@ export const StatisticsCards = ({
             title="Utilizatsiya"
             value={utilization.toFixed(1)}
             suffix="%"
+            valueStyle={{ color: '#78ccbe' }}
           />
         </Card>
       </Col>

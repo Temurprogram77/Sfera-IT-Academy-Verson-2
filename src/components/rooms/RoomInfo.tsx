@@ -1,7 +1,7 @@
 'use client'
 
-import { Card, Row, Col, Statistic, Badge } from 'antd'
-import { HomeOutlined, TeamOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { Card, Row, Col, Statistic,  } from 'antd'
+import { TeamOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { Room } from '../../types/room'
 
 interface RoomInfoProps {
@@ -18,7 +18,6 @@ export default function RoomInfo({ room }: RoomInfoProps) {
     <div className="space-y-6">
       <Card className="border-0 shadow-sm">
         <div className="flex items-center gap-4 mb-6">
-          <HomeOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
           <div>
             <h1 className="text-3xl font-bold m-0">{room.name}</h1>
           </div>
