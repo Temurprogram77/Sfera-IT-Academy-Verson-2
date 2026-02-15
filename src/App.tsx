@@ -35,10 +35,10 @@ import Parents from "./pages/Parents/Parents";
 import Groups from "./pages/Groups/Groups";
 import Rooms from "./pages/Rooms/Rooms";
 import Grades from "./pages/Grades/Grades";
-import Assessnment from "./pages/Assessnment/Assessnment";
 import Messages from "./pages/Messages/Messages";
 import Admins from "./pages/Admins/Admins";
 import RoomsID from "./pages/RoomsID/RoomsID";
+import Attendance from "./pages/Attendance/Attendance";
 
 import { Toaster } from "sonner";
 import { useTheme } from "./context/ThemeContext";
@@ -305,7 +305,7 @@ export default function App() {
             {/* Messages & Grades */}
             <Route path="messages" element={<Messages />} />
             <Route path="grades" element={<Grades />} />
-            <Route path="assessment" element={<Assessnment />} />
+            <Route path="attendance" element={<Attendance />} /> 
 
             {/* Groups & Rooms */}
             <Route path="categories" element={<Categories />} />
