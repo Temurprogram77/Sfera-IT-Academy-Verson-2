@@ -3,6 +3,7 @@ export interface User {
   fullName: string;
   phone: string;
   role: string;
+  email?: string;
 }
 
 export interface UserProfileResponse {
@@ -19,3 +20,13 @@ export interface UseProfileReturn {
   isRefetching: boolean;
 }
 
+export interface UpdatePasswordRequest {
+  phone: string;
+  password: string;
+}
+
+export interface UpdatePasswordResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}

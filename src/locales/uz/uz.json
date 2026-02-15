@@ -196,5 +196,14 @@
   "dragImageText": "Rasmni bosing yoki sudrab keling",
   "dragImageHint": "JPG, PNG, JPEG • Max 5MB",
   "remove": "O‘chirish",
-  "confirmDeletes": "O‘chirilsinmi?"
+  "confirmDeletes": "O‘chirilsinmi?",
+  "enterPhone": "Telefon raqamni kiriting",
+  "newPassword": "Yangi parol",
+  "optional": "ixtiyoriy",
+  "enterNewPassword": "Yangi parolni kiriting",
+  "leaveBlankToKeepCurrentPassword": "Parolni o'zgartirmaslik uchun bo'sh qoldiring",
+  "updatePhoneOnly": "Faqat telefon raqamni yangilaysizmi?",
+  "profileUpdated": "Profil muvaffaqiyatli yangilandi",
+  "updateError": "Yangilashda xatolik",
+  "saving": "Saqlanmoqda..."
 }

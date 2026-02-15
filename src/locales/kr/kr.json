@@ -194,5 +194,14 @@
   "dragImageText": "Расмни босинг ёки судраб келинг",
   "dragImageHint": "JPG, PNG, JPEG • Max 5MB",
   "remove": "Ўчириш",
-  "confirmDeletes": "Ўчирилсинми?"
+  "confirmDeletes": "Ўчирилсинми?",
+  "enterPhone": "Телефон рақамни киритинг",
+  "newPassword": "Янги парол",
+  "optional": "ихтиёрий",
+  "enterNewPassword": "Янги паролни киритинг",
+  "leaveBlankToKeepCurrentPassword": "Паролни ўзгартирмаслик учун бўш қолдиринг",
+  "updatePhoneOnly": "Фақат телефон рақамни янгилайсизми?",
+  "profileUpdated": "Профил муваффақиятли янгиланди",
+  "updateError": "Янгилашда хатолик",
+  "saving": "Сақланмоқда..."
 }

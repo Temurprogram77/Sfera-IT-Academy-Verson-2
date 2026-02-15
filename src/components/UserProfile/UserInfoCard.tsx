@@ -81,7 +81,7 @@ export default function UserInfoCard({ user }: { user: any }) {
           {/* HEADER */}
           <div className="px-2 pr-14 mb-6">
             <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-              {t("editPersonalInformation")}
+              {t("editPersonalInformation")} 
             </h4>
 
             <p className="text-sm text-gray-500 dark:text-gray-400">

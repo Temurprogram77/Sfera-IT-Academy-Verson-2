@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
   },
   USER: {
     PROFILE: "/user/me",
+    UPDATE_PASSWORD: "/user/update-password",
   },
   STUDENT: {
     LIST: "/student",
