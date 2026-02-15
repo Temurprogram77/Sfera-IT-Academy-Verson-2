@@ -6,7 +6,7 @@ import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
 import { useTranslation } from "react-i18next";
 import { useGroups, useGroupDetails } from "../../hooks/useGroups";
-import { useTeacher } from "../../hooks/useTeacher";
+import { useSimpleTeachers } from "../../hooks/useSimpleTeachers";
 import { useRooms } from "../../hooks/useRooms";
 import {
   Group,
@@ -50,7 +50,7 @@ const Groups = () => {
     isUpdating,
   } = useGroups({ name: searchTerm, page: currentPage, size: pageSize });
 
-  const { teachers, isLoading: teachersLoading } = useTeacher();
+  const { teachers, isLoading: teachersLoading } = useSimpleTeachers();
   const { rooms, loading: roomsLoading } = useRooms();
 
   const { group: editingGroup, loading: groupDetailsLoading } = useGroupDetails(
@@ -58,13 +58,9 @@ const Groups = () => {
   );
 
   const weekDaysOptions = [
-    { value: WeekDay.MONDAY, label: "Dushanba" },
-    { value: WeekDay.TUESDAY, label: "Seshanba" },
-    { value: WeekDay.WEDNESDAY, label: "Chorshanba" },
-    { value: WeekDay.THURSDAY, label: "Payshanba" },
-    { value: WeekDay.FRIDAY, label: "Juma" },
-    { value: WeekDay.SATURDAY, label: "Shanba" },
-    { value: WeekDay.SUNDAY, label: "Yakshanba" },
+    { value: WeekDay.oddDays, label: "Toq kunlari" },
+    { value: WeekDay.evenDays, label: "Juft kunlari" },
+    { value: WeekDay.otherDays, label: "Boshqa kunlar" },
   ];
 
   const openAddModal = () => {
@@ -148,7 +144,7 @@ const Groups = () => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900">
+    <div className="p-6 bg-white dark:bg-gray-900 rounded-xl">
       <div className="max-w-7xl mx-auto">
         <ListHeader
           title={t("groupsCount")}
@@ -284,15 +280,74 @@ const Groups = () => {
               label="Boshlanish vaqti"
               rules={[{ required: true, message: "Vaqtni tanlang" }]}
             >
-              <TimePicker format="HH:mm" className="w-full" />
+              <TimePicker
+                format="HH:mm"
+                className="w-full"
+                hideDisabledOptions
+                disabledTime={() => ({
+                  disabledHours: () => [
+                    ...Array.from({ length: 8 }, (_, i) => i), // 00–07
+                    ...Array.from({ length: 3 }, (_, i) => i + 21), // 21–23
+                  ],
+                })}
+              />
             </FormWrapper.Item>
 
             <FormWrapper.Item
-              name="endTime"
-              label="Tugash vaqti"
-              rules={[{ required: true, message: "Vaqtni tanlang" }]}
+              shouldUpdate={(p, c) => p.startTime !== c.startTime}
             >
-              <TimePicker format="HH:mm" className="w-full" />
+              {({ getFieldValue }) => {
+                const startTime = getFieldValue("startTime");
+
+                return (
+                  <FormWrapper.Item
+                    name="endTime"
+                    label="Tugash vaqti"
+                    dependencies={["startTime"]}
+                    rules={[
+                      { required: true, message: "Vaqtni tanlang" },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          const start = getFieldValue("startTime");
+                          if (!value || !start) return Promise.resolve();
+                          if (value.isAfter(start)) return Promise.resolve();
+                          return Promise.reject(
+                            new Error(
+                              "Tugash vaqti boshlanishdan keyin bo‘lishi kerak",
+                            ),
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <TimePicker
+                      format="HH:mm"
+                      className="w-full"
+                      hideDisabledOptions
+                      disabledTime={() => {
+                        const baseDisabled = [
+                          ...Array.from({ length: 8 }, (_, i) => i),
+                          ...Array.from({ length: 3 }, (_, i) => i + 21),
+                        ];
+
+                        if (!startTime) {
+                          return { disabledHours: () => baseDisabled };
+                        }
+
+                        const startHour = startTime.hour();
+
+                        return {
+                          // FAQAT SOATLARNI BLOKLAYMIZ
+                          disabledHours: () => [
+                            ...baseDisabled,
+                            ...Array.from({ length: startHour }, (_, i) => i),
+                          ],
+                        };
+                      }}
+                    />
+                  </FormWrapper.Item>
+                );
+              }}
             </FormWrapper.Item>
 
             <FormWrapper.Item

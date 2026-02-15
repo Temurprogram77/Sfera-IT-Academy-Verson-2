@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
     DELETE: (studentId: string | number) => `/student/${studentId}`,
   },
   TEACHER: {
+    All: "/teacher/list",
     LIST: "/teacher",
     CREATE_TEACHER: "/teacher/saveUser",
     UPDATE: "/teacher",
@@ -48,6 +49,13 @@ export const API_ENDPOINTS = {
     UPDATE: "/parent",
     GET_BY_ID: (parentId: string | number) => `/parent/${parentId}`,
     DELETE: (parentId: string | number) => `/parent/${parentId}`,
+  },
+  CATEGORY: {
+    LIST: "/category",
+    GET_BY_ID: (id: string | number) => `/category/${id}`,
+    CREATE: "/category",
+    UPDATE: "/category/update",
+    DELETE: (id: string | number) => `/category/${id}`,
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",
