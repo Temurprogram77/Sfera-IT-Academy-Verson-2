@@ -53,6 +53,7 @@ import AdminsDetail from "./pages/AdminsDetail/AdminsDetail";
 import ParentsDetail from "./pages/ParentsDetail/ParentsDetail";
 import Categories from "./pages/Categories/Categories";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
+import AttendanceGroup from "./pages/Attendance/AttendanceGroup";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -305,7 +306,8 @@ export default function App() {
             {/* Messages & Grades */}
             <Route path="messages" element={<Messages />} />
             <Route path="grades" element={<Grades />} />
-            <Route path="attendance" element={<Attendance />} /> 
+            <Route path="attendance/group/:id" element={<Attendance />} /> 
+            <Route path="attendance" element={<AttendanceGroup />} />
 
             {/* Groups & Rooms */}
             <Route path="categories" element={<Categories />} />
@@ -335,7 +337,7 @@ export default function App() {
             <Route path="line-chart" element={<LineChart />} />
             <Route path="bar-chart" element={<BarChart />} />
           </Route>
-
+          {/*reportlar uchun route*/}
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>

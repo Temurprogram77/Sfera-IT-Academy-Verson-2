@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Report SSE Test (Full)</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --card: rgba(255, 255, 255, 0.08);
+        --line: rgba(255, 255, 255, 0.16);
+        --txt: rgba(255, 255, 255, 0.92);
+        --mut: rgba(255, 255, 255, 0.65);
+        --ok: #2dd4bf;
+        --err: #fb7185;
+        --warn: #fbbf24;
+        --shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+        --r: 18px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 28px;
+        color: var(--txt);
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial;
+        background:
+          radial-gradient(
+            1200px 600px at 20% 0%,
+            rgba(96, 165, 250, 0.25),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 80% 20%,
+            rgba(45, 212, 191, 0.18),
+            transparent 55%
+          ),
+          var(--bg);
+        min-height: 100vh;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .top {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+        padding: 14px;
+        backdrop-filter: blur(10px);
+      }
+      h1 {
+        margin: 0;
+        font-size: 26px;
+      }
+      .sub {
+        color: var(--mut);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.4;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--mut);
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 13px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--warn);
+      }
+      .dot.ok {
+        background: var(--ok);
+      }
+      .dot.err {
+        background: var(--err);
+      }
+      button {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--txt);
+        padding: 10px 12px;
+        border-radius: 14px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--txt);
+        outline: none;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1.6fr 0.8fr 0.8fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      @media (max-width: 900px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .log {
+        white-space: pre-wrap;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.85);
+        max-height: 170px;
+        overflow: auto;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      @media (max-width: 980px) {
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.06)
+        );
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 14px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 150px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--mut);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      .name {
+        font-weight: 900;
+        font-size: 15px;
+        line-height: 1.2;
+      }
+      .badge {
+        font-size: 11px;
+        font-weight: 900;
+        padding: 6px 9px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.07);
+        text-transform: uppercase;
+      }
+      .desc {
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 13px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 3.6em;
+      }
+      .empty {
+        color: var(--mut);
+        text-align: center;
+        padding: 18px;
+        border: 1px dashed rgba(255, 255, 255, 0.25);
+        border-radius: var(--r);
+      }
+      .mini {
+        font-size: 12px;
+        color: var(--mut);
+        margin-top: 6px;
+      }
+      .hint {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 12px;
+        line-height: 1.4;
+        margin-top: 8px;
+      }
+      .kbd {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 11px;
+        padding: 2px 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div class="panel" style="flex: 1 1 520px">
+          <h1>📡 Report SSE Test (Full)</h1>
+          <div class="sub">
+            SSE tinglaydi: <b>event: reports</b> yoki default <b>message</b>.
+            Pastdagi <b>Log</b> va <b>Network tab</b> bilan statusni ko‘rasiz.
+          </div>
+          <div class="hint">
+            ✅ Tavsiya: HTML faylni Live Server bilan oching. Agar endpoint JWT
+            bilan himoyalangan bo‘lsa,
+            <span class="kbd">EventSource</span> header yubora olmaydi → 401/403
+            bo‘ladi.
+          </div>
+        </div>
+
+        <div class="panel controls">
+          <span class="pill"
+            ><span id="dot" class="dot"></span
+            ><span id="status">Disconnected</span></span
+          >
+          <button id="connectBtn">Connect</button>
+          <button id="disconnectBtn" disabled>Disconnect</button>
+          <button id="clearBtn">Clear</button>
+        </div>
+      </div>
+
+      <div class="panel grid2">
+        <div>
+          <div class="sub" style="margin: 0 0 6px">SSE URL</div>
+          <input
+            id="url"
+            value="http://5.189.158.5:8082/attendance/stream/12"
+          />
+          <div class="mini">
+            Masalan:
+            <span class="kbd">http://localhost:8080/report/stream</span>
+          </div>
+        </div>
+        <div>
+          <div class="sub" style="margin: 0 0 6px">Search</div>
+          <input id="q" placeholder="name/description/user..." />
+          <div class="mini">Matn kiritib filter qiling</div>
+        </div>
+        <div>
+          <div class="sub" style="margin: 0 0 6px">Status</div>
+          <select id="st">
+            <option value="">All</option>
+            <option value="NEW_REPORT">NEW_REPORT</option>
+            <option value="ACCEPTED">ACCEPTED</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="COMPLETED">COMPLETED</option>
+            <option value="APPROVE">APPROVE</option>
+            <option value="CANCELLED">CANCELLED</option>
+          </select>
+          <div class="mini">Status bo‘yicha filter</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom: 14px">
+        <div class="sub" style="margin: 0 0 8px">
+          <b>Log</b> (CORS/security/401/403 shu yerda bilinadi)
+        </div>
+        <div id="log" class="log">Ready.</div>
+      </div>
+
+      <div id="cards" class="cards"></div>
+      <div id="empty" class="empty" style="display: none">
+        Hozircha report yo‘q yoki filter natija bermadi.
+      </div>
+    </div>
+
+    <script>
+      let es = null;
+      let all = [];
+      let lastEventAt = 0;
+
+      const $ = (id) => document.getElementById(id);
+      const dot = $("dot");
+      const statusEl = $("status");
+      const logEl = $("log");
+      const cardsEl = $("cards");
+      const emptyEl = $("empty");
+
+      function log(msg) {
+        const t = new Date().toLocaleTimeString();
+        logEl.textContent += `\n[${t}] ${msg}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function setState(state, text) {
+        statusEl.textContent = text;
+        dot.classList.remove("ok", "err");
+        if (state === "ok") dot.classList.add("ok");
+        if (state === "err") dot.classList.add("err");
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function card(r) {
+        const title = r.reportName || "Report #" + (r.id ?? "—");
+        const desc = r.description || "—";
+        const status = r.status || "—";
+        const pr = r.priority || "—";
+        const dep = r.department || "—";
+        const cat = r.category || "—";
+        const rt = r.reportType || "—";
+        const dt = r.dangerType || "—";
+        const loc = r.location || "—";
+        const ass = r.assignee || "—";
+        const rep = r.reportUser || "—";
+
+        return `
+      <div class="card">
+        <div class="row">
+          <div class="name">${escapeHtml(title)}</div>
+          <span class="badge">${escapeHtml(status)}</span>
+        </div>
+        <div class="desc">${escapeHtml(desc)}</div>
+        <div class="row">
+          <span>📁 ${escapeHtml(cat)}</span>
+          <span>🧾 ${escapeHtml(rt)}</span>
+          <span>🏢 ${escapeHtml(dep)}</span>
+        </div>
+        <div class="row">
+          <span>⚠️ ${escapeHtml(dt)}</span>
+          <span>🔥 ${escapeHtml(pr)}</span>
+          <span>📍 ${escapeHtml(loc)}</span>
+        </div>
+        <div class="row">
+          <span>👤 Assignee: ${escapeHtml(ass)}</span>
+          <span>🧑‍💼 Reporter: ${escapeHtml(rep)}</span>
+        </div>
+      </div>
+    `;
+      }
+
+      function render() {
+        const q = $("q").value.trim().toLowerCase();
+        const st = $("st").value;
+
+        let list = all.slice();
+
+        if (st) list = list.filter((x) => String(x?.status || "") === st);
+
+        if (q) {
+          list = list.filter((x) => {
+            const hay = [
+              x?.reportName,
+              x?.description,
+              x?.category,
+              x?.reportType,
+              x?.department,
+              x?.dangerType,
+              x?.assignee,
+              x?.reportUser,
+              x?.location,
+              x?.priority,
+              x?.status,
+            ]
+              .map((v) => String(v || ""))
+              .join(" ")
+              .toLowerCase();
+            return hay.includes(q);
+          });
+        }
+
+        if (!list.length) {
+          cardsEl.innerHTML = "";
+          emptyEl.style.display = "block";
+          return;
+        }
+
+        emptyEl.style.display = "none";
+        cardsEl.innerHTML = list.map(card).join("");
+      }
+
+      // ---------- Robust payload parsing ----------
+      function safeJsonParse(raw) {
+        // Ignore empty/keepalive
+        if (raw == null) return null;
+        const s = String(raw).trim();
+        if (!s) return null;
+        if (s === "ping" || s === "keep-alive") return { _ping: true };
+
+        // normal parse
+        try {
+          return JSON.parse(s);
+        } catch (e) {}
+
+        // double-encoded: "\"{...}\""
+        try {
+          const once = JSON.parse(s);
+          if (typeof once === "string") return JSON.parse(once);
+          return once;
+        } catch (e) {}
+
+        return { _raw: raw };
+      }
+
+      function normalizePayload(parsed) {
+        if (!parsed) return null;
+        if (parsed._ping) return { type: "ping" };
+
+        // 1) list
+        if (Array.isArray(parsed)) return { type: "list", list: parsed };
+
+        // 2) ApiResponse: {data:[...]}
+        if (Array.isArray(parsed.data))
+          return { type: "list", list: parsed.data, meta: parsed };
+
+        // 3) boshqa nom bo‘lishi mumkin
+        if (Array.isArray(parsed.payload))
+          return { type: "list", list: parsed.payload, meta: parsed };
+
+        // 4) bitta object report bo‘lsa (optional)
+        if (
+          parsed &&
+          typeof parsed === "object" &&
+          (parsed.id || parsed.reportName)
+        ) {
+          return { type: "single", item: parsed };
+        }
+
+        return { type: "unknown", parsed };
+      }
+
+      function applyPayload(raw) {
+        const parsed = safeJsonParse(raw);
+
+        if (!parsed) {
+          log("⚠️ empty event received");
+          return;
+        }
+
+        const norm = normalizePayload(parsed);
+
+        if (norm.type === "ping") {
+          lastEventAt = Date.now();
+          log("🔁 ping");
+          return;
+        }
+
+        if (norm.type === "list") {
+          all = norm.list || [];
+          lastEventAt = Date.now();
+          log("✅ data received: " + all.length + " reports");
+          render();
+          return;
+        }
+
+        if (norm.type === "single") {
+          // single report kelsa: ro‘yxatni update qilamiz
+          const item = norm.item;
+          const id = item.id;
+          if (id == null) {
+            all.unshift(item);
+          } else {
+            const idx = all.findIndex((x) => x && x.id === id);
+            if (idx >= 0) all[idx] = item;
+            else all.unshift(item);
+          }
+          lastEventAt = Date.now();
+          log("✅ single report received");
+          render();
+          return;
+        }
+
+        log("⚠️ payload not recognized (check console)");
+        console.log("RAW:", raw);
+        console.log("PARSED:", parsed);
+      }
+
+      // ---------- SSE Connection ----------
+      function connect() {
+        const url = $("url").value.trim();
+        if (!url) return alert("URL kiriting!");
+
+        disconnect();
+        setState("warn", "Connecting...");
+        log("Connecting to: " + url);
+
+        // IMPORTANT: EventSource header yubora olmaydi (JWT bo'lsa 401/403 bo'lishi mumkin)
+        es = new EventSource(url);
+
+        es.onopen = () => {
+          setState("ok", "Connected");
+          $("connectBtn").disabled = true;
+          $("disconnectBtn").disabled = false;
+          log("✅ connected (waiting events...)");
+        };
+
+        es.onerror = (e) => {
+          setState("err", "Error / Reconnecting...");
+          log("❌ error (Network tab: status / CORS / 401/403)");
+          console.log("SSE error:", e);
+        };
+
+        // Siz yuborayotgan event name: reports
+        es.addEventListener("attendance", (e) => {
+          console.log("DATA:", JSON.parse(e.data));
+        });
+
+        // Agar server default event yuborsa
+        es.onmessage = (ev) => {
+          log("📩 message event received");
+          applyPayload(ev.data);
+        };
+      }
+
+      function disconnect() {
+        if (es) {
+          es.close();
+          es = null;
+          log("Disconnected");
+        }
+        $("connectBtn").disabled = false;
+        $("disconnectBtn").disabled = true;
+        setState("warn", "Disconnected");
+      }
+
+      function clearAll() {
+        all = [];
+        render();
+        logEl.textContent = "Cleared.";
+      }
+
+      // Event kelmayotganini ham ko‘rsatish uchun (ixtiyoriy)
+      setInterval(() => {
+        if (!es) return;
+        if (!lastEventAt) return;
+        const diff = Date.now() - lastEventAt;
+        if (diff > 15000) {
+          // 15s event bo‘lmasa, log chiqaramiz (backend sendToAll chaqirilmayapti degani bo‘lishi mumkin)
+          log(
+            "⏳ still connected, but no events for 15s (backend sendToAll ishlayaptimi?)",
+          );
+          lastEventAt = Date.now(); // spam bo‘lmasin
+        }
+      }, 5000);
+
+      $("connectBtn").addEventListener("click", connect);
+      $("disconnectBtn").addEventListener("click", disconnect);
+      $("clearBtn").addEventListener("click", clearAll);
+      $("q").addEventListener("input", () => setTimeout(render, 100));
+      $("st").addEventListener("change", render);
+
+      // Avto connect:
+      connect();
+    </script>
+  </body>
+</html>
