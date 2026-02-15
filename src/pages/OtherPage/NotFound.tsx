@@ -19,11 +19,6 @@ export default function NotFound() {
           </h1>
 
           <p className="!p-0 h-[220px] text-green-500 text-[200px]">404</p>
-          <img
-            src="/images/error/404-dark.svg"
-            alt="404"
-            className="hidden dark:block"
-          />
 
           <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
             {t("pageNotFound")}

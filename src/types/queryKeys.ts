@@ -23,6 +23,7 @@ export const QUERY_KEYS = {
   TEACHERS: {
     CREATE: "teachers",
     DETAIL: (id: string | number) => ["teachers", id] as const,
+    TEACHERS_SIMPLE: "teachers-list"
   },
   ADMIN: {
     ALL: ["admin"],
@@ -32,5 +33,9 @@ export const QUERY_KEYS = {
     ALL: ["parents"],
     DETAIL: "parent-detail",
     // DETAIL: (id: string | number) => ["parents", id] as const,
+  },
+  CATEGORIES: {
+    ALL: ["categories"] as const,
+    DETAIL: (id: string | number) => ["categories", id] as const,
   },
 } as const;

@@ -104,11 +104,7 @@ export interface UpdateGroupDto {
 
 // Week days enum for better type safety
 export enum WeekDay {
-  MONDAY = "MONDAY",
-  TUESDAY = "TUESDAY",
-  WEDNESDAY = "WEDNESDAY",
-  THURSDAY = "THURSDAY",
-  FRIDAY = "FRIDAY",
-  SATURDAY = "SATURDAY",
-  SUNDAY = "SUNDAY",
+  oddDays = "Toq kunlari",
+  evenDays = "Juft kunlari",
+  otherDays = "Boshqa kunlar",
 }

@@ -9,6 +9,7 @@ import {
   UpdateTeacherResponse,
   DeleteTeacherResponse,
   TeacherDetailResponse,
+  TeachersResponse,
 } from "../types/teacher";
 
 class TeacherService {
@@ -16,6 +17,17 @@ class TeacherService {
     try {
       const url = buildUrlWithParams(API_ENDPOINTS.TEACHER.LIST, params);
       const response = await apiClient.get<TeacherListResponse>(url);
+      return response;
+    } catch (error) {
+      console.error("Get teachers error", error);
+      throw error;
+    }
+  }
+
+  async getListTeachers(params?: TeacherListParams): Promise<TeachersResponse> {
+    try {
+      const url = buildUrlWithParams(API_ENDPOINTS.TEACHER.All, params);
+      const response = await apiClient.get<TeachersResponse>(url);
       return response;
     } catch (error) {
       console.error("Get teachers error", error);

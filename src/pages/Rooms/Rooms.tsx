@@ -69,7 +69,7 @@ const Rooms = () => {
   const isSaving = isCreating || isUpdating;
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
       {/* Header */}
       <ListHeader
         title={t("rooms")}

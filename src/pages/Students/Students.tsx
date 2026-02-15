@@ -137,7 +137,7 @@ const Students = () => {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
       <ListHeader
         title={t("studentsCount")}
         count={pagination.totalElements}

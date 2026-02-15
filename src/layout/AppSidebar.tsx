@@ -117,6 +117,7 @@ const AppSidebar: React.FC = () => {
         name: t("classes"),
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
         subItems: [
+          { name: t("categories"), path: "/categories", pro: false },
           { name: t("groups"), path: "/groups", pro: false },
           { name: t("rooms"), path: "/rooms", pro: false },
         ],

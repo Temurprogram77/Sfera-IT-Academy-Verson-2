@@ -39,8 +39,12 @@ export interface Teacher {
   phone: string;
   imageUrl?: string;
   status?: string;
-  createdAt?: string;
-  updatedAt?: string;
+}
+
+export interface TeachersResponse {
+  success: boolean;
+  message: string;
+  data: Teacher[];
 }
 
 export interface TeacherListParams extends Record<string, string | number | undefined> {
