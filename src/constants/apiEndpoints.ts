@@ -53,10 +53,18 @@ export const API_ENDPOINTS = {
   },
   CATEGORY: {
     LIST: "/category",
+    SEARCH: "/category/search",
     GET_BY_ID: (id: string | number) => `/category/${id}`,
     CREATE: "/category",
     UPDATE: "/category/update",
     DELETE: (id: string | number) => `/category/${id}`,
+  },
+  MARK: {
+    LIST: "/mark",
+    GET_BY_ID: (id: string | number) => `/mark/${id}`,
+    CREATE: "/mark",
+    UPDATE: "/mark/update",
+    DELETE: (id: string | number) => `/mark/${id}`,
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

@@ -104,7 +104,7 @@ export interface UpdateGroupDto {
 
 // Week days enum for better type safety
 export enum WeekDay {
-  oddDays = "Toq kunlari",
-  evenDays = "Juft kunlari",
-  otherDays = "Boshqa kunlar",
+  oddDays = "TOQ_KUNLAR",
+  evenDays = "JUFT_KUNLAR",
+  otherDays = "BOSHQA_KUNLAR",
 }

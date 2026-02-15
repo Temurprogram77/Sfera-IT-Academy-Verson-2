@@ -74,7 +74,7 @@ export default function MessageSidebar({
       )}
 
       <aside
-        className={`fixed top-0 right-0 z-[100] h-full w-[360px] bg-white dark:bg-gray-900 border-l shadow-xl dark:border-[#1d2939] transition-transform duration-300
+        className={`fixed top-0 right-0 z-[100] h-screen w-[360px] bg-white dark:bg-gray-900 border-l shadow-xl dark:border-[#1d2939] transition-transform duration-300
           ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex items-center justify-between p-4 border-b dark:border-[#1d2939]">

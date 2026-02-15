@@ -15,10 +15,27 @@ class CategoryService {
   async getCategories(params?: CategoryListParams): Promise<CategoryListResponse> {
     try {
       const url = buildUrlWithParams(API_ENDPOINTS.CATEGORY.LIST, params);
+      console.log("🔍 Category API URL:", url);
+      console.log("🔍 Category API Params:", params);
       const response = await apiClient.get<CategoryListResponse>(url);
+      console.log("✅ Category API Raw Response:", response);
       return response;
     } catch (error) {
-      console.error("Get categories error:", error);
+      console.error("❌ Get categories error:", error);
+      throw error;
+    }
+  }
+
+  async searchCategories(params?: CategoryListParams): Promise<CategoryListResponse> {
+    try {
+      const url = buildUrlWithParams(API_ENDPOINTS.CATEGORY.SEARCH, params);
+      console.log("🔍 Search API URL:", url);
+      console.log("🔍 Search API Params:", params);
+      const response = await apiClient.get<CategoryListResponse>(url);
+      console.log("✅ Search API Raw Response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Search categories error:", error);
       throw error;
     }
   }

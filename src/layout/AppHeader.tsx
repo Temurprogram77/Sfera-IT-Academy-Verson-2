@@ -56,6 +56,8 @@ const AppHeader: React.FC = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const role = localStorage.getItem("user_role");
+
   return (
     <>
       {isMessageSidebarOpen && (
@@ -120,13 +122,23 @@ const AppHeader: React.FC = () => {
               <ThemeToggleButton />
               <SelectLanguage />
 
-              <button
-                onClick={() => setIsMessageSidebarOpen(true)}
-                className="relative flex items-center justify-center w-11 h-11 text-gray-500 bg-white border border-gray-200 rounded-full hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"
-              >
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange-400 animate-ping"></span>
-                <BellOutlined />
-              </button>
+              {role === "ROLE_PARENT" ? (
+                <button
+                  onClick={() => setIsMessageSidebarOpen(true)}
+                  className="relative flex items-center justify-center w-11 h-11 text-gray-500 bg-white border border-gray-200 rounded-full hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"
+                >
+                  <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange-400 animate-ping"></span>
+                  <BellOutlined />
+                </button>
+              ) : role === "ROLE_STUDENT" ? (
+                <button
+                  onClick={() => setIsMessageSidebarOpen(true)}
+                  className="relative flex items-center justify-center w-11 h-11 text-gray-500 bg-white border border-gray-200 rounded-full hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"
+                >
+                  <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange-400 animate-ping"></span>
+                  <BellOutlined />
+                </button>
+              ) : null}
             </div>
 
             <UserDropdown />

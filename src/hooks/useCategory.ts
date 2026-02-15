@@ -15,6 +15,9 @@ import { QUERY_KEYS } from "../types/queryKeys";
 export const useCategories = (params?: CategoryListParams) => {
   const queryClient = useQueryClient();
 
+  // Agar search term bo'lsa SEARCH endpoint ishlatamiz, aks holda LIST
+  const hasSearchParams = params?.name && params.name.trim().length > 0;
+
   const {
     data: categoryData,
     isLoading,
@@ -22,10 +25,64 @@ export const useCategories = (params?: CategoryListParams) => {
     refetch,
     isRefetching,
   } = useQuery<CategoryListResponse, Error>({
-    queryKey: [QUERY_KEYS.CATEGORIES.ALL, params],
-    queryFn: () => categoryService.getCategories(params),
+    queryKey: [
+      hasSearchParams ? QUERY_KEYS.CATEGORIES.SEARCH : QUERY_KEYS.CATEGORIES.ALL,
+      params
+    ],
+    queryFn: () =>
+      hasSearchParams
+        ? categoryService.searchCategories(params)
+        : categoryService.getCategories(params),
     staleTime: 1000 * 60 * 5,
   });
+
+  // Debug: API dan kelgan ma'lumotni ko'rish
+  console.log("Category API Response:", categoryData);
+
+  // API dan kelgan ma'lumotni flexible parse qilish
+  const getCategoriesData = () => {
+    if (!categoryData?.data) return [];
+
+    // Agar data.body bo'lsa (pagination format)
+    if (categoryData.data.body && Array.isArray(categoryData.data.body)) {
+      return categoryData.data.body;
+    }
+
+    // Agar data to'g'ridan-to'g'ri array bo'lsa
+    if (Array.isArray(categoryData.data)) {
+      return categoryData.data;
+    }
+
+    return [];
+  };
+
+  const getPaginationData = () => {
+    if (!categoryData?.data) {
+      return { page: 0, size: 10, totalPage: 0, totalElements: 0 };
+    }
+
+    // Agar pagination object bo'lsa
+    if (typeof categoryData.data === 'object' && 'body' in categoryData.data) {
+      return {
+        page: categoryData.data.page || 0,
+        size: categoryData.data.size || 10,
+        totalPage: categoryData.data.totalPage || 0,
+        totalElements: categoryData.data.totalElements || 0,
+      };
+    }
+
+    // Agar to'g'ridan-to'g'ri array bo'lsa
+    if (Array.isArray(categoryData.data)) {
+      return {
+        page: 0,
+        size: 10,
+        totalPage: 1,
+        totalElements: categoryData.data.length,
+      };
+    }
+
+    return { page: 0, size: 10, totalPage: 0, totalElements: 0 };
+  };
 
   const createCategoryMutation = useMutation<
     CategoryActionResponse,
@@ -83,13 +140,8 @@ export const useCategories = (params?: CategoryListParams) => {
   });
 
   return {
-    categories: categoryData?.data || [],
-    pagination: {
-      page: 0,
-      size: 10,
-      totalPage: 1,
-      totalElements: categoryData?.data?.length || 0,
-    },
+    categories: getCategoriesData(),
+    pagination: getPaginationData(),
 
     // States
     loading: isLoading,

@@ -24,6 +24,7 @@ import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import IconButton from "../../components/IconButton/IconButton";
 import InputComponent from "../../components/Input/Input";
 import SelectComponent from "../../components/Select/Select";
+import { useCategories } from "../../hooks/useCategory";
 
 const PRIMARY_COLOR = "#00A67D";
 
@@ -52,6 +53,7 @@ const Groups = () => {
 
   const { teachers, isLoading: teachersLoading } = useSimpleTeachers();
   const { rooms, loading: roomsLoading } = useRooms();
+  const { categories, loading: categoryLoading } = useCategories();
 
   const { group: editingGroup, loading: groupDetailsLoading } = useGroupDetails(
     editingGroupId || 0,
@@ -275,80 +277,82 @@ const Groups = () => {
               <InputComponent placeholder="Guruh nomi" />
             </FormWrapper.Item>
 
-            <FormWrapper.Item
-              name="startTime"
-              label="Boshlanish vaqti"
-              rules={[{ required: true, message: "Vaqtni tanlang" }]}
-            >
-              <TimePicker
-                format="HH:mm"
-                className="w-full"
-                hideDisabledOptions
-                disabledTime={() => ({
-                  disabledHours: () => [
-                    ...Array.from({ length: 8 }, (_, i) => i), // 00–07
-                    ...Array.from({ length: 3 }, (_, i) => i + 21), // 21–23
-                  ],
-                })}
-              />
-            </FormWrapper.Item>
+            <div className="grid grid-cols-2 gap-3">
+              <FormWrapper.Item
+                name="startTime"
+                label="Boshlanish vaqti"
+                rules={[{ required: true, message: "Vaqtni tanlang" }]}
+              >
+                <TimePicker
+                  format="HH:mm"
+                  className="w-full"
+                  hideDisabledOptions
+                  disabledTime={() => ({
+                    disabledHours: () => [
+                      ...Array.from({ length: 8 }, (_, i) => i), // 00–07
+                      ...Array.from({ length: 3 }, (_, i) => i + 21), // 21–23
+                    ],
+                  })}
+                />
+              </FormWrapper.Item>
 
-            <FormWrapper.Item
-              shouldUpdate={(p, c) => p.startTime !== c.startTime}
-            >
-              {({ getFieldValue }) => {
-                const startTime = getFieldValue("startTime");
+              <FormWrapper.Item
+                shouldUpdate={(p, c) => p.startTime !== c.startTime}
+              >
+                {({ getFieldValue }) => {
+                  const startTime = getFieldValue("startTime");
 
-                return (
-                  <FormWrapper.Item
-                    name="endTime"
-                    label="Tugash vaqti"
-                    dependencies={["startTime"]}
-                    rules={[
-                      { required: true, message: "Vaqtni tanlang" },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          const start = getFieldValue("startTime");
-                          if (!value || !start) return Promise.resolve();
-                          if (value.isAfter(start)) return Promise.resolve();
-                          return Promise.reject(
-                            new Error(
-                              "Tugash vaqti boshlanishdan keyin bo‘lishi kerak",
-                            ),
-                          );
-                        },
-                      }),
-                    ]}
-                  >
-                    <TimePicker
-                      format="HH:mm"
-                      className="w-full"
-                      hideDisabledOptions
-                      disabledTime={() => {
-                        const baseDisabled = [
-                          ...Array.from({ length: 8 }, (_, i) => i),
-                          ...Array.from({ length: 3 }, (_, i) => i + 21),
-                        ];
+                  return (
+                    <FormWrapper.Item
+                      name="endTime"
+                      label="Tugash vaqti"
+                      dependencies={["startTime"]}
+                      rules={[
+                        { required: true, message: "Vaqtni tanlang" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const start = getFieldValue("startTime");
+                            if (!value || !start) return Promise.resolve();
+                            if (value.isAfter(start)) return Promise.resolve();
+                            return Promise.reject(
+                              new Error(
+                                "Tugash vaqti boshlanishdan keyin bo‘lishi kerak",
+                              ),
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <TimePicker
+                        format="HH:mm"
+                        className="w-full"
+                        hideDisabledOptions
+                        disabledTime={() => {
+                          const baseDisabled = [
+                            ...Array.from({ length: 8 }, (_, i) => i),
+                            ...Array.from({ length: 3 }, (_, i) => i + 21),
+                          ];
 
-                        if (!startTime) {
-                          return { disabledHours: () => baseDisabled };
-                        }
+                          if (!startTime) {
+                            return { disabledHours: () => baseDisabled };
+                          }
 
-                        const startHour = startTime.hour();
+                          const startHour = startTime.hour();
 
-                        return {
-                          // FAQAT SOATLARNI BLOKLAYMIZ
-                          disabledHours: () => [
-                            ...baseDisabled,
-                            ...Array.from({ length: startHour }, (_, i) => i),
-                          ],
-                        };
-                      }}
-                    />
-                  </FormWrapper.Item>
-                );
-              }}
-            </FormWrapper.Item>
+                          return {
+                            // FAQAT SOATLARNI BLOKLAYMIZ
+                            disabledHours: () => [
+                              ...baseDisabled,
+                              ...Array.from({ length: startHour }, (_, i) => i),
+                            ],
+                          };
+                        }}
+                      />
+                    </FormWrapper.Item>
+                  );
+                }}
+              </FormWrapper.Item>
+            </div>
 
             <FormWrapper.Item
               name="weekDays"
@@ -384,10 +388,11 @@ const Groups = () => {
             >
               <SelectComponent
                 placeholder="Kategoriyani tanlang"
-                options={[
-                  { value: 1, label: "1-kategoriya" },
-                  // Agar backenddan kategoriyalar kelsa, shu yerni dinamik qil
-                ]}
+                loading={categoryLoading}
+                options={categories.map((category) => ({
+                  value: category.id,
+                  label: category.name,
+                }))}
               />
             </FormWrapper.Item>
 

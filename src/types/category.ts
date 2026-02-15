@@ -26,7 +26,13 @@ export interface CategoryListParams extends Record<string, string | number | und
 export interface CategoryListResponse {
   success: boolean;
   message: string;
-  data: Category[];
+  data: Category[] | {
+    body: Category[];
+    page: number;
+    size: number;
+    totalPage: number;
+    totalElements: number;
+  };
 }
 
 export interface CategoryResponse {

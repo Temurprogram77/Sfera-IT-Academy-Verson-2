@@ -1,7 +1,7 @@
 // pages/Categories/Categories.tsx
 
 import { useState } from "react";
-import { Image, Spin } from "antd";
+import { Image, InputNumber, Spin } from "antd";
 import {
   AppstoreOutlined,
   ReadOutlined,
@@ -176,8 +176,8 @@ const Categories = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-xl opacity-0 " />
                       </div>
                     ) : (
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                        <AppstoreOutlined className="text-xl" />
+                      <div className="w-[56px] h-[56px] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        {record.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div className="flex flex-col">
@@ -189,7 +189,9 @@ const Categories = () => {
                         </span>
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-1">
-                        {record.description}
+                        {record.description.length > 30
+                          ? record.description.slice(0, 70) + "..."
+                          : record.description}
                       </div>
                     </div>
                   </div>
@@ -299,9 +301,10 @@ const Categories = () => {
                 },
               ]}
             >
-              <InputComponent
-                type="number"
-                placeholder="60"
+              <InputNumber
+                min={1}
+                placeholder={"60"}
+                className="w-full"
                 prefix={<ClockCircleOutlined className="text-gray-400" />}
               />
             </FormWrapper.Item>
@@ -318,9 +321,10 @@ const Categories = () => {
                 },
               ]}
             >
-              <InputComponent
-                type="number"
-                placeholder="20"
+              <InputNumber
+                min={1}
+                placeholder={"20"}
+                className="w-full"
                 prefix={<QuestionCircleOutlined className="text-gray-400" />}
               />
             </FormWrapper.Item>

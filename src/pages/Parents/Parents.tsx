@@ -7,15 +7,12 @@ import { useTranslation } from "react-i18next";
 import { useParents } from "../../hooks/useParent";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { Parent } from "../../types/parent";
-import { PencilIcon, TrashBinIcon } from "../../icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FileUpload from "../../components/Input/FileUpload";
 import { formatPhoneDisplay } from "../../utils/phone";
 import PhoneInput from "../../components/Input/PhoneInput";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InputComponent from "../../components/Input/Input";
-import IconButton from "../../components/IconButton/IconButton";
-import { EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 const Parents = () => {
@@ -41,12 +38,8 @@ const Parents = () => {
     deleteParent,
     isCreating,
     isUpdating,
-    isDeleting,
   } = useParents({ name: searchTerm, page: currentPage, size: pageSize });
   const { uploadFile, isUploading, uploadProgress } = useFileUpload();
-  const handleView = (id: number) => {
-    navigate(`/parents/${id}`);
-  };
   // Modal functions
   const openAddModal = () => {
     setIsEditMode(false);
