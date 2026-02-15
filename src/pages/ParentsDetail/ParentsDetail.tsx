@@ -183,7 +183,7 @@ const ParentDetail: React.FC = () => {
               {getRoleText(parent.role)}
             </Tag>
 
-            <Space direction="vertical" className="w-full mt-4" size={12}>
+            <Space orientation="vertical" className="w-full mt-4" size={12}>
               <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-300">
                 <PhoneOutlined />
                 <Text>{formatPhone(parent.phone)}</Text>
@@ -215,7 +215,7 @@ const ParentDetail: React.FC = () => {
 
           {/* Additional Info Section */}
           <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <Space direction="vertical" size={8} className="w-full">
+            <Space orientation="vertical" size={8} className="w-full">
               <div className="flex items-start gap-2">
                 <SafetyCertificateOutlined className="text-green-600 mt-1" />
                 <div>

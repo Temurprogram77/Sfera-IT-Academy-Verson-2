@@ -77,10 +77,10 @@ export default function AttendanceList({
   };
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size="large">
+    <Space orientation="vertical" style={{ width: '100%' }} size="large">
       {/* Controls Section */}
       <Card>
-        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+        <Space orientation="vertical" style={{ width: '100%' }} size="middle">
           {/* Search and Filter Row */}
           <Row gutter={16}>
             <Col xs={24} sm={12}>

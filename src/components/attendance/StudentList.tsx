@@ -54,7 +54,7 @@ export default function StudentList({
                 </Space>
               }
               description={
-                <Space direction="vertical" size={0}>
+                <Space orientation="vertical" size={0}>
                   <Badge
                     color={statusConfig.color}
                     text={statusConfig.label}

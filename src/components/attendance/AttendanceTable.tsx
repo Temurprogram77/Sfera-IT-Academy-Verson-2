@@ -69,7 +69,7 @@ export default function AttendanceTable({ students }: AttendanceTableProps) {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-      <Space direction="vertical" style={{ width: '100%' }} size="large">
+      <Space orientation="vertical" style={{ width: '100%' }} size="large">
         {/* Search and Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-4">
           <Input

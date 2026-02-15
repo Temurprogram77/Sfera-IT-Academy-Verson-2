@@ -115,7 +115,7 @@ const TeachersDetail: React.FC = () => {
 
             <Divider />
 
-            <Space direction="vertical">
+            <Space orientation="vertical">
               <Space>
                 <PhoneOutlined />
                 <PhoneInput value={teacher.phone} />
