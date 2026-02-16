@@ -38,7 +38,7 @@ export const API_ENDPOINTS = {
   GROUP: {
     ALL: "/group/all",
     LIST: "/group",
-    CREATE: "/group",
+    CREATE: "/group/update",
     UPDATE: "/group/update",
     DELETE: (id: number | string) => `/group/${id}`,
     GET_BY_ID: (id: number | string) => `/group/${id}`,
@@ -65,6 +65,13 @@ export const API_ENDPOINTS = {
     CREATE: "/mark",
     UPDATE: "/mark/update",
     DELETE: (id: string | number) => `/mark/${id}`,
+  },
+  NEWS: {
+    LIST: "/news",
+    GET_BY_ID: (id: string | number) => `/news/${id}`,
+    CREATE: "/news",
+    UPDATE: "/news/update",
+    DELETE: (id: string | number) => `/news/${id}`,
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

@@ -210,5 +210,6 @@
   "updatePhoneOnly": "Faqat telefon raqamni yangilaysizmi?",
   "profileUpdated": "Profil muvaffaqiyatli yangilandi",
   "updateError": "Yangilashda xatolik",
-  "saving": "Saqlanmoqda..."
+  "saving": "Saqlanmoqda...",
+  "news": "Yangiliklar"
 }

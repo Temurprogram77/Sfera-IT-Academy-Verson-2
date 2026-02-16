@@ -10,6 +10,7 @@ import {
   UserCircleIcon,
   UserIcon,
   ListIcon,
+  DocsIcon
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
@@ -142,6 +143,7 @@ const AppSidebar: React.FC = () => {
         subItems: [{ name: t("grades"), path: "/grades", pro: false }],
       },
       { name: t("attendance"), path: "/attendance", icon: <ListIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+      { name: t("news"), path: "/news", icon: <DocsIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN","ROLE_STUDENT", "ROLE_PARENT"] },
       {
         icon: <CalenderIcon />,
         name: t("calendar"),

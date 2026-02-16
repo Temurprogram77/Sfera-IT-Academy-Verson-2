@@ -4,7 +4,7 @@ import { formatPhone } from "../../utils/phoneFormatter";
 import IconButton from "../IconButton/IconButton";
 import ModalComponent from "../Modal/Modal";
 import { useEffect, useState } from "react";
-import { EditFilled, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import PasswordInput from "../ui/input/PasswordInput";
 import PhoneInput from "../ui/input/PhoneInput";
 import { useMaskito } from "@maskito/react";
@@ -14,6 +14,9 @@ import { toast } from "sonner";
 import Label from "../form/Label";
 import { userService } from "../../services/userService";
 import { adminService } from "../../services/adminService";
+import FileUpload from "../Input/FileUpload";
+import InputComponent from "../Input/Input";
+import { useFileUpload } from "../../hooks/useFileUpload";
 
 const basePhoneOptions = maskitoPhoneOptionsGenerator({
   countryIsoCode: "UZ",
@@ -29,25 +32,29 @@ interface UserMetaCardProps {
     fullName?: string;
     imageUrl?: string;
   };
-  refetch?: () => Promise<void>; // async bo‘lishi kerak
+  refetch?: () => Promise<void>;
 }
 
 export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
   const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const inputRef = useMaskito({ options: phoneOptions });
+  const { uploadFile, isUploading, uploadProgress } = useFileUpload();
 
   const [mode, setMode] = useState<"password" | "profile">("password");
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // --- Har doim user props o‘zgarganda state-ni yangilash ---
   useEffect(() => {
     if (user) {
-      const formattedPhone = user.phone?.startsWith("+") ? user.phone : `+${user.phone || ""}`;
+      const formattedPhone = user.phone?.startsWith("+")
+        ? user.phone
+        : `+${user.phone || ""}`;
+
       setPhone(formattedPhone);
       setFullName(user.fullName || "");
       setImageUrl(user.imageUrl || "");
@@ -55,30 +62,20 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
     }
   }, [user]);
 
-  // --- Modal yopilganda state-ni reset qilish ---
   const handleModalClose = () => {
-    const formattedPhone = user.phone?.startsWith("+") ? user.phone : `+${user.phone || ""}`;
-    setPhone(formattedPhone);
-    setFullName(user.fullName || "");
-    setImageUrl(user.imageUrl || "");
-    setPassword("");
     closeModal();
+    setSelectedFile(null);
   };
 
-  // --- Submit handler ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (mode === "password") {
-        // --- Parolni yangilash ---
         if (!password) return toast.error("Parol kiriting");
 
         const cleanPhone = phone.replace(/\D/g, "");
-        if (!cleanPhone.startsWith("998") || cleanPhone.length !== 12) {
-          return toast.error("Telefon formati noto‘g‘ri");
-        }
 
         const response = await userService.updatePassword({
           phone: cleanPhone,
@@ -87,14 +84,21 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
 
         if (response.success) {
           toast.success(response.message);
-          await refetch?.(); // ma’lumotni yangilab olish
+          await refetch?.();
           handleModalClose();
         } else {
           toast.error(response.message);
         }
       } else {
-        // --- Shaxsiy ma’lumotlarni tahrirlash ---
-        if (!fullName || !phone) return toast.error("To‘liq ma’lumot kiriting");
+        if (!fullName || !phone)
+          return toast.error("To‘liq ma’lumot kiriting");
+
+        let finalImageUrl = imageUrl;
+
+        if (selectedFile) {
+          const uploaded = await uploadFile(selectedFile);
+          if (uploaded) finalImageUrl = uploaded;
+        }
 
         const cleanPhone = phone.replace(/\D/g, "");
 
@@ -102,12 +106,12 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
           id: user.id,
           fullName,
           phone: cleanPhone,
-          imageUrl,
+          imageUrl: finalImageUrl,
         });
 
         if (response.success) {
           toast.success(response.message);
-          await refetch?.(); // ma’lumotni yangilab olish
+          await refetch?.();
           handleModalClose();
         } else {
           toast.error(response.message);
@@ -122,157 +126,127 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
 
   return (
     <>
-      {/* --- Card --- */}
-      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
-            <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800 flex items-center justify-center">
-              <img
-                className="object-contain w-16 h-16 dark:hidden"
-                src="/images/logoOne.png"
-                alt="Logo"
-              />
-              <img
-                className="object-contain w-16 h-16 hidden dark:block"
-                src="/images/logoTwo.png"
-                alt="Logo Dark"
-              />
+      {/* CARD */}
+      <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border dark:border-gray-800">
+        <div className="flex items-center justify-between flex-wrap gap-6">
+
+          {/* User Info */}
+          <div className="flex items-center gap-5">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500 shadow">
+              {user.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold">
+                  {user.fullName?.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
 
-            <div className="order-3 xl:order-2">
-              <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                {user.fullName || "-"}
-              </h4>
-
-              <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatPhone(user.phone)}
-                </p>
-
-                <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
-
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Sfera IT Academy
-                </p>
-              </div>
+            <div>
+              <h3 className="text-lg font-semibold dark:text-white">
+                {user.fullName}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {formatPhone(user.phone)}
+              </p>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          {/* Buttons */}
+          <div className="flex gap-3">
             <IconButton
-              text={t("updatePassword") || "Parolni yangilash"}
+              text="Parolni yangilash"
               icon={<LockOutlined />}
               onClick={() => {
                 setMode("password");
                 openModal();
               }}
-              type="default"
             />
 
             <IconButton
-              text={t("editProfile") || "Shaxsiy ma’lumotlarni yangilash"}
+              text="Profilni tahrirlash"
               icon={<UserOutlined />}
               onClick={() => {
                 setMode("profile");
                 openModal();
               }}
-              type="default"
             />
           </div>
         </div>
       </div>
 
-      {/* --- Modal --- */}
+      {/* MODAL */}
       <ModalComponent
         open={isOpen}
         title={
           mode === "password"
-            ? t("updatePassword") || "Parolni yangilash"
-            : t("editProfile") || "Shaxsiy ma’lumotlarni tahrirlash"
+            ? "Parolni yangilash"
+            : "Profilni tahrirlash"
         }
         onCancel={handleModalClose}
         footer={null}
       >
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* --- Password Mode --- */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+
           {mode === "password" && (
             <>
               <div>
-                <Label>{t("phone") || "Telefon"}</Label>
+                <Label>Telefon</Label>
                 <PhoneInput ref={inputRef} value={phone} disabled />
               </div>
 
               <div>
-                <Label>
-                  {t("newPassword") || "Yangi parol"}{" "}
-                  <span className="text-error-500">*</span>
-                </Label>
+                <Label>Yangi parol</Label>
                 <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t("enterNewPassword") || "Yangi parolni kiriting"}
                   disabled={isLoading}
                 />
               </div>
             </>
           )}
 
-          {/* --- Profile Mode --- */}
           {mode === "profile" && (
             <>
-              <div>
-                <Label>
-                  {t("fullName") || "To‘liq ism"} <span className="text-error-500">*</span>
-                </Label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full p-2 border rounded"
-                  disabled={isLoading}
-                />
-              </div>
+              <InputComponent
+                label="To‘liq ism"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
 
               <div>
-                <Label>
-                  {t("phone") || "Telefon"} <span className="text-error-500">*</span>
-                </Label>
+                <Label>Telefon</Label>
                 <PhoneInput
                   ref={inputRef}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+998 90 123 45 67"
                   disabled={isLoading}
                 />
               </div>
 
-              <div>
-                <Label>{t("imageUrl") || "Rasm URL"}</Label>
-                <input
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full p-2 border rounded"
-                  disabled={isLoading}
-                />
-              </div>
+              <FileUpload
+                onFileSelect={(file) => setSelectedFile(file)}
+                uploadedImageUrl={imageUrl}
+                onRemove={() => {
+                  setImageUrl("");
+                  setSelectedFile(null);
+                }}
+                uploadProgress={uploadProgress.percent}
+                isUploading={isUploading}
+              />
             </>
           )}
 
-          {/* --- Buttons --- */}
-          <div className="flex justify-end gap-3 mt-6">
+          <div className="flex justify-end gap-3">
+            <IconButton text="Bekor qilish" onClick={handleModalClose} />
             <IconButton
-              text={t("close") || "Yopish"}
-              onClick={handleModalClose}
-              type="default"
-              disabled={isLoading}
-            />
-
-            <IconButton
-              text={isLoading ? t("saving") || "Saqlanmoqda..." : t("saveChanges") || "Saqlash"}
+              text={isLoading ? "Saqlanmoqda..." : "Saqlash"}
               htmlType="submit"
               type="primary"
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
             />
           </div>
         </form>
