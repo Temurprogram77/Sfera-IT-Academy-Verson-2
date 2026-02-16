@@ -26,13 +26,13 @@ export default function Attendance() {
 
   // Guruh ma'lumotlarini olamiz
   const { group, students, loading, error } = useGroupDetails(id!);
-
+  const baseUrl=import.meta.env.VITE_API_BASE_URL
   // SSE orqali real-time attendance olish
   useEffect(() => {
     if (!id) return;
 
     const sse = createSSE({
-      url: `http://5.189.158.5:8082/attendance/stream/${id}`,
+      url: `${baseUrl}/attendance/stream/${id}`,
       eventName: "attendance",
       onMessage: (data: AttendanceRecord[]) => {
         console.log("Attendance data received:", data);
