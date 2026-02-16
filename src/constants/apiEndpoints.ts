@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     CREATE_STUDENT: "/student/saveStudent",
     GET_BY_ID: (studentId: string | number) => `/student/${studentId}`,
     UPDATE: "/student",
+    UPDATE_GROUP: "/student/update-group",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
   },
   TEACHER: {
@@ -72,6 +73,15 @@ export const API_ENDPOINTS = {
     CREATE: "/news",
     UPDATE: "/news/update",
     DELETE: (id: string | number) => `/news/${id}`,
+  },
+  EVENT: {
+    LIST: "/event/list",
+    STREAM: "/event/stream", // GET - real-time
+    CREATE: "/event", // POST
+    UPDATE: "/event/update", // PUT
+    GET_BY_DATE: "/event/byDate",
+    
+    DELETE: (eventId: string | number) => `/event/${eventId}`, // DELETE
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

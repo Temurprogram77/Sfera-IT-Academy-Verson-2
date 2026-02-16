@@ -43,4 +43,10 @@ export const QUERY_KEYS = {
     ALL: ["marks"] as const,
     DETAIL: (id: string | number) => ["marks", id] as const,
   },
+  EVENTS: {
+    ALL: ["events"] as const,
+    LIST: ["events", "list"] as const,
+    BY_DATE: ["events", "byDate"],
+    DETAIL: (id: string | number) => ["events", id] as const,
+  },
 } as const;

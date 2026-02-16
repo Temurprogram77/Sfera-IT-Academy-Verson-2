@@ -6,6 +6,7 @@ import {
   CreateStudentDto,
   StudentActionResponse,
   UpdateStudentDto,
+  UpdateStudentGroupDto,
   StudentListParams,
 } from "../types/student";
 
@@ -58,6 +59,23 @@ class StudentService {
       return response;
     } catch (error) {
       console.error("Update student error:", error);
+      throw error;
+    }
+  }
+
+  // PUT /student/update-group - Update student group
+  async updateStudentGroup(data: UpdateStudentGroupDto): Promise<StudentActionResponse> {
+    try {
+      // Query params bilan yuborish: ?studentId=33&groupId=1
+      const url = buildUrlWithParams(API_ENDPOINTS.STUDENT.UPDATE_GROUP, {
+        studentId: data.studentId,
+        groupId: data.groupId,
+      });
+
+      const response = await apiClient.put<StudentActionResponse>(url);
+      return response;
+    } catch (error) {
+      console.error("Update student group error:", error);
       throw error;
     }
   }

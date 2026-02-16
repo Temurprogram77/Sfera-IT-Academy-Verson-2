@@ -35,9 +35,11 @@ const Students = () => {
     pagination,
     createStudent,
     updateStudent,
+    updateStudentGroup,
     deleteStudent,
     isCreating,
     isUpdating,
+    isUpdatingGroup,
     isDeleting,
   } = useStudents({ name: searchTerm, page: currentPage, size: pageSize });
   const { groups, loading: groupsLoading } = useGroups();
@@ -62,9 +64,11 @@ const Students = () => {
       fullName: student.fulName,
       phoneNumber: student.phoneNumber,
       groupId: student.groupId,
+      parentPhone: student.parentPhone, // Parent phone ham set qilamiz
     });
     setIsModalVisible(true);
   };
+
   const normalizePhone = (value: string) => {
     let digits = value.replace(/\D/g, "");
 
@@ -74,6 +78,7 @@ const Students = () => {
 
     return digits;
   };
+
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
@@ -85,23 +90,78 @@ const Students = () => {
       }
 
       if (isEditMode && editingStudent) {
-        updateStudent(
-          {
-            id: editingStudent.id,
-            fullName: values.fullName,
-            phone: normalizePhone(values.phoneNumber),
-            imgUrl: finalImageUrl || "",
-          },
-          {
-            onSuccess: () => {
-              setIsModalVisible(false);
-              form.resetFields();
-              setUploadedImageUrl("");
-              setSelectedFile(null);
+        // Edit mode - Guruh o'zgarganmi tekshirish
+        const hasGroupChanged = values.groupId !== editingStudent.groupId;
+
+        // Agar guruh o'zgargan bo'lsa
+        if (hasGroupChanged) {
+          console.log("📝 Guruh o'zgargan! updateStudentGroup ishga tushadi");
+          console.log(
+            `Old group: ${editingStudent.groupId}, New group: ${values.groupId}`,
+          );
+
+          // 1. Avval guruhni o'zgartirish (update-group API ga)
+          updateStudentGroup(
+            {
+              studentId: editingStudent.id,
+              groupId: values.groupId,
             },
-          },
-        );
+            {
+              onSuccess: () => {
+                console.log("✅ Guruh muvaffaqiyatli o'zgartirildi");
+
+                // 2. Keyin boshqa ma'lumotlarni yangilash (update API ga)
+                updateStudent(
+                  {
+                    id: editingStudent.id,
+                    fullName: values.fullName,
+                    phone: normalizePhone(values.phoneNumber),
+                    imgUrl: finalImageUrl || "",
+                    parentPhone: normalizePhone(values.parentPhone),
+                  },
+                  {
+                    onSuccess: () => {
+                      console.log("✅ Student ma'lumotlari yangilandi");
+                      setIsModalVisible(false);
+                      form.resetFields();
+                      setUploadedImageUrl("");
+                      setSelectedFile(null);
+                    },
+                  },
+                );
+              },
+              onError: (error) => {
+                console.error("❌ Guruhni o'zgartirishda xatolik:", error);
+              },
+            },
+          );
+        } else {
+          // Agar guruh o'zgarmagan bo'lsa, faqat boshqa ma'lumotlarni yangilash
+          console.log("📝 Guruh o'zgarmagan, faqat ma'lumotlarni yangilash");
+
+          updateStudent(
+            {
+              id: editingStudent.id,
+              fullName: values.fullName,
+              phone: normalizePhone(values.phoneNumber),
+              imgUrl: finalImageUrl || "",
+              parentPhone: normalizePhone(values.parentPhone),
+            },
+            {
+              onSuccess: () => {
+                console.log("✅ Student ma'lumotlari yangilandi");
+                setIsModalVisible(false);
+                form.resetFields();
+                setUploadedImageUrl("");
+                setSelectedFile(null);
+              },
+            },
+          );
+        }
       } else {
+        // Create mode
+        console.log("📝 Yangi student yaratish");
+
         createStudent(
           {
             fullName: values.fullName,
@@ -114,6 +174,7 @@ const Students = () => {
           },
           {
             onSuccess: () => {
+              console.log("✅ Student yaratildi");
               setIsModalVisible(false);
               form.resetFields();
               setUploadedImageUrl("");
@@ -175,7 +236,7 @@ const Students = () => {
                       width={40}
                       height={40}
                       preview={{
-                        mask: "Ko‘rish",
+                        mask: "Ko'rish",
                       }}
                       style={{
                         borderRadius: "50%",
@@ -222,6 +283,7 @@ const Students = () => {
         />
       )}
 
+      {/* Student qo'shish/tahrirlash modal */}
       <ModalComponent
         open={isModalVisible}
         title={editingStudent ? t("editStudent") : t("addStudent")}
@@ -230,10 +292,13 @@ const Students = () => {
           setIsModalVisible(false);
           form.resetFields();
           setUploadedImageUrl("");
+          setSelectedFile(null);
         }}
         okText={t("save")}
         cancelText={t("cancel")}
-        confirmLoading={isCreating || isUpdating || isUploading}
+        confirmLoading={
+          isCreating || isUpdating || isUpdatingGroup || isUploading
+        }
       >
         <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
@@ -258,49 +323,33 @@ const Students = () => {
             <PhoneInput placeholder="+998 90 123 45 67" />
           </FormWrapper.Item>
 
-          {!editingStudent && (
-            <FormWrapper.Item
-              name="groupId"
-              label={t("group")}
-              rules={[{ required: true, message: "Iltimos, guruhni tanlang" }]}
-            >
-              <SelectComponent
-                placeholder="Guruhni tanlang"
-                loading={groupsLoading}
-                options={groups.map((g) => ({ value: g.id, label: g.name }))}
-                // showSearch qo'shish xohlasang:
-                // showSearch
-              />
-            </FormWrapper.Item>
-          )}
-
-          <FormWrapper.Item label={t("image")}>
-            <FileUpload
-              onFileSelect={(file) => {
-                setSelectedFile(file);
-              }}
-              uploadedImageUrl={uploadedImageUrl}
-              onRemove={() => {
-                setUploadedImageUrl("");
-                setSelectedFile(null);
-              }}
-              uploadProgress={uploadProgress.percent}
-              // isUploading={isUploading}
+          {/* Guruh select - Edit va Create uchun */}
+          <FormWrapper.Item
+            name="groupId"
+            label={t("group")}
+            rules={[{ required: true, message: "Iltimos, guruhni tanlang" }]}
+          >
+            <SelectComponent
+              placeholder="Guruhni tanlang"
+              loading={groupsLoading}
+              options={groups.map((g) => ({ value: g.id, label: g.name }))}
             />
           </FormWrapper.Item>
 
-          {!editingStudent && (
-            <FormWrapper.Item
-              name="password"
-              label="Password"
-              rules={[{ required: true, message: "Please enter password" }]}
-            >
-              <InputComponent variant="password" placeholder="Enter password" />
-            </FormWrapper.Item>
-          )}
-
+          {/* Faqat Create mode uchun */}
           {!editingStudent && (
             <>
+              <FormWrapper.Item
+                name="password"
+                label="Password"
+                rules={[{ required: true, message: "Please enter password" }]}
+              >
+                <InputComponent
+                  variant="password"
+                  placeholder="Enter password"
+                />
+              </FormWrapper.Item>
+
               <FormWrapper.Item
                 name="parentName"
                 label="Parent Name"
@@ -324,6 +373,19 @@ const Students = () => {
             ]}
           >
             <PhoneInput placeholder="+998 90 123 45 67" />
+          </FormWrapper.Item>
+          <FormWrapper.Item label={t("image")}>
+            <FileUpload
+              onFileSelect={(file) => {
+                setSelectedFile(file);
+              }}
+              uploadedImageUrl={uploadedImageUrl}
+              onRemove={() => {
+                setUploadedImageUrl("");
+                setSelectedFile(null);
+              }}
+              uploadProgress={uploadProgress.percent}
+            />
           </FormWrapper.Item>
         </FormWrapper>
       </ModalComponent>

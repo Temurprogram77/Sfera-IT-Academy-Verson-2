@@ -5,6 +5,7 @@ import {
   StudentListResponse,
   CreateStudentDto,
   UpdateStudentDto,
+  UpdateStudentGroupDto,
   StudentActionResponse,
   StudentListParams,
 } from "../types/student";
@@ -52,11 +53,31 @@ export const useStudents = (params?: StudentListParams) => {
     mutationFn: (data: UpdateStudentDto) => studentService.updateStudent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
-      toast.success("Student updated successfully");
+      toast.success("Student muvaffaqiyatli yangilandi");
     },
     onError: (error: Error) => {
-      toast.error("Student yangilashda xatolik yuz berdi.");
+      toast.error("Student yangilashda xatolik yuz berdi");
       console.error("Update student error:", error);
+    },
+  });
+
+  const updateStudentGroupMutation = useMutation<
+    StudentActionResponse,
+    Error,
+    UpdateStudentGroupDto
+  >({
+    mutationFn: (data: UpdateStudentGroupDto) =>
+      studentService.updateStudentGroup(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STUDENTS.ALL] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUPS.ALL],
+      });
+      toast.success("Student guruhi muvaffaqiyatli o'zgartirildi");
+    },
+    onError: (error: Error) => {
+      toast.error("Guruhni o'zgartirishda xatolik yuz berdi");
+      console.error("Update student group error:", error);
     },
   });
 
@@ -98,11 +119,13 @@ export const useStudents = (params?: StudentListParams) => {
     // Mutations
     createStudent: createStudentMutation.mutate,
     updateStudent: updateStudentMutation.mutate,
+    updateStudentGroup: updateStudentGroupMutation.mutate, // Yangi mutation
     deleteStudent: deleteStudentMutation.mutate,
 
     // Loading states
     isCreating: createStudentMutation.isPending,
     isUpdating: updateStudentMutation.isPending,
+    isUpdatingGroup: updateStudentGroupMutation.isPending, // Yangi loading state
     isDeleting: deleteStudentMutation.isPending,
   };
 };
