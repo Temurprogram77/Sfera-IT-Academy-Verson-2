@@ -9,6 +9,7 @@ import {
   HorizontaLDots,
   UserCircleIcon,
   UserIcon,
+  ListIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
@@ -120,7 +121,6 @@ const AppSidebar: React.FC = () => {
           { name: t("categories"), path: "/categories", pro: false },
           { name: t("groups"), path: "/groups", pro: false },
           { name: t("rooms"), path: "/rooms", pro: false },
-          { name: t("attendance"), path: "/attendance", pro: false },
         ],
       },
       {
@@ -139,10 +139,9 @@ const AppSidebar: React.FC = () => {
         icon: <BoltIcon />,
         name: t("grades"),
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
-        subItems: [
-          { name: t("grades"), path: "/grades", pro: false },
-        ],
+        subItems: [{ name: t("grades"), path: "/grades", pro: false }],
       },
+      { name: t("attendance"), path: "/attendance", icon: <ListIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
       {
         icon: <CalenderIcon />,
         name: t("calendar"),
