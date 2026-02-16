@@ -2,15 +2,24 @@
 
 import { Row, Col, Card, Button } from 'antd'
 import { UserOutlined, BookOutlined } from '@ant-design/icons';
-import type { Group } from '../../lib/mockData'
 import { Link } from 'react-router-dom'; 
 
 interface GroupsGridProps {
-  groups: Group[]
-  onSelectGroup: (group: Group) => void; 
+  groups: any[]; // yoki API dan kelgan guruh type
+  loading?: boolean;
+  error?: any;
+  onSelectGroup?: (group: any) => void; // optional qildim
 }
 
-export default function GroupsGrid({ groups }: GroupsGridProps) {
+export default function GroupsGrid({ groups, loading, error }: GroupsGridProps) {
+  if (loading) {
+    return <div>Yuklanmoqda...</div>;
+  }
+
+  if (error) {
+    return <div>Xatolik yuz berdi</div>;
+  }
+
   return (
     <Row gutter={[24, 24]}> 
       {groups.map((group) => (
