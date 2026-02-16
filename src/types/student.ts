@@ -17,6 +17,7 @@ export interface Student {
   imgUrl: string;
   groupId: number;
   groupName: string;
+  parentPhone: string;
 }
 
 // ============= STUDENT DETAIL TYPE (from API GET by ID) =============
@@ -74,6 +75,13 @@ export interface UpdateStudentDto {
   fullName: string;
   phone: string;
   imgUrl: string;
+  parentPhone: string;
+}
+
+// Guruhni o'zgartirish uchun
+export interface UpdateStudentGroupDto {
+  studentId: number;
+  groupId: number;
 }
 
 // Password change uchun
