@@ -1,8 +1,9 @@
 'use client'
 
-import { Row, Col, Card, Button } from 'antd'
+import { Row, Col, Card, Button, Spin } from 'antd'
 import { UserOutlined, BookOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'; 
+import NotFoundData from '../../pages/OtherPage/NotFoundData';
 
 interface GroupsGridProps {
   groups: any[]; // yoki API dan kelgan guruh type
@@ -13,11 +14,16 @@ interface GroupsGridProps {
 
 export default function GroupsGrid({ groups, loading, error }: GroupsGridProps) {
   if (loading) {
-    return <div>Yuklanmoqda...</div>;
+    return <div className="flex justify-center items-center py-20">
+          <Spin size="large" />
+        </div>
   }
 
   if (error) {
-    return <div>Xatolik yuz berdi</div>;
+    return <NotFoundData
+          title="Yangiliklar topilmadi"
+          description="Hozircha hech qanday yangilik qo'shilmagan"
+        />
   }
 
   return (

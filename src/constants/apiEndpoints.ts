@@ -76,12 +76,12 @@ export const API_ENDPOINTS = {
   },
   EVENT: {
     LIST: "/event/list",
-    STREAM: "/event/stream", // GET - real-time
-    CREATE: "/event", // POST
-    UPDATE: "/event/update", // PUT
+    STREAM: "/event/stream",
+    CREATE: "/event", 
+    UPDATE: "/event/update", 
     GET_BY_DATE: "/event/byDate",
     
-    DELETE: (eventId: string | number) => `/event/${eventId}`, // DELETE
+    DELETE: (eventId: string | number) => `/event/${eventId}`,
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

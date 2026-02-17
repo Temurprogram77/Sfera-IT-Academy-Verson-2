@@ -94,7 +94,7 @@ const News = () => {
       }
 
       const payload = {
-        name: values.title,
+        title: values.title,
         description: values.description,
         imgUrl: finalImageUrl || "",
         date: values.date?.format("YYYY-MM-DD"),
@@ -128,7 +128,8 @@ const News = () => {
     setCurrentPage(page - 1);
     setPageSize(size);
   };
-
+  console.log(news);
+  
   return (
     <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
       <ListHeader
@@ -235,7 +236,7 @@ const News = () => {
       >
         <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
-            name="name"
+            name="title"
             label="Yangilik nomi"
             rules={[{ required: true, message: "Nomni kiriting" }]}
           >

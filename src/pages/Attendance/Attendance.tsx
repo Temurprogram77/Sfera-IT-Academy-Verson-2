@@ -108,9 +108,9 @@ export default function Attendance() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin size="large" tip="Yuklanmoqda..." />
-      </div>
+      <div className="flex justify-center items-center py-20">
+          <Spin size="large" />
+        </div>
     );
   }
 
