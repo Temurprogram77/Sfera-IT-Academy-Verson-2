@@ -172,8 +172,8 @@ const News = () => {
                         className=" rounded-[6px] object-cover border shadow"
                       />
                     ) : (
-                      <div className="w-[64px] h-[64px] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
-                        {record.title}
+                      <div className="w-[64px] h-[64px] rounded-full bg-[#00a67d] flex items-center justify-center text-white text-xl font-bold">
+                        {record.title.charAt(0).toUpperCase()}
                       </div>
                     )}
 
