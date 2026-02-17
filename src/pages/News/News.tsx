@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Image, DatePicker, Spin } from "antd";
-import { FileTextOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import ListHeader from "../../components/ListHeader/ListHeader";
@@ -73,7 +72,7 @@ const News = () => {
       setSelectedFile(null);
 
       form.setFieldsValue({
-        name: data.name,
+        name: data.title,
         description: data.description,
         date: data.date ? dayjs(data.date) : null,
       });
@@ -95,7 +94,7 @@ const News = () => {
       }
 
       const payload = {
-        name: values.name,
+        name: values.title,
         description: values.description,
         imgUrl: finalImageUrl || "",
         date: values.date?.format("YYYY-MM-DD"),
@@ -156,7 +155,7 @@ const News = () => {
           <TableComponent<NewsItem>
             data={news}
             itemName="yangiliklar"
-            searchKeys={["name", "description"]}
+            searchKeys={["title", "description"]}
             viewPath={(id) => `/news/${id}`}
             columnsConfig={[
               {
@@ -173,13 +172,13 @@ const News = () => {
                       />
                     ) : (
                       <div className="w-[64px] h-[64px] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
-                        {record.name.charAt(0).toUpperCase()}
+                        {record.title}
                       </div>
                     )}
 
                     <div className="flex flex-col">
                       <div className="font-semibold text-gray-900 dark:text-white text-base">
-                        {record.name}
+                        {record.title}
                       </div>
                       <div className="text-sm text-gray-500 line-clamp-1">
                         {record.description}
