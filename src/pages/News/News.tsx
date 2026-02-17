@@ -1,58 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Image, DatePicker, Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
-import TableComponent from "../../components/Table/Table";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InputComponent from "../../components/Input/Input";
 import FileUpload from "../../components/Input/FileUpload";
+import TableComponent from "../../components/Table/Table";
 
-import { newsService } from "../../services/newsService";
 import { NewsItem } from "../../types/news";
 import { useFileUpload } from "../../hooks/useFileUpload";
+import { useNews } from "../../hooks/useNews";
 
 const News = () => {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
-
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [form] = FormWrapper.useForm();
   const { uploadFile, isUploading, uploadProgress } = useFileUpload();
 
-  const fetchNews = async () => {
-    try {
-      setLoading(true);
-      const res = await newsService.getNews({
-        page: currentPage,
-        size: pageSize,
-        search: searchTerm,
-      });
-
-      setNews(res.data);
-      setTotal(res.data.length);
-    } catch (err) {
-      console.error("Fetch news error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNews();
-  }, [currentPage, pageSize, searchTerm]);
+  const {
+    news,
+    total,
+    loading,
+    createNews,
+    updateNews,
+    deleteNews,
+    isCreating,
+    isUpdating,
+  } = useNews({ page: currentPage, size: pageSize, search: searchTerm });
 
   const openAddModal = () => {
     setEditingNews(null);
@@ -62,25 +48,17 @@ const News = () => {
     setIsModalVisible(true);
   };
 
-  const openEditModal = async (item: NewsItem) => {
-    try {
-      const res = await newsService.getNewsById(item.id);
-      const data = res.data;
-
-      setEditingNews(data);
-      setUploadedImageUrl(data.imgUrl || "");
-      setSelectedFile(null);
-
-      form.setFieldsValue({
-        name: data.title,
-        description: data.description,
-        date: data.date ? dayjs(data.date) : null,
-      });
-
-      setIsModalVisible(true);
-    } catch (err) {
-      console.error(err);
-    }
+  // ✅ TableComponent faqat (item) kutadi
+  const openEditModal = (item: NewsItem) => {
+    setEditingNews(item);
+    setUploadedImageUrl(item.imgUrl || "");
+    setSelectedFile(null);
+    form.setFieldsValue({
+      title: item.title,
+      description: item.description,
+      date: item.date ? dayjs(item.date) : null,
+    });
+    setIsModalVisible(true);
   };
 
   const handleSave = async () => {
@@ -101,35 +79,31 @@ const News = () => {
       };
 
       if (editingNews) {
-        await newsService.updateNews({
-          id: editingNews.id,
-          ...payload,
-        });
+        updateNews({ id: editingNews.id, ...payload });
       } else {
-        await newsService.createNews(payload);
+        createNews(payload);
       }
 
       setIsModalVisible(false);
       form.resetFields();
       setUploadedImageUrl("");
       setSelectedFile(null);
-      fetchNews();
     } catch (err) {
       console.error("Validation error:", err);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    await newsService.deleteNews(id);
-    fetchNews();
+  // ✅ TableComponent faqat (id) kutadi
+  const handleDelete = (id: number) => {
+    deleteNews(id);
   };
 
+  // ✅ handlePageChange qaytarildi
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page - 1);
     setPageSize(size);
   };
-  console.log(news);
-  
+
   return (
     <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
       <ListHeader
@@ -169,14 +143,13 @@ const News = () => {
                         src={record.imgUrl}
                         width={64}
                         height={64}
-                        className=" rounded-[6px] object-cover border shadow"
+                        className="rounded-[6px] object-cover border shadow"
                       />
                     ) : (
                       <div className="w-[64px] h-[64px] rounded-full bg-[#00a67d] flex items-center justify-center text-white text-xl font-bold">
                         {record.title.charAt(0).toUpperCase()}
                       </div>
                     )}
-
                     <div className="flex flex-col">
                       <div className="font-semibold text-gray-900 dark:text-white text-base">
                         {record.title}
@@ -192,7 +165,7 @@ const News = () => {
                 key: "date",
                 title: "Sana",
                 dataIndex: "date",
-                width: 200,
+                width: 180,
                 align: "center",
                 render: (date: string) => (
                   <div className="text-sm font-medium">{date}</div>
@@ -217,13 +190,9 @@ const News = () => {
       <ModalComponent
         open={isModalVisible}
         title={
-          <div className="flex items-center gap-2">
-            <span>
-              {editingNews
-                ? "Yangilikni tahrirlash"
-                : "Yangi yangilik qo'shish"}
-            </span>
-          </div>
+          <span>
+            {editingNews ? "Yangilikni tahrirlash" : "Yangi yangilik qo'shish"}
+          </span>
         }
         onOk={handleSave}
         onCancel={() => {
@@ -232,7 +201,7 @@ const News = () => {
         }}
         okText="Saqlash"
         cancelText="Bekor qilish"
-        confirmLoading={isUploading}
+        confirmLoading={isUploading || isCreating || isUpdating}
       >
         <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item

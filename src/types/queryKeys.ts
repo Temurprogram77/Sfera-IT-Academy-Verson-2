@@ -34,6 +34,10 @@ export const QUERY_KEYS = {
     DETAIL: "parent-detail",
     // DETAIL: (id: string | number) => ["parents", id] as const,
   },
+  NEWS: {
+    ALL: ["news"],
+    DETAIL: "news-detail",
+  },
   CATEGORIES: {
     ALL: ["categories"] as const,
     SEARCH: ["categories", "search"] as const,
