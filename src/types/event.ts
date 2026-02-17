@@ -6,10 +6,11 @@ export interface IEvent {
   date: string; // "YYYY-MM-DD" formatida
   startTime: string;
   endTime: string;
-  groupNames: string[]; // ["Bootcamp1", "FullStack 1"]
+  color: "QIZIL" | "YASHIL" | "SARIQ"; // Backend dan keladigan rang
+  groupNames: string[];
 }
 
-// Event yaratish uchun (ID va groupNames siz)
+// Event yaratish uchun
 export interface ICreateEvent {
   name: string;
   description: string;

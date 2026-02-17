@@ -38,7 +38,10 @@ export interface GroupDetail {
   students?: GroupStudent[];
 }
 
-export interface GroupListParams extends Record<string, string | number | undefined> {
+export interface GroupListParams extends Record<
+  string,
+  string | number | undefined
+> {
   name?: string;
   teacherId?: number;
   categoryId?: number;
@@ -85,7 +88,7 @@ export interface CreateGroupDto {
   name: string;
   startTime: string;
   endTime: string;
-  weekDays: string[];
+  weekDays: WeekDay;
   teacherId: number;
   categoryId: number;
   roomId: number;
@@ -96,7 +99,7 @@ export interface UpdateGroupDto {
   name: string;
   startTime: string;
   endTime: string;
-  weekDays: string[];
+  weekDays: WeekDay;
   teacherId: number;
   categoryId: number;
   roomId: number;

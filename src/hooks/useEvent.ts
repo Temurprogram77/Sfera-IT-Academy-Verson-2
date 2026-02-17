@@ -4,7 +4,7 @@ import { eventService } from "../services/eventService";
 import { QUERY_KEYS } from "../types/queryKeys";
 import { IEvent, ICreateEvent, IUpdateEvent } from "../types/event";
 
-// Barcha eventlarni olish uchun hook
+// ─── Barcha eventlarni olish ─────────────────────────────────────────────────
 export const useEvents = () => {
   const queryClient = useQueryClient();
 
@@ -29,8 +29,9 @@ export const useEvents = () => {
       toast.success("Event muvaffaqiyatli yaratildi!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Event yaratishda xatolik!");
-      console.error("Create Event error:", error);
+      toast.error(
+        error?.response?.data?.message || "Event yaratishda xatolik!"
+      );
     },
   });
 
@@ -42,8 +43,9 @@ export const useEvents = () => {
       toast.success("Event muvaffaqiyatli yangilandi!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Event yangilashda xatolik!");
-      console.error("Update Event error:", error);
+      toast.error(
+        error?.response?.data?.message || "Event yangilashda xatolik!"
+      );
     },
   });
 
@@ -55,8 +57,9 @@ export const useEvents = () => {
       toast.success("Event muvaffaqiyatli o'chirildi!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Event o'chirishda xatolik!");
-      console.error("Delete Event error:", error);
+      toast.error(
+        error?.response?.data?.message || "Event o'chirishda xatolik!"
+      );
     },
   });
 
@@ -81,7 +84,7 @@ export const useEvents = () => {
   };
 };
 
-// Muayyan sana uchun eventlarni olish
+// ─── Muayyan sana uchun eventlarni olish ─────────────────────────────────────
 export const useEventsByDate = (
   date: string | null,
   isModalVisible: boolean = false
