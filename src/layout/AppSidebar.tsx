@@ -10,7 +10,7 @@ import {
   UserCircleIcon,
   UserIcon,
   ListIcon,
-  DocsIcon
+  DocsIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { authService } from "../services/authService ";
@@ -22,7 +22,7 @@ type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
-  subItems?: { name: string; path: string; pro: boolean }[];
+  subItems?: { name: string; path: string; pro: boolean; roles?: string[] }[];
   roles: string[];
 };
 
@@ -108,7 +108,12 @@ const AppSidebar: React.FC = () => {
         name: t("users"),
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
         subItems: [
-          { name: t("admins"), path: "/admins", pro: false },
+          {
+            name: t("admins"),
+            path: "/admins",
+            pro: false,
+            roles: ["ROLE_SUPER_ADMIN"],
+          },
           { name: t("teachers"), path: "/teachers", pro: false },
           { name: t("parents"), path: "/parents", pro: false },
           { name: t("students"), path: "/students", pro: false },
@@ -142,8 +147,24 @@ const AppSidebar: React.FC = () => {
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
         subItems: [{ name: t("grades"), path: "/grades", pro: false }],
       },
-      { name: t("attendance"), path: "/attendance", icon: <ListIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
-      { name: t("news"), path: "/news", icon: <DocsIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN","ROLE_STUDENT", "ROLE_PARENT"] },
+      {
+        name: t("attendance"),
+        path: "/attendance",
+        icon: <ListIcon />,
+        roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
+      },
+      {
+        name: t("news"),
+        path: "/news",
+        icon: <DocsIcon />,
+        roles: [
+          "ROLE_TEACHER",
+          "ROLE_SUPER_ADMIN",
+          "ROLE_ADMIN",
+          "ROLE_STUDENT",
+          "ROLE_PARENT",
+        ],
+      },
       {
         icon: <CalenderIcon />,
         name: t("calendar"),
@@ -172,9 +193,25 @@ const AppSidebar: React.FC = () => {
     [t, i18n.language],
   );
 
-  const filteredNavItems = allNavItems.filter(
-    (item) => currentRole && item.roles.includes(currentRole),
-  );
+  const filteredNavItems = useMemo(() => {
+    if (!currentRole) return [];
+
+    return allNavItems
+      .filter((item) => item.roles.includes(currentRole))
+      .map((item) => {
+        if (!item.subItems) return item;
+
+        const filteredSub = item.subItems.filter(
+          (sub) => !sub.roles || sub.roles.includes(currentRole),
+        );
+
+        // agar ichida hech narsa qolmasa parent ham chiqmaydi
+        if (filteredSub.length === 0) return null;
+
+        return { ...item, subItems: filteredSub };
+      })
+      .filter(Boolean) as NavItem[];
+  }, [allNavItems, currentRole]);
 
   const isActive = useCallback(
     (path: string) => location.pathname.startsWith(path),

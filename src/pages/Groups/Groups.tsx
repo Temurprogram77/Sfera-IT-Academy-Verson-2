@@ -88,7 +88,7 @@ const Groups = () => {
         endTime: editingGroup.endTime
           ? dayjs(editingGroup.endTime, "HH:mm")
           : null,
-        weekDays: editingGroup.weekDays || [],
+        weekDays: editingGroup.weekDays,
         teacherId: editingGroup.teacherId,
         categoryId: editingGroup.categoryId,
         roomId: editingGroup.roomId,
@@ -360,7 +360,6 @@ const Groups = () => {
               rules={[{ required: true, message: "Kunlarni tanlang" }]}
             >
               <SelectComponent
-                mode="multiple"
                 placeholder="Kunlarni tanlang"
                 options={weekDaysOptions}
               />

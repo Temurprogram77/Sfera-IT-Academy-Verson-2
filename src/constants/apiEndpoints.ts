@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
   GROUP: {
     ALL: "/group/all",
     LIST: "/group",
-    CREATE: "/group",
+    CREATE: "/group/update",
     UPDATE: "/group/update",
     DELETE: (id: number | string) => `/group/${id}`,
     GET_BY_ID: (id: number | string) => `/group/${id}`,
@@ -76,12 +76,16 @@ export const API_ENDPOINTS = {
   },
   EVENT: {
     LIST: "/event/list",
-    STREAM: "/event/stream",
-    CREATE: "/event", 
-    UPDATE: "/event/update", 
+    STREAM: "/event/stream", // GET - real-time
+    CREATE: "/event", // POST
+    UPDATE: "/event/update", // PUT
     GET_BY_DATE: "/event/byDate",
-    
-    DELETE: (eventId: string | number) => `/event/${eventId}`,
+
+    DELETE: (eventId: string | number) => `/event/${eventId}`, // DELETE
+  },
+  DASHBOARD_ENDPOINTS: {
+    METRICS: "/dashboard",
+    SCHEDULE: "/dashboard/schedule",
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

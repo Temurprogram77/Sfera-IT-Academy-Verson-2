@@ -803,3 +803,39 @@ body.ant-modal-open {
   background-color: #d89614 !important;
   border-color: #d89614 !important;
 }
+
+/* TODAY border */
+.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: #22c55e !important; /* yashil */
+}
+
+/* TODAY background */
+.ant-picker-cell-today .ant-picker-cell-inner {
+  background: rgba(34, 197, 94, 0.15) !important;
+  border-radius: 8px;
+}
+
+/* TODAY number */
+.ant-picker-cell-today .ant-picker-cell-inner .ant-picker-calendar-date-value {
+  color: #16a34a !important;
+  font-weight: 700;
+}
+
+/* SELECTED DAY border */
+.ant-picker-cell-selected .ant-picker-cell-inner::before {
+  border-color: #22c55e !important;
+}
+
+/* SELECTED DAY background */
+.ant-picker-cell-selected .ant-picker-cell-inner {
+  background: rgba(34, 197, 94, 0.2) !important;
+  border-radius: 8px;
+}
+
+/* SELECTED DAY number */
+.ant-picker-cell-selected
+.ant-picker-calendar-date-value {
+  color: #15803d !important;
+  font-weight: 700;
+}
+

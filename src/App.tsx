@@ -307,7 +307,7 @@ export default function App() {
             {/* Messages & Grades */}
             <Route path="messages" element={<Messages />} />
             <Route path="grades" element={<Grades />} />
-            <Route path="attendance/group/:id" element={<Attendance />} /> 
+            <Route path="attendance/group/:id" element={<Attendance />} />
             <Route path="attendance" element={<AttendanceGroup />} />
             <Route path="news" element={<News />} />
 
