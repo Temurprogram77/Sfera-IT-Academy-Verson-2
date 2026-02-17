@@ -28,7 +28,7 @@ export interface GroupDetail {
   name: string;
   startTime: string;
   endTime: string;
-  weekDays: string[];
+  weekDays: string[]; // ✅ array
   teacherId: number | null;
   categoryId: number;
   roomId: number | null;
@@ -51,7 +51,7 @@ export interface GroupListParams extends Record<
 
 export interface GroupDaysParams {
   groupId: number;
-  yearMonth: string; // Format: YYYY-MM
+  yearMonth: string;
 }
 
 export interface GroupListResponse {
@@ -88,7 +88,7 @@ export interface CreateGroupDto {
   name: string;
   startTime: string;
   endTime: string;
-  weekDays: WeekDay;
+  weekDays: string[]; // ✅ string[] ga o'zgardi
   teacherId: number;
   categoryId: number;
   roomId: number;
@@ -99,13 +99,12 @@ export interface UpdateGroupDto {
   name: string;
   startTime: string;
   endTime: string;
-  weekDays: WeekDay;
+  weekDays: string[]; // ✅ string[] ga o'zgardi
   teacherId: number;
   categoryId: number;
   roomId: number;
 }
 
-// Week days enum for better type safety
 export enum WeekDay {
   oddDays = "TOQ_KUNLAR",
   evenDays = "JUFT_KUNLAR",

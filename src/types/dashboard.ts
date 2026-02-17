@@ -15,7 +15,7 @@ export interface IDashboardMetricsResponse {
 }
 
 // ─── Schedule (Jadval) ────────────────────────────────────────────────────────
-export type GroupEnum = "JUFT_KUNLAR" | "TOQ_KUNLAR" | "BOSHQA_KUNLAR";
+export type GroupEnum = "" | "JUFT_KUNLAR" | "TOQ_KUNLAR" | "BOSHQA_KUNLAR";
 
 export type WeekDay =
   | "MONDAY"
