@@ -16,11 +16,10 @@ export default function StudentInfoCard() {
         {user.fullName && (
           <Info label="Ism" value={truncateText(user.fullName, 20)} />
         )}
-        {user.parentName && (
-          <Info label="Ota-ona" value={truncateText(user.parentName, 20)} />
+        {user.teacherName && (
+          <Info label="O'qituvchi" value={truncateText(user.teacherName, 20)} />
         )}
         {user.groupName && <Info label="Guruh" value={user.groupName} />}
-        {user.teacherName && <Info label="O‘qituvchi" value={user.teacherName} />}
         {user.roomName && <Info label="Xona" value={user.roomName} />}
         {user.lessonCount && (
           <Info label="Haftasiga dars" value={`${user.lessonCount} ta`} />
