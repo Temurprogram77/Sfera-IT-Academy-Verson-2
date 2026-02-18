@@ -33,6 +33,7 @@
     "flatpickr": "^4.6.13",
     "i18next": "^25.7.3",
     "libphonenumber-js": "^1.12.33",
+    "lottie-react": "^2.4.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.7.0",
     "react-chartjs-2": "^5.3.1",

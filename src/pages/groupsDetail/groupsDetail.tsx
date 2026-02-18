@@ -20,7 +20,6 @@ import {
   UserOutlined,
   ClockCircleOutlined,
   CalendarOutlined,
-  ArrowLeftOutlined,
   EditOutlined,
   TeamOutlined,
   BookOutlined,
@@ -29,6 +28,7 @@ import {
 import NotFoundData from "../OtherPage/NotFoundData";
 import { useGroupDetails, useGroupDays } from "../../hooks/useGroups";
 import type { GroupStudent } from "../../types/group";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
 const { Title, Text } = Typography;
 
@@ -62,7 +62,7 @@ const GroupsDetail = () => {
       groupId: Number(id),
       yearMonth: currentYearMonth,
     },
-    !!id && !groupLoading
+    !!id && !groupLoading,
   );
 
   const getDayLabel = (day: string) => {
@@ -100,13 +100,21 @@ const GroupsDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
-
+        <AppBreadcrumb
+          items={[
+            { title: "Dashboard", path: "/" },
+            { title: "Guruhlar", path: "/groups" },
+            { title: group?.categoryName || "Guruh" },
+          ]}
+        />
         {/* Guruh nomi va tahrirlash tugmasi */}
         <Card className="mb-6! rounded-lg shadow-md">
           <Row justify="space-between" align="middle">
             <Col>
               <Title level={2} className="m-0 dark:text-white">
-                <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 12 }} />
+                <TeamOutlined
+                  style={{ color: PRIMARY_COLOR, marginRight: 12 }}
+                />
                 {group.name}
               </Title>
               {group.categoryName && (
@@ -139,12 +147,17 @@ const GroupsDetail = () => {
             <Card
               title={
                 <span>
-                  <UserOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                  <UserOutlined
+                    style={{ marginRight: 8, color: PRIMARY_COLOR }}
+                  />
                   O'quvchilar
                 </span>
               }
               extra={
-                <Tag color={PRIMARY_COLOR} style={{ fontSize: 14, padding: "4px 12px" }}>
+                <Tag
+                  color={PRIMARY_COLOR}
+                  style={{ fontSize: 14, padding: "4px 12px" }}
+                >
                   {students.length} ta
                 </Tag>
               }
@@ -195,7 +208,9 @@ const GroupsDetail = () => {
             <Card
               title={
                 <span>
-                  <BookOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                  <BookOutlined
+                    style={{ marginRight: 8, color: PRIMARY_COLOR }}
+                  />
                   Guruh ma'lumotlari
                 </span>
               }
@@ -205,7 +220,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <UserOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <UserOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       O'qituvchi
                     </span>
                   }
@@ -218,7 +235,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <BookOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <BookOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       Kategoriya
                     </span>
                   }
@@ -231,7 +250,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <HomeOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <HomeOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       Xona
                     </span>
                   }
@@ -244,7 +265,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <ClockCircleOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <ClockCircleOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       Dars vaqti
                     </span>
                   }
@@ -257,7 +280,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <CalendarOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <CalendarOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       Dars kunlari
                     </span>
                   }
@@ -265,7 +290,11 @@ const GroupsDetail = () => {
                   <div>
                     {group.weekDays && group.weekDays.length > 0 ? (
                       group.weekDays.map((day) => (
-                        <Tag key={day} color={PRIMARY_COLOR} style={{ marginBottom: 4 }}>
+                        <Tag
+                          key={day}
+                          color={PRIMARY_COLOR}
+                          style={{ marginBottom: 4 }}
+                        >
                           {getDayLabel(day)}
                         </Tag>
                       ))
@@ -278,7 +307,9 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
+                      <TeamOutlined
+                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
+                      />
                       O'quvchilar soni
                     </span>
                   }
@@ -294,7 +325,9 @@ const GroupsDetail = () => {
               <Card
                 title={
                   <span>
-                    <CalendarOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
+                    <CalendarOutlined
+                      style={{ marginRight: 8, color: PRIMARY_COLOR }}
+                    />
                     {currentYearMonth} - dars kunlari
                   </span>
                 }
@@ -309,7 +342,11 @@ const GroupsDetail = () => {
                   />
                 ) : groupDays.length > 0 ? (
                   <>
-                    <Text strong className="dark:text-white" style={{ display: "block", marginBottom: 12 }}>
+                    <Text
+                      strong
+                      className="dark:text-white"
+                      style={{ display: "block", marginBottom: 12 }}
+                    >
                       Jami: {groupDays.length} kun
                     </Text>
                     <Divider style={{ margin: "12px 0" }} />
@@ -324,7 +361,7 @@ const GroupsDetail = () => {
                             fontSize: 13,
                           }}
                         >
-                          📅 {new Date(day).toLocaleDateString("uz-UZ", {
+                          {new Date(day).toLocaleDateString("uz-UZ", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

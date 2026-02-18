@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Avatar,
-  Card,
-  Space,
-  Typography,
-  Tag,
-  Spin,
-  Result,
-} from "antd";
+import { Avatar, Card, Space, Typography, Tag, Spin, Result } from "antd";
 import {
   UserOutlined,
   PhoneOutlined,
@@ -28,6 +20,7 @@ import DetailDescriptions, {
   DetailItem,
 } from "../../components/DetailDescriptions/DetailDescriptions";
 import PhoneInput from "../../components/Input/PhoneInput";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
 const { Title, Text } = Typography;
 
@@ -104,6 +97,13 @@ const AdminDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6">
+      <AppBreadcrumb
+        items={[
+          { title: "Dashboard", path: "/" },
+          { title: "Adminlar", path: "/admins" },
+          { title: admin?.fullName || "Admin" },
+        ]}
+      />
       <div className="flex justify-between items-center mb-6">
         <Title level={3}>Admin ma'lumotlari</Title>
 

@@ -137,6 +137,7 @@ const AppSidebar: React.FC = () => {
       },
       {
         icon: <BoltIcon />,
+<<<<<<< HEAD
         name: t("grades"),
         roles: [  "ROLE_TEACHER"],
         subItems: [
@@ -151,6 +152,17 @@ const AppSidebar: React.FC = () => {
             pro: false,
           },
         ],
+=======
+        name: t("mygrades"),
+        path: "/my-grades",
+        roles: ["ROLE_STUDENT"],
+      },
+      {
+        icon: <BoltIcon />,
+        name: t("mychildsgrades"),
+        path: "/my-childs-grades",
+        roles: ["ROLE_PARENT"],
+>>>>>>> 087727724cd60b26aa62ff2f10dc5d24f3e1109d
       },
       {
         icon: <BoltIcon />,

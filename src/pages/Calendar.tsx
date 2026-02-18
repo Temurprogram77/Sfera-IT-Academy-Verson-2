@@ -240,7 +240,6 @@ const Calendar = () => {
         width={800}
       >
         {isFormMode ? (
-          /* ── Form mode ── */
           <EventFormView
             formValues={formValues}
             onChange={setFormValues}
@@ -248,7 +247,6 @@ const Calendar = () => {
             groupsLoading={groupsLoading}
           />
         ) : (
-          /* ── Ro'yxat mode ── */
           <EventListView
             selectedDate={selectedDate ?? ""}
             events={selectedDateEvents}

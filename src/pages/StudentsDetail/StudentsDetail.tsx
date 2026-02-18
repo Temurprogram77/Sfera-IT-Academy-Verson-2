@@ -18,7 +18,6 @@ import {
   LockOutlined,
   TeamOutlined,
   UserAddOutlined,
-  ArrowLeftOutlined,
   ReloadOutlined,
   BookOutlined,
 } from "@ant-design/icons";
@@ -30,6 +29,7 @@ import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import IconButton from "../../components/IconButton/IconButton";
 import InputComponent from "../../components/Input/Input";
 import { useStudentDetail } from "../../hooks/useStudentDetail";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
 const { Title, Text } = Typography;
 
@@ -41,7 +41,8 @@ const StudentDetail: React.FC = () => {
   const [form] = FormWrapper.useForm<ChangePasswordFormValues>();
 
   // Hook orqali student ma'lumotlarini olish
-  const { student, loading, error, refetch, isRefetching } = useStudentDetail(id);
+  const { student, loading, error, refetch, isRefetching } =
+    useStudentDetail(id);
 
   const handlePasswordChange = async () => {
     try {
@@ -128,6 +129,13 @@ const StudentDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       {/* Header */}
+      <AppBreadcrumb
+        items={[
+          { title: "Dashboard", path: "/" },
+          { title: "O'quvchilar", path: "/students" },
+          { title: student?.fulName || "O'quvchi" },
+        ]}
+      />
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <div>
@@ -220,7 +228,11 @@ const StudentDetail: React.FC = () => {
             <Text strong className="text-base mb-3 block">
               Guruh ma'lumotlari
             </Text>
-            <Descriptions bordered column={{ xs: 1, sm: 1, md: 2 }} size="middle">
+            <Descriptions
+              bordered
+              column={{ xs: 1, sm: 1, md: 2 }}
+              size="middle"
+            >
               <Descriptions.Item label="Guruh nomi" span={2}>
                 <Space>
                   <TeamOutlined className="text-purple-500" />
@@ -265,8 +277,8 @@ const StudentDetail: React.FC = () => {
                   </Text>
                   <Text type="secondary" className="text-sm">
                     O'quvchi {student.groupName} guruhida o'qiydi. Ota-onasi{" "}
-                    {student.parentName} tizimda ro'yxatdan o'tgan va farzandining
-                    o'quv jarayonini kuzatib boradi.
+                    {student.parentName} tizimda ro'yxatdan o'tgan va
+                    farzandining o'quv jarayonini kuzatib boradi.
                   </Text>
                 </div>
               </div>

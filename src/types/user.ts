@@ -1,9 +1,15 @@
 export interface User {
   id: number;
-  fullName: string;
-  phone: string;
-  role: string;
-  email?: string;
+  fullName?: string;
+  phone?: string;
+  role?: string;
+  imgUrl?: string;
+  groupName?: string;
+  parentName?: string;
+  groupId?: number;
+  teacherName?: string;
+  roomName?: string;
+  lessonCount?: string;
 }
 
 export interface UserProfileResponse {

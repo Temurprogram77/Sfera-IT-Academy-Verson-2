@@ -17,6 +17,8 @@ import { adminService } from "../../services/adminService";
 import FileUpload from "../Input/FileUpload";
 import InputComponent from "../Input/Input";
 import { useFileUpload } from "../../hooks/useFileUpload";
+import { User } from "../../types/user";
+import { Image } from "antd";
 
 const basePhoneOptions = maskitoPhoneOptionsGenerator({
   countryIsoCode: "UZ",
@@ -26,12 +28,7 @@ const basePhoneOptions = maskitoPhoneOptionsGenerator({
 const phoneOptions = { ...basePhoneOptions, lazy: false };
 
 interface UserMetaCardProps {
-  user: {
-    id: number;
-    phone?: string;
-    fullName?: string;
-    imageUrl?: string;
-  };
+  user: User;
   refetch?: () => Promise<void>;
 }
 
@@ -49,6 +46,9 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // API imgUrl yoki imageUrl ni birlashtirish
+  const avatarUrl = user?.imgUrl || user?.imageUrl;
+
   useEffect(() => {
     if (user) {
       const formattedPhone = user.phone?.startsWith("+")
@@ -57,7 +57,7 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
 
       setPhone(formattedPhone);
       setFullName(user.fullName || "");
-      setImageUrl(user.imageUrl || "");
+      setImageUrl(avatarUrl || "");
       setPassword("");
     }
   }, [user]);
@@ -76,7 +76,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
         if (!password) return toast.error("Parol kiriting");
 
         const cleanPhone = phone.replace(/\D/g, "");
-
         const response = await userService.updatePassword({
           phone: cleanPhone,
           password,
@@ -90,8 +89,7 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
           toast.error(response.message);
         }
       } else {
-        if (!fullName || !phone)
-          return toast.error("To‘liq ma’lumot kiriting");
+        if (!fullName || !phone) return toast.error("To'liq ma'lumot kiriting");
 
         let finalImageUrl = imageUrl;
 
@@ -101,7 +99,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
         }
 
         const cleanPhone = phone.replace(/\D/g, "");
-
         const response = await adminService.updateAdmin({
           id: user.id,
           fullName,
@@ -129,13 +126,16 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
       {/* CARD */}
       <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border dark:border-gray-800">
         <div className="flex items-center justify-between flex-wrap gap-6">
-
           {/* User Info */}
           <div className="flex items-center gap-5">
-            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500 shadow">
-              {user.imageUrl ? (
-                <img
-                  src={user.imageUrl}
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500 shadow flex-shrink-0">
+              {avatarUrl ? (
+                <Image
+                  src={user.imgUrl || ""}
+                  alt={user.fullName}
+                  preview={{
+                    mask: <div className="text-white text-sm">Ko‘rish</div>, // optional, ustiga yozuv
+                  }}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -146,12 +146,16 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold dark:text-white">
-                {user.fullName}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {formatPhone(user.phone)}
-              </p>
+              {user.fullName && (
+                <h3 className="text-lg font-semibold dark:text-white">
+                  {user.fullName}
+                </h3>
+              )}
+              {user.phone && (
+                <p className="text-sm text-gray-500">
+                  {formatPhone(user.phone)}
+                </p>
+              )}
             </div>
           </div>
 
@@ -165,7 +169,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
                 openModal();
               }}
             />
-
             <IconButton
               text="Profilni tahrirlash"
               icon={<UserOutlined />}
@@ -182,22 +185,18 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
       <ModalComponent
         open={isOpen}
         title={
-          mode === "password"
-            ? "Parolni yangilash"
-            : "Profilni tahrirlash"
+          mode === "password" ? "Parolni yangilash" : "Profilni tahrirlash"
         }
         onCancel={handleModalClose}
         footer={null}
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-
           {mode === "password" && (
             <>
               <div>
                 <Label>Telefon</Label>
                 <PhoneInput ref={inputRef} value={phone} disabled />
               </div>
-
               <div>
                 <Label>Yangi parol</Label>
                 <PasswordInput
@@ -212,11 +211,10 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
           {mode === "profile" && (
             <>
               <InputComponent
-                label="To‘liq ism"
+                label="To'liq ism"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
-
               <div>
                 <Label>Telefon</Label>
                 <PhoneInput
@@ -226,7 +224,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
                   disabled={isLoading}
                 />
               </div>
-
               <FileUpload
                 onFileSelect={(file) => setSelectedFile(file)}
                 uploadedImageUrl={imageUrl}

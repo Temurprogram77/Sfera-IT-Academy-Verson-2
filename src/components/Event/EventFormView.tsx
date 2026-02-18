@@ -76,6 +76,7 @@ const EventFormView: React.FC<EventFormViewProps> = ({
           value: g.id,
           label: g.groupName || g.name || `Guruh ${g.id}`,
         }))}
+        className="w-full mt-5! mb-3!"
         placeholder="Guruhlarni tanlang"
         mode="multiple"
         loading={groupsLoading}

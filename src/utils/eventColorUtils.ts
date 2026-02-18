@@ -22,7 +22,7 @@ export const getColorConfig = (
         text: isDark ? "#fde047" : "#ca8a04",
         tagColor: "gold",
         label: "O'tgan",
-        emoji: "📅",
+        emoji: "",
         cssClass: "cal-yellow",
       };
     case "QIZIL":
