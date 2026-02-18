@@ -11,6 +11,7 @@ const InputComponent = ({
   value,
   onChange,
   variant = "default",
+  max,
 }: InputComponentProps) => {
   const renderInput = () => {
     switch (variant) {
@@ -33,6 +34,8 @@ const InputComponent = ({
             value={value}
             onChange={onChange}
             rows={4}
+            showCount
+            maxLength={max}
           />
         );
 

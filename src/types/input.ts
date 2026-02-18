@@ -8,6 +8,7 @@ export interface InputComponentProps {
   prefix?: React.ReactNode;
   className?: string;
   value?: string | number;
+  max?: number;
   variant?: "default" | "password" | "textarea";
   onChange?:
     | ((e: React.ChangeEvent<HTMLInputElement>) => void)
