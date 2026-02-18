@@ -5,7 +5,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import { LoadingScreen } from "./components/loading/Loading";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
@@ -45,6 +44,7 @@ import { useAuthContext } from "./context/AuthContext";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
 import { ConfigProvider, theme as antdTheme } from "antd";
+
 import GroupsDetail from "./pages/groupsDetail/groupsDetail";
 import StudentsDetail from "./pages/StudentsDetail/StudentsDetail";
 import TeachersDetail from "./pages/TeachersDetail/TeachersDetail";
@@ -54,12 +54,10 @@ import Categories from "./pages/Categories/Categories";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
 import AttendanceGroup from "./pages/Attendance/AttendanceGroup";
 import News from "./pages/News/News";
-<<<<<<< HEAD
 import TeacherGroups from "./pages/Grades/Assessment";
 import SingleAssessment from "./pages/Grades/GroupAssessment";
-=======
 import MyGrades from "./pages/myGrades/MyGrades";
->>>>>>> 087727724cd60b26aa62ff2f10dc5d24f3e1109d
+
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -91,16 +89,13 @@ function ProtectedRoute({ children, allowedRoles }: Props) {
   const role = localStorage.getItem("user_role");
   const location = useLocation();
 
-  // Token yo'q bo'lsa loginga yo'naltirish
   if (!token) {
     return <Navigate to="/signin" replace state={{ from: location }} />;
   }
 
-  // Agar allowedRoles berilgan bo'lsa va user roli mos kelmasa
   if (allowedRoles && !allowedRoles.includes(role || "")) {
-    // Role asosida home page'ga yo'naltirish
-    if (role === "ROLE_ADMIN") return <Navigate to="/admin" replace />;
-    if (role === "ROLE_TEACHER") return <Navigate to="/teacher" replace />;
+    if (role === "ROLE_ADMIN") return <Navigate to="/dashboard/admin" replace />;
+    if (role === "ROLE_TEACHER") return <Navigate to="/dashboard/teacher" replace />;
     return <Navigate to="/signin" replace />;
   }
 
@@ -124,13 +119,12 @@ export default function App() {
   const { theme } = useTheme();
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
@@ -141,77 +135,27 @@ export default function App() {
     <ConfigProvider
       theme={{
         algorithm: theme === "dark" ? darkAlgorithm : defaultAlgorithm,
-
         token: {
           colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
           colorText: theme === "dark" ? "#e5e7eb" : "#111827",
           colorBorder: theme === "dark" ? "#374151" : "#e5e7eb",
         },
-
         components: {
           Modal: {
             contentBg: theme === "dark" ? "#111827" : "#ffffff",
             headerBg: theme === "dark" ? "#111827" : "#ffffff",
             footerBg: theme === "dark" ? "#111827" : "#ffffff",
           },
-          Segmented: {
-            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
-            colorPrimary: theme === "dark" ? "##101828" : "#1890ff",
-          },
-          Popconfirm: {
-            colorBgElevated: theme === "dark" ? "#1f2937" : "#ffffff",
-            colorText: theme === "dark" ? "#f9fafb" : "#111827",
-            colorBorder: theme === "dark" ? "#4b5563" : "#d1d5db",
-            borderRadiusLG: 8,
-          },
-          Dropdown: {
-            paddingBlock: 4,
-            colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
-            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
-            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
-          },
-          Calendar: {
-            fullBg: theme === "dark" ? "#111827" : "#ffffff",
-            fullPanelBg: theme === "dark" ? "#1f2937" : "#ffffff",
-            itemActiveBg: theme === "dark" ? "#3b82f6" : "#1890ff",
-          },
-          Menu: {
-            colorBgContainer: theme === "dark" ? "#111827" : "#ffffff",
-            itemBg: theme === "dark" ? "#111827" : "#ffffff",
-            itemSelectedBg: theme === "dark" ? "#1d4ed8" : "#e6f7ff",
-            itemSelectedColor: theme === "dark" ? "#ffffff" : "#1890ff",
-            itemHoverBg: theme === "dark" ? "#1f2937" : "#f5f5f5",
-            itemHoverColor: theme === "dark" ? "#60a5fa" : "#40a9ff",
-
-            itemActiveBg: theme === "dark" ? "#1e40af" : "#bae6fd",
-
-            popupBg: theme === "dark" ? "#1f2937" : "#ffffff",
-            subMenuItemBg: theme === "dark" ? "#111827" : "#fafafa",
-
-            colorBorder: theme === "dark" ? "#374151" : "#f0f0f0",
-            colorBorderSecondary: theme === "dark" ? "#4b5563" : "#e8e8e8",
-
-            itemColor: theme === "dark" ? "#d1d5db" : "#000000",
-            itemDisabledColor: theme === "dark" ? "#6b7280" : "#bfbfbf",
-            groupTitleColor: theme === "dark" ? "#9ca3af" : "#8c8c8c",
-          },
           Select: {
             colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
-            colorBgElevated: theme === "dark" ? "#374151" : "#ffffff",
             colorText: theme === "dark" ? "#e5e7eb" : "#000000",
             colorBorder: theme === "dark" ? "#4b5563" : "#d9d9d9",
-            colorIcon: theme === "dark" ? "#9ca3af" : "#8c8c8c",
           },
           Input: {
             colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
             colorText: theme === "dark" ? "#e5e7eb" : "#111827",
             colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
-            colorTextPlaceholder: theme === "dark" ? "#9ca3af" : "#6b7280",
-
             activeBorderColor: theme === "dark" ? "#3b82f6" : "#1890ff",
-
-            hoverBorderColor: theme === "dark" ? "#60a5fa" : "#40a9ff",
           },
         },
       }}
@@ -312,15 +256,25 @@ export default function App() {
           <Route path="messages" element={<Messages />} />
           <Route path="grades" element={<Grades />} />
           <Route path="my-grades" element={<MyGrades />} />
+
+          {/* Attendance */}
           <Route path="attendance/group/:id" element={<Attendance />} />
           <Route path="attendance" element={<AttendanceGroup />} />
+
+          {/* News */}
           <Route path="news" element={<News />} />
 
-          {/* Groups & Rooms */}
+          {/* Categories & Groups */}
           <Route path="categories" element={<Categories />} />
           <Route path="categories/:id" element={<CategoryDetail />} />
           <Route path="groups" element={<Groups />} />
           <Route path="groups/:id" element={<GroupsDetail />} />
+
+          {/* Assessment */}
+          <Route path="assessment" element={<TeacherGroups />} />
+          <Route path="assessment/:id" element={<SingleAssessment />} />
+
+          {/* Rooms */}
           <Route path="rooms" element={<Rooms />} />
           <Route path="room/:id" element={<RoomsID />} />
 
@@ -329,20 +283,8 @@ export default function App() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="blank" element={<Blank />} />
 
-<<<<<<< HEAD
-            {/* Groups & Rooms */}
-            <Route path="categories" element={<Categories />} />
-            <Route path="categories/:id" element={<CategoryDetail />} />
-            <Route path="groups" element={<Groups />} />
-            <Route path="assessment" element={<TeacherGroups />} />
-            <Route path="assessment/:id" element={<SingleAssessment />} />
-            <Route path="groups/:id" element={<GroupsDetail />} />
-            <Route path="rooms" element={<Rooms />} />
-            <Route path="room/:id" element={<RoomsID />} />
-=======
           {/* Tables */}
           <Route path="basic-tables" element={<BasicTables />} />
->>>>>>> 087727724cd60b26aa62ff2f10dc5d24f3e1109d
 
           {/* UI Elements */}
           <Route path="alerts" element={<Alerts />} />
@@ -356,7 +298,7 @@ export default function App() {
           <Route path="line-chart" element={<LineChart />} />
           <Route path="bar-chart" element={<BarChart />} />
         </Route>
-        {/*reportlar uchun route*/}
+
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
