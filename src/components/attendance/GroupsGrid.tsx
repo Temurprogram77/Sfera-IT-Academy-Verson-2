@@ -1,33 +1,41 @@
-'use client'
+"use client";
 
-import { Row, Col, Card, Button, Spin } from 'antd'
-import { UserOutlined, BookOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom'; 
-import NotFoundData from '../../pages/OtherPage/NotFoundData';
+import { Row, Col, Card, Button, Spin } from "antd";
+import { UserOutlined, BookOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import NotFoundData from "../../pages/OtherPage/NotFoundData";
 
 interface GroupsGridProps {
-  groups: any[]; // yoki API dan kelgan guruh type
+  groups: any[];
   loading?: boolean;
   error?: any;
-  onSelectGroup?: (group: any) => void; // optional qildim
+  onSelectGroup?: (group: any) => void;
 }
 
-export default function GroupsGrid({ groups, loading, error }: GroupsGridProps) {
+export default function GroupsGrid({
+  groups,
+  loading,
+  error,
+}: GroupsGridProps) {
   if (loading) {
-    return <div className="flex justify-center items-center py-20">
-          <Spin size="large" />
-        </div>
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (error) {
-    return <NotFoundData
-          title="Yangiliklar topilmadi"
-          description="Hozircha hech qanday yangilik qo'shilmagan"
-        />
+    return (
+      <NotFoundData
+        title="Yangiliklar topilmadi"
+        description="Hozircha hech qanday yangilik qo'shilmagan"
+      />
+    );
   }
 
   return (
-    <Row gutter={[24, 24]}> 
+    <Row gutter={[24, 24]}>
       {groups.map((group) => (
         <Col key={group.id} xs={24} sm={12} lg={8}>
           <Card
@@ -35,14 +43,12 @@ export default function GroupsGrid({ groups, loading, error }: GroupsGridProps) 
             className="h-full cursor-pointer border border-gray-200"
           >
             <div className="flex flex-col h-full gap-4">
-              <h3 className="text-lg font-bold text-gray-900">
-                {group.name}
-              </h3>
-              <div className="flex items-center text-gray-600 text-sm">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">{group.name}</h3>
+              <div className="flex items-center text-gray-400 text-sm">
                 <BookOutlined style={{ fontSize: 16, marginRight: 8 }} />
                 {group.teacherName}
               </div>
-              <div className="flex items-center text-gray-600 text-sm">
+              <div className="flex items-center text-gray-500 text-sm">
                 <UserOutlined style={{ fontSize: 16, marginRight: 8 }} />
                 {group.studentCount} talaba
               </div>
@@ -60,5 +66,5 @@ export default function GroupsGrid({ groups, loading, error }: GroupsGridProps) 
         </Col>
       ))}
     </Row>
-  )
+  );
 }

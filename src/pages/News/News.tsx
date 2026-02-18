@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, DatePicker, Spin, Card, Modal, Tag } from "antd";
+import { Image, DatePicker, Spin, Card, Modal, Tag, Button, Popconfirm } from "antd";
 import {
   CalendarOutlined,
   EyeOutlined,
@@ -19,6 +19,7 @@ import FileUpload from "../../components/Input/FileUpload";
 import { NewsItem } from "../../types/news";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { useNews } from "../../hooks/useNews";
+import { Form } from "antd";
 
 const News = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,6 +33,7 @@ const News = () => {
 
   const [viewingNews, setViewingNews] = useState<NewsItem | null>(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+
 
   const [form] = FormWrapper.useForm();
   const { uploadFile, isUploading, uploadProgress } = useFileUpload();
@@ -47,6 +49,10 @@ const News = () => {
     isUpdating,
   } = useNews({ page: currentPage, size: pageSize, search: searchTerm });
 
+const titleValue = Form.useWatch("title", form);
+const descriptionValue = Form.useWatch("description", form);
+
+const isSaveDisabled = !titleValue?.trim() || !descriptionValue?.trim();
   const openAddModal = () => {
     setEditingNews(null);
     setUploadedImageUrl("");
@@ -73,6 +79,7 @@ const News = () => {
   };
 
   const handleSave = async () => {
+    if (isSaveDisabled) return;
     try {
       const values = await form.validateFields();
       let finalImageUrl = uploadedImageUrl;
@@ -109,7 +116,7 @@ const News = () => {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl min-h-screen">
       <ListHeader
         title="Yangiliklar soni"
         count={total}
@@ -130,23 +137,23 @@ const News = () => {
           description="Hozircha hech qanday yangilik qo'shilmagan"
         />
       ) : (
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {news.map((item) => (
             <Card
               key={item.id}
               hoverable
-              className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700"
+              className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-800"
               cover={
                 item.imgUrl ? (
-                  <div className="h-70 overflow-hidden">
+                  <div className="h-52 overflow-hidden">
                     <img
                       src={item.imgUrl}
                       alt={item.title}
-                      className="w-full h-full bg-contain transition-transform duration-300 hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />
                   </div>
                 ) : (
-                  <div className="h-70 bg-gradient-to-br from-[#00a67d] to-[#007a5c] flex flex-col items-center justify-center gap-2">
+                  <div className="h-52 bg-gradient-to-br from-[#00a67d] to-[#007a5c] flex flex-col items-center justify-center gap-2">
                     <FileTextOutlined className="text-white text-5xl" />
                     <span className="text-white text-sm font-medium opacity-80">
                       Rasm mavjud emas
@@ -154,42 +161,83 @@ const News = () => {
                   </div>
                 )
               }
-              actions={[
-                <EyeOutlined
-                  key="view"
-                  className="text-blue-500 hover:text-blue-700 text-base"
-                  onClick={() => openViewModal(item)}
-                />,
-                <EditOutlined
-                  key="edit"
-                  className="text-green-500 hover:text-green-700 text-base"
-                  onClick={() => openEditModal(item)}
-                />,
-                <DeleteOutlined
-                  key="delete"
-                  className="text-red-400 hover:text-red-600 text-base"
-                  onClick={() => handleDelete(item.id)}
-                />,
-              ]}
+              // actions o'rniga o'zimiz quramiz
+              actions={undefined}
             >
               <div className="flex flex-col gap-2">
+                {item.date && (
+                  <Tag
+                    icon={<CalendarOutlined />}
+                    color="green"
+                    className="w-fit text-xs"
+                  >
+                    {item.date}
+                  </Tag>
+                )}
                 <h3 className="font-semibold text-gray-900 dark:text-white text-base line-clamp-2 leading-snug">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
+                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 leading-relaxed">
                   {item.description}
                 </p>
+              </div>
+
+              {/* Custom action tugmalar */}
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <Button
+                  type="primary"
+                  ghost
+                  icon={<EyeOutlined />}
+                  onClick={() => openViewModal(item)}
+                  className="flex-1 !border-blue-400 !text-blue-500 hover:!bg-blue-50 dark:hover:!bg-blue-900/20 dark:!border-blue-500 dark:!text-blue-400"
+                  size="small"
+                >
+                  Ko'rish
+                </Button>
+
+                <Button
+                  type="primary"
+                  ghost
+                  icon={<EditOutlined />}
+                  onClick={() => openEditModal(item)}
+                  className="flex-1 !border-green-400 !text-green-600 hover:!bg-green-50 dark:hover:!bg-green-900/20 dark:!border-green-500 dark:!text-green-400"
+                  size="small"
+                >
+                  Tahrirlash
+                </Button>
+
+                <Popconfirm
+                  title="Yangilikni o'chirish"
+                  description="Rostdan ham o'chirmoqchimisiz?"
+                  onConfirm={() => handleDelete(item.id)}
+                  okText="Ha"
+                  cancelText="Yo'q"
+                  okButtonProps={{ danger: true }}
+                >
+                  <Button
+                    danger
+                    ghost
+                    icon={<DeleteOutlined />}
+                    className="flex-1 dark:!border-red-500 dark:!text-red-400 dark:hover:!bg-red-900/20"
+                    size="small"
+                  >
+                    O'chirish
+                  </Button>
+                </Popconfirm>
               </div>
             </Card>
           ))}
         </div>
       )}
+
+      {/* 👁 View Modal */}
       <Modal
         open={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={null}
         width={600}
         centered
+        className="dark:[&_.ant-modal-content]:bg-gray-800 dark:[&_.ant-modal-header]:bg-gray-800 dark:[&_.ant-modal-title]:text-white dark:[&_.ant-modal-close]:text-gray-400"
         title={
           <span className="text-lg font-semibold text-gray-800 dark:text-white">
             {viewingNews?.title}
@@ -202,8 +250,8 @@ const News = () => {
               <Image
                 src={viewingNews.imgUrl}
                 alt={viewingNews.title}
-                className="w-full rounded-xl object-cover"
-                style={{ maxHeight: 470, objectFit: "cover" }}
+                className="w-full rounded-xl"
+                style={{ maxHeight: 350, objectFit: "cover" }}
                 preview={false}
               />
             )}
@@ -221,7 +269,7 @@ const News = () => {
       <ModalComponent
         open={isModalVisible}
         title={
-          <span>
+          <span className="dark:text-white">
             {editingNews ? "Yangilikni tahrirlash" : "Yangi yangilik qo'shish"}
           </span>
         }
@@ -233,8 +281,14 @@ const News = () => {
         okText="Saqlash"
         cancelText="Bekor qilish"
         confirmLoading={isUploading || isCreating || isUpdating}
+        okButtonProps={{
+          disabled: isSaveDisabled,
+        }}
       >
-        <FormWrapper form={form} layout="vertical">
+        <FormWrapper
+          form={form}
+          layout="vertical"
+        >
           <FormWrapper.Item
             name="title"
             label="Yangilik nomi"

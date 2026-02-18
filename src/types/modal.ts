@@ -1,3 +1,4 @@
+import { ModalProps } from "antd/es/modal/interface";
 import { ReactNode } from "react";
 
 export interface ModalComponentProps {
@@ -10,4 +11,5 @@ export interface ModalComponentProps {
   children: ReactNode;
   footer?: ReactNode[] | null;
   confirmLoading?: boolean;
+  okButtonProps?: ModalProps["okButtonProps"];
 }

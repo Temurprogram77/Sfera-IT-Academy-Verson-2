@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal, ModalProps } from "antd";
 import { ModalComponentProps } from "../../types/modal";
 
 const ModalComponent = ({
@@ -11,6 +11,7 @@ const ModalComponent = ({
   children,
   footer,
   confirmLoading,
+  okButtonProps,
 }: ModalComponentProps) => {
   return (
     <Modal
@@ -22,6 +23,7 @@ const ModalComponent = ({
       cancelText={cancelText}
       footer={footer}
       confirmLoading={confirmLoading}
+      okButtonProps={okButtonProps} 
     >
       {children}
     </Modal>
