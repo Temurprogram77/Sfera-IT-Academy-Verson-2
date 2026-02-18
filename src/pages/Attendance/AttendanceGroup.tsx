@@ -20,7 +20,7 @@ export default function AttendancePage() {
             Talabalarning davomat ma'lumotlarini ko'rish uchun guruhni tanlang
           </Text>
         </div>
-        
+         
         <GroupsGrid
           groups={groups}
           loading={loading}

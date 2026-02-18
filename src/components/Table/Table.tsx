@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
 import { Table, Form, Popconfirm } from "antd";
-
 import { PencilIcon, TrashBinIcon } from "../../icons";
 import ModalComponent from "../Modal/Modal";
 import { toast } from "sonner";
@@ -34,54 +33,40 @@ const TableComponent = <T extends { id: number }>({
 
   const filteredItems = useMemo(() => {
     if (!searchKeys.length) return items;
-
     return items.filter((i) =>
-      searchKeys.some((key) => String(i[key]).toLowerCase().includes("")),
+      searchKeys.some((key) =>
+        String(i[key]).toLowerCase().includes(""),
+      ),
     );
   }, [items, searchKeys]);
 
   const showModal = (item: T | null = null) => {
     setEditingItem(item);
-
-    if (item) {
-      form.setFieldsValue(item);
-    } else {
-      form.resetFields();
-    }
-
+    if (item) form.setFieldsValue(item);
+    else form.resetFields();
     setIsModalVisible(true);
   };
+
   const handleView = (id: number) => {
-    if (viewPath) {
-      navigate(viewPath(id));
-    }
+    if (viewPath) navigate(viewPath(id));
   };
 
   const handleEdit = (record: T) => {
-    // Agar onEdit funksiyasi berilgan bo'lsa, uni chaqir va ichki modalni ochma
-    if (onEdit) {
-      onEdit(record);
-    } else {
-      // Agar onEdit yo'q bo'lsa, ichki modalni och
-      showModal(record);
-    }
+    if (onEdit) onEdit(record);
+    else showModal(record);
   };
 
   const handleSave = async () => {
     const values = await form.validateFields();
-
     if (editingItem) {
       setItems((prev) =>
-        prev.map((i) => (i.id === editingItem.id ? { ...i, ...values } : i)),
+        prev.map((i) => (i.id === editingItem.id ? { ...i, ...values } : i))
       );
-
       toast.success(`${itemName} yangilandi`);
     } else {
       setItems((prev) => [...prev, { id: Date.now(), ...values } as T]);
-
       toast.success(`Yangi ${itemName} qo'shildi`);
     }
-
     setIsModalVisible(false);
   };
 
@@ -97,42 +82,45 @@ const TableComponent = <T extends { id: number }>({
         ? col.render
         : (_: any, record: T) => String(record[col.key as keyof T]),
     })),
-
-    // modalFields.length > 0 && { ... }  👇 bu qatorni o'zgartiramiz
-    {
-      title: t("actions"),
-      key: "actions",
-      render: (_: unknown, record: T) => (
-        <div className="flex justify-end gap-3">
-          {viewPath && (
-            <IconButton
-              icon={<EyeOutlined />}
-              onClick={() => handleView(record.id)}
-            />
-          )}
-          {onEdit && (
-            <IconButton
-              icon={<PencilIcon />}
-              onClick={() => handleEdit(record)}
-              warning
-            />
-          )}
-          {onDelete && (
-            <Popconfirm
-              title={`${itemName} ${t("confirmDeleteSuffix")}`}
-              onConfirm={() => handleDelete(record.id)}
-              okText={t("yes")}
-              cancelText={t("no")}
-            >
-              <span>
-                <IconButton icon={<TrashBinIcon />} danger />
-              </span>
-            </Popconfirm>
-          )}
-        </div>
-      ),
-    },
-  ].filter(Boolean);
+    // Agar onEdit/onDelete/viewPath bo'lsa, "Amallar" ustuni qo'shiladi
+    ...(onEdit || onDelete || viewPath
+      ? [
+          {
+            title: t("actions"),
+            key: "actions",
+            render: (_: unknown, record: T) => (
+              <div className="flex justify-end gap-3">
+                {viewPath && (
+                  <IconButton
+                    icon={<EyeOutlined />}
+                    onClick={() => handleView(record.id)}
+                  />
+                )}
+                {onEdit && (
+                  <IconButton
+                    icon={<PencilIcon />}
+                    onClick={() => handleEdit(record)}
+                    warning
+                  />
+                )}
+                {onDelete && (
+                  <Popconfirm
+                    title={`${itemName} ${t("confirmDeleteSuffix")}`}
+                    onConfirm={() => handleDelete(record.id)}
+                    okText={t("yes")}
+                    cancelText={t("no")}
+                  >
+                    <span>
+                      <IconButton icon={<TrashBinIcon />} danger />
+                    </span>
+                  </Popconfirm>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl">
@@ -150,7 +138,9 @@ const TableComponent = <T extends { id: number }>({
         <ModalComponent
           open={isModalVisible}
           title={
-            editingItem ? `${itemName} ${t("edit")}` : `${t("new")} ${itemName}`
+            editingItem
+              ? `${itemName} ${t("edit")}`
+              : `${t("new")} ${itemName}`
           }
           onOk={handleSave}
           onCancel={() => setIsModalVisible(false)}

@@ -122,7 +122,7 @@ const AppSidebar: React.FC = () => {
       {
         icon: <BoxCubeIcon />,
         name: t("classes"),
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
+        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
         subItems: [
           { name: t("categories"), path: "/categories", pro: false },
           { name: t("groups"), path: "/groups", pro: false },
@@ -138,13 +138,24 @@ const AppSidebar: React.FC = () => {
       {
         icon: <BoltIcon />,
         name: t("grades"),
+        roles: [  "ROLE_TEACHER"],
+        subItems: [
+          {
+        name: t("grades"),
         path: "/grades",
-        roles: ["ROLE_STUDENT", "ROLE_PARENT"],
+        pro: false,
+          },
+          {
+            name: "Baholash",
+            path: "/assessment",
+            pro: false,
+          },
+        ],
       },
       {
         icon: <BoltIcon />,
         name: t("grades"),
-        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER"],
+        roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
         subItems: [{ name: t("grades"), path: "/grades", pro: false }],
       },
       {

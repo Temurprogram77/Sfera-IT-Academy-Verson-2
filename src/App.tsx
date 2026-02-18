@@ -55,6 +55,8 @@ import Categories from "./pages/Categories/Categories";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
 import AttendanceGroup from "./pages/Attendance/AttendanceGroup";
 import News from "./pages/News/News";
+import TeacherGroups from "./pages/Grades/Assessment";
+import SingleAssessment from "./pages/Grades/GroupAssessment";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -315,6 +317,8 @@ export default function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="categories/:id" element={<CategoryDetail />} />
             <Route path="groups" element={<Groups />} />
+            <Route path="assessment" element={<TeacherGroups />} />
+            <Route path="assessment/:id" element={<SingleAssessment />} />
             <Route path="groups/:id" element={<GroupsDetail />} />
             <Route path="rooms" element={<Rooms />} />
             <Route path="room/:id" element={<RoomsID />} />
