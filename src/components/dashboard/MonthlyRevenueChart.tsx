@@ -6,6 +6,7 @@ import { GroupEnum, IScheduleGroup } from "../../types/dashboard";
 // ─── Konstantalar ─────────────────────────────────────────────────────────────
 
 const TAB_OPTIONS: { label: string; value: GroupEnum }[] = [
+  { label: "BARCHA KUNLAR", value: "" },
   { label: "JUFT KUNLAR", value: "JUFT_KUNLAR" },
   { label: "TOQ KUNLAR", value: "TOQ_KUNLAR" },
   { label: "BOSHQA", value: "BOSHQA_KUNLAR" },

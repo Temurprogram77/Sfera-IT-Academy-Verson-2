@@ -7,7 +7,7 @@ export default function Admin() {
     <>
       <PageMeta title="Sfera IT Academy Admin" description="AdminDashboard" />
 
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-7xl mx-auto">
         <AcademyMetrics />
 
         <MonthlyRevenueChart />

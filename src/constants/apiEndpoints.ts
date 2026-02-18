@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
   GROUP: {
     ALL: "/group/all",
     LIST: "/group",
-    CREATE: "/group/update",
+    CREATE: "/group",
     UPDATE: "/group/update",
     DELETE: (id: number | string) => `/group/${id}`,
     GET_BY_ID: (id: number | string) => `/group/${id}`,

@@ -1,6 +1,6 @@
 // src/pages/Groups/Groups.tsx
 import { useState, useEffect } from "react";
-import { Popconfirm, Spin, TimePicker, Tag, message } from "antd";
+import { Popconfirm, Spin, TimePicker, Tag } from "antd";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
@@ -88,7 +88,8 @@ const Groups = () => {
         endTime: editingGroup.endTime
           ? dayjs(editingGroup.endTime, "HH:mm")
           : null,
-        weekDays: editingGroup.weekDays,
+        // ✅ weekDays allaqachon string[] bo'lib keladi — to'g'ridan-to'g'ri set qilinadi
+        weekDays: editingGroup.weekDays ?? [],
         teacherId: editingGroup.teacherId,
         categoryId: editingGroup.categoryId,
         roomId: editingGroup.roomId,
@@ -99,11 +100,13 @@ const Groups = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+
+      // ✅ weekDays: values.weekDays endi string[] bo'ladi (multi-select)
       const groupData: CreateGroupDto | UpdateGroupDto = {
         name: values.name.trim(),
         startTime: values.startTime.format("HH:mm"),
         endTime: values.endTime.format("HH:mm"),
-        weekDays: values.weekDays,
+        weekDays: values.weekDays as string[],   // ✅ array holida yuboriladi
         teacherId: values.teacherId,
         categoryId: values.categoryId || 1,
         roomId: values.roomId,
@@ -289,8 +292,8 @@ const Groups = () => {
                   hideDisabledOptions
                   disabledTime={() => ({
                     disabledHours: () => [
-                      ...Array.from({ length: 8 }, (_, i) => i), // 00–07
-                      ...Array.from({ length: 3 }, (_, i) => i + 21), // 21–23
+                      ...Array.from({ length: 8 }, (_, i) => i),
+                      ...Array.from({ length: 3 }, (_, i) => i + 21),
                     ],
                   })}
                 />
@@ -316,7 +319,7 @@ const Groups = () => {
                             if (value.isAfter(start)) return Promise.resolve();
                             return Promise.reject(
                               new Error(
-                                "Tugash vaqti boshlanishdan keyin bo‘lishi kerak",
+                                "Tugash vaqti boshlanishdan keyin bo'lishi kerak",
                               ),
                             );
                           },
@@ -340,10 +343,12 @@ const Groups = () => {
                           const startHour = startTime.hour();
 
                           return {
-                            // FAQAT SOATLARNI BLOKLAYMIZ
                             disabledHours: () => [
                               ...baseDisabled,
-                              ...Array.from({ length: startHour }, (_, i) => i),
+                              ...Array.from(
+                                { length: startHour },
+                                (_, i) => i,
+                              ),
                             ],
                           };
                         }}
@@ -354,12 +359,21 @@ const Groups = () => {
               </FormWrapper.Item>
             </div>
 
+            {/* ✅ mode="multiple" — bir nechta kun tanlash imkoni */}
             <FormWrapper.Item
               name="weekDays"
               label="Kunlar"
-              rules={[{ required: true, message: "Kunlarni tanlang" }]}
+              rules={[
+                { required: true, message: "Kamida bitta kun tanlang" },
+                {
+                  type: "array",
+                  min: 1,
+                  message: "Kamida bitta kun tanlang",
+                },
+              ]}
             >
               <SelectComponent
+                mode="multiple"
                 placeholder="Kunlarni tanlang"
                 options={weekDaysOptions}
               />

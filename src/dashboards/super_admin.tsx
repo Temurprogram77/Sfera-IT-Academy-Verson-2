@@ -7,7 +7,7 @@ export default function SuperAdmin() {
     <>
       <PageMeta title="Sfera IT Academy Super Admin" description="Super Admin Dashboard" />
 
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-7xl mx-auto">
         <AcademyMetrics />
 
         <MonthlyRevenueChart />
