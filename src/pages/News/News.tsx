@@ -161,19 +161,9 @@ const isSaveDisabled = !titleValue?.trim() || !descriptionValue?.trim();
                   </div>
                 )
               }
-              // actions o'rniga o'zimiz quramiz
               actions={undefined}
             >
               <div className="flex flex-col gap-2">
-                {item.date && (
-                  <Tag
-                    icon={<CalendarOutlined />}
-                    color="green"
-                    className="w-fit text-xs"
-                  >
-                    {item.date}
-                  </Tag>
-                )}
                 <h3 className="font-semibold text-gray-900 dark:text-white text-base line-clamp-2 leading-snug">
                   {item.title}
                 </h3>
@@ -181,8 +171,6 @@ const isSaveDisabled = !titleValue?.trim() || !descriptionValue?.trim();
                   {item.description}
                 </p>
               </div>
-
-              {/* Custom action tugmalar */}
               <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <Button
                   type="primary"
