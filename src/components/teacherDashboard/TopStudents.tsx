@@ -1,4 +1,4 @@
-import { images } from "../../assets/icons/images";
+import { images } from "../../assets/images";
 const { crown, medal1, medal2, medal3 } = images;
 
 const topStudents = [
