@@ -16,7 +16,6 @@ import {
   PhoneOutlined,
   LockOutlined,
   SafetyCertificateOutlined,
-  ArrowLeftOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,6 +26,7 @@ import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import IconButton from "../../components/IconButton/IconButton";
 import InputComponent from "../../components/Input/Input";
 import { useParentDetail } from "../../hooks/useParentDetail";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
 const { Title, Text } = Typography;
 
@@ -133,6 +133,13 @@ const ParentDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <AppBreadcrumb
+        items={[
+          { title: "Dashboard", path: "/" },
+          { title: "Ota-onalar", path: "/parents" },
+          { title: parent?.fullName || "Ota-ona" },
+        ]}
+      />
       {/* Header */}
       <div className="mb-6">
         <div className="flex justify-between items-center">

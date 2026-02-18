@@ -1,5 +1,4 @@
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -55,6 +54,7 @@ import Categories from "./pages/Categories/Categories";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
 import AttendanceGroup from "./pages/Attendance/AttendanceGroup";
 import News from "./pages/News/News";
+import MyGrades from "./pages/myGrades/MyGrades";
 interface Props {
   children: React.ReactNode;
   allowedRoles?: string[]; // ruxsat berilgan rollar
@@ -211,146 +211,145 @@ export default function App() {
         },
       }}
     >
-      <Router>
-        {!isOnline && (
-          <div
-            style={{
-              background: "red",
-              color: "white",
-              padding: "10px",
-              textAlign: "center",
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              zIndex: 9999,
-            }}
-          >
-            Internet yo‘q. Iltimos, tarmoqni tekshiring.
-          </div>
-        )}
-        <ScrollToTop />
-        <Routes>
-          {/* Auth */}
+      {!isOnline && (
+        <div
+          style={{
+            background: "red",
+            color: "white",
+            padding: "10px",
+            textAlign: "center",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            zIndex: 9999,
+          }}
+        >
+          Internet yo‘q. Iltimos, tarmoqni tekshiring.
+        </div>
+      )}
+      <ScrollToTop />
+      <Routes>
+        {/* Auth */}
+        <Route
+          path="/signin"
+          element={
+            <PublicRoute>
+              <SignIn />
+            </PublicRoute>
+          }
+        />
+
+        {/* Dashboard */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/" element={<RootRedirect />} />
+
+          {/* Dashboards */}
           <Route
-            path="/signin"
+            path="dashboard/admin"
             element={
-              <PublicRoute>
-                <SignIn />
-              </PublicRoute>
+              <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/super_admin"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
+                <SuperAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/teacher"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
+                <Teacher />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/student"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
+                <Student />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="dashboard/parent"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
+                <Parent />
+              </ProtectedRoute>
             }
           />
 
-          {/* Dashboard */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="/" element={<RootRedirect />} />
+          {/* Users */}
+          <Route path="teachers" element={<Teachers />} />
+          <Route path="teachers/:id" element={<TeachersDetail />} />
+          <Route path="admins" element={<Admins />} />
+          <Route path="admins/:id" element={<AdminsDetail />} />
+          <Route path="students" element={<Students />} />
+          <Route path="students/:id" element={<StudentsDetail />} />
+          <Route path="parents" element={<Parents />} />
+          <Route path="parents/:id" element={<ParentsDetail />} />
 
-            {/* Dashboards */}
-            <Route
-              path="dashboard/admin"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="dashboard/super_admin"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
-                  <SuperAdmin />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="dashboard/teacher"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
-                  <Teacher />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="dashboard/student"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
-                  <Student />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="dashboard/parent"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
-                  <Parent />
-                </ProtectedRoute>
-              }
-            />
+          {/* Messages & Grades */}
+          <Route path="messages" element={<Messages />} />
+          <Route path="grades" element={<Grades />} />
+          <Route path="my-grades" element={<MyGrades />} />
+          <Route path="attendance/group/:id" element={<Attendance />} />
+          <Route path="attendance" element={<AttendanceGroup />} />
+          <Route path="news" element={<News />} />
 
-            {/* Users */}
-            <Route path="teachers" element={<Teachers />} />
-            <Route path="teachers/:id" element={<TeachersDetail />} />
-            <Route path="admins" element={<Admins />} />
-            <Route path="admins/:id" element={<AdminsDetail />} />
-            <Route path="students" element={<Students />} />
-            <Route path="students/:id" element={<StudentsDetail />} />
-            <Route path="parents" element={<Parents />} />
-            <Route path="parents/:id" element={<ParentsDetail />} />
+          {/* Groups & Rooms */}
+          <Route path="categories" element={<Categories />} />
+          <Route path="categories/:id" element={<CategoryDetail />} />
+          <Route path="groups" element={<Groups />} />
+          <Route path="groups/:id" element={<GroupsDetail />} />
+          <Route path="rooms" element={<Rooms />} />
+          <Route path="room/:id" element={<RoomsID />} />
 
-            {/* Messages & Grades */}
-            <Route path="messages" element={<Messages />} />
-            <Route path="grades" element={<Grades />} />
-            <Route path="attendance/group/:id" element={<Attendance />} />
-            <Route path="attendance" element={<AttendanceGroup />} />
-            <Route path="news" element={<News />} />
+          {/* Profile & Other Pages */}
+          <Route path="profile" element={<UserProfiles />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="blank" element={<Blank />} />
 
-            {/* Groups & Rooms */}
-            <Route path="categories" element={<Categories />} />
-            <Route path="categories/:id" element={<CategoryDetail />} />
-            <Route path="groups" element={<Groups />} />
-            <Route path="groups/:id" element={<GroupsDetail />} />
-            <Route path="rooms" element={<Rooms />} />
-            <Route path="room/:id" element={<RoomsID />} />
+          {/* Tables */}
+          <Route path="basic-tables" element={<BasicTables />} />
 
-            {/* Profile & Other Pages */}
-            <Route path="profile" element={<UserProfiles />} />
-            <Route path="calendar" element={<Calendar />} />
-            <Route path="blank" element={<Blank />} />
+          {/* UI Elements */}
+          <Route path="alerts" element={<Alerts />} />
+          <Route path="avatars" element={<Avatars />} />
+          <Route path="badge" element={<Badges />} />
+          <Route path="buttons" element={<Buttons />} />
+          <Route path="images" element={<Images />} />
+          <Route path="videos" element={<Videos />} />
 
-            {/* Tables */}
-            <Route path="basic-tables" element={<BasicTables />} />
+          {/* Charts */}
+          <Route path="line-chart" element={<LineChart />} />
+          <Route path="bar-chart" element={<BarChart />} />
+        </Route>
+        {/*reportlar uchun route*/}
+        {/* Fallback */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 
-            {/* UI Elements */}
-            <Route path="alerts" element={<Alerts />} />
-            <Route path="avatars" element={<Avatars />} />
-            <Route path="badge" element={<Badges />} />
-            <Route path="buttons" element={<Buttons />} />
-            <Route path="images" element={<Images />} />
-            <Route path="videos" element={<Videos />} />
-
-            {/* Charts */}
-            <Route path="line-chart" element={<LineChart />} />
-            <Route path="bar-chart" element={<BarChart />} />
-          </Route>
-          {/*reportlar uchun route*/}
-          {/* Fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-
-        {/* Toaster */}
-        <Toaster
-          position="top-right"
-          richColors
-          theme={theme === "dark" ? "dark" : "light"}
-        />
-      </Router>
+      {/* Toaster */}
+      <Toaster
+        position="top-right"
+        richColors
+        theme={theme === "dark" ? "dark" : "light"}
+      />
     </ConfigProvider>
   );
 }

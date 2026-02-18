@@ -11,7 +11,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/tanstack";
 import { ConfigProvider } from "antd";
 import { tokenManager } from "./utils/tokenManager";
-import { AuthProvider } from "./context/AuthContext"; // ✅ YANGI
+import { AuthProvider } from "./context/AuthContext";
+import { BrowserRouter } from "react-router";
 
 const antTheme = {
   token: {
@@ -24,19 +25,18 @@ const antTheme = {
 
 function AppWithTokenManager() {
   useEffect(() => {
-
     tokenManager.initialize();
 
     const handleSessionExpired = () => {
-      toast.error('Sessiya tugadi. Iltimos, qaytadan kiring.', {
+      toast.error("Sessiya tugadi. Iltimos, qaytadan kiring.", {
         duration: 5000,
       });
     };
 
-    window.addEventListener('session-expired', handleSessionExpired);
+    window.addEventListener("session-expired", handleSessionExpired);
 
     return () => {
-      window.removeEventListener('session-expired', handleSessionExpired);
+      window.removeEventListener("session-expired", handleSessionExpired);
     };
   }, []);
 
@@ -45,17 +45,19 @@ function AppWithTokenManager() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider theme={antTheme}>
-        <ThemeProvider>
-          <AuthProvider>
-            <AppWrapper>
-              <AppWithTokenManager />
-              <Toaster position="top-right" richColors />
-            </AppWrapper>
-          </AuthProvider>
-        </ThemeProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
-  </StrictMode>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider theme={antTheme}>
+          <ThemeProvider>
+            <AuthProvider>
+              <AppWrapper>
+                <AppWithTokenManager />
+                <Toaster position="top-right" richColors />
+              </AppWrapper>
+            </AuthProvider>
+          </ThemeProvider>
+        </ConfigProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </StrictMode>,
 );

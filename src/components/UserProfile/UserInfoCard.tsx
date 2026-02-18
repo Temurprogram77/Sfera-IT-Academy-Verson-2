@@ -59,6 +59,16 @@ export default function UserInfoCard({ user }: { user: any }) {
               </p>
             </div>
 
+            <div>
+              <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+                {t("Ota Ona ismi")}
+              </p>
+
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {user?.parentName}
+              </p>
+            </div>
+
             {/* PHONE */}
             <div>
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
@@ -73,15 +83,12 @@ export default function UserInfoCard({ user }: { user: any }) {
         </div>
       </div>
 
-      {/* =========================
-          MODAL
-      ========================== */}
       <Modal open={isOpen} onCancel={closeModal} title={"Modal"}>
         <div className="no-scrollbar w-full rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           {/* HEADER */}
           <div className="px-2 pr-14 mb-6">
             <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-              {t("editPersonalInformation")} 
+              {t("editPersonalInformation")}
             </h4>
 
             <p className="text-sm text-gray-500 dark:text-gray-400">

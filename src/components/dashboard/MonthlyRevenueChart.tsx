@@ -3,8 +3,6 @@ import { Select, Spin, Empty } from "antd";
 import { useSchedule } from "../../hooks/useDashboard";
 import { GroupEnum, IScheduleGroup } from "../../types/dashboard";
 
-// ─── Konstantalar ─────────────────────────────────────────────────────────────
-
 const TAB_OPTIONS: { label: string; value: GroupEnum }[] = [
   { label: "BARCHA KUNLAR", value: "" },
   { label: "JUFT KUNLAR", value: "JUFT_KUNLAR" },
@@ -18,36 +16,29 @@ const TIME_STEP_OPTIONS = [
   { label: "1 Soat", value: 60 },
 ];
 
-// Jadval boshlanish/tugash soatlari
-const DAY_START = 8; // 08:00
-const DAY_END = 20; // 20:00
+const DAY_START = 8;
+const DAY_END = 20;
 
-// Har bir guruh uchun rang — index bo'yicha aylanadi
 const GROUP_COLORS = [
-  { bg: "#17B26A", text: "#fff" }, // yashil
-  { bg: "#155EEF", text: "#fff" }, // ko'k
-  { bg: "#F04438", text: "#fff" }, // qizil
-  { bg: "#EAB308", text: "#fff" }, // sariq
-  { bg: "#7B61FF", text: "#fff" }, // binafsha
-  { bg: "#0BA5EC", text: "#fff" }, // moviy
+  { bg: "#17B26A", text: "#fff" },
+  { bg: "#155EEF", text: "#fff" },
+  { bg: "#F04438", text: "#fff" },
+  { bg: "#EAB308", text: "#fff" },
+  { bg: "#7B61FF", text: "#fff" },
+  { bg: "#0BA5EC", text: "#fff" },
 ];
 
-// ─── Yordamchi funksiyalar ────────────────────────────────────────────────────
-
-// "HH:mm" → daqiqaga o'girish (kunning boshidan)
 const timeToMinutes = (time: string): number => {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
 };
 
-// Daqiqadan "HH:mm" ga
 const minutesToTime = (minutes: number): string => {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 };
 
-// Vaqt ustunlarini yaratish
 const buildTimeSlots = (stepMinutes: number): string[] => {
   const slots: string[] = [];
   for (let m = DAY_START * 60; m <= DAY_END * 60; m += stepMinutes) {
@@ -56,7 +47,6 @@ const buildTimeSlots = (stepMinutes: number): string[] => {
   return slots;
 };
 
-// ─── ScheduleBlock ────────────────────────────────────────────────────────────
 interface ScheduleBlockProps {
   group: IScheduleGroup;
   colorIndex: number;
@@ -81,7 +71,7 @@ const ScheduleBlock: React.FC<ScheduleBlockProps> = ({
         top: "4px",
         bottom: "4px",
         background: color.bg,
-        borderRadius: 6,
+        borderRadius: 8,
         padding: "4px 6px",
         color: color.text,
         fontSize: 11,
@@ -89,107 +79,58 @@ const ScheduleBlock: React.FC<ScheduleBlockProps> = ({
         overflow: "hidden",
         cursor: "default",
         zIndex: 2,
-        boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        gap: 1,
       }}
       title={`${group.groupName}\n${group.teacherName}\n${group.startTime} - ${group.endTime}`}
     >
-      <span
-        style={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          lineHeight: "14px",
-        }}
-      >
+      <span className="truncate">
         {group.startTime} - {group.endTime} / {group.groupName}
       </span>
-      <span
-        style={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          fontSize: 10,
-          opacity: 0.9,
-          lineHeight: "13px",
-        }}
-      >
+      <span className="truncate text-[10px] opacity-90">
         O'qituvchi: {group.teacherName}
       </span>
     </div>
   );
 };
 
-// ─── Asosiy Component ─────────────────────────────────────────────────────────
 export default function ScheduleChart() {
   const [activeTab, setActiveTab] = useState<GroupEnum>("JUFT_KUNLAR");
   const [stepMinutes, setStepMinutes] = useState<number>(30);
-
   const { rooms, loading } = useSchedule(activeTab);
 
-  // Vaqt ustunlari
   const timeSlots = useMemo(() => buildTimeSlots(stepMinutes), [stepMinutes]);
-
   const totalMinutes = (DAY_END - DAY_START) * 60;
 
-  // Blok pozitsiyasini hisoblash
-  const getBlockStyle = (
-    startTime: string,
-    endTime: string,
-  ): { leftPercent: number; widthPercent: number } => {
+  const getBlockStyle = (startTime: string, endTime: string) => {
     const startMin = timeToMinutes(startTime) - DAY_START * 60;
     const endMin = timeToMinutes(endTime) - DAY_START * 60;
-    const leftPercent = (startMin / totalMinutes) * 100;
-    const widthPercent = ((endMin - startMin) / totalMinutes) * 100;
-    return { leftPercent, widthPercent };
+    return {
+      leftPercent: (startMin / totalMinutes) * 100,
+      widthPercent: ((endMin - startMin) / totalMinutes) * 100,
+    };
   };
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: 16,
-        border: "1px solid #e5e7eb",
-        overflow: "hidden",
-      }}
-      className="dark:bg-white/[0.03] dark:border-gray-800"
-    >
-      {/* ── Header: tablar + vaqt oralig'i ── */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px 20px 0",
-          borderBottom: "1px solid #f3f4f6",
-        }}
-      >
-        {/* Tablar */}
-        <div style={{ display: "flex", gap: 0 }}>
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden transition-colors">
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center px-6 pt-4 border-b border-gray-200 dark:border-gray-700">
+
+        <div className="flex">
           {TAB_OPTIONS.map((tab) => {
             const isActive = activeTab === tab.value;
             return (
               <button
                 key={tab.value}
                 onClick={() => setActiveTab(tab.value)}
-                style={{
-                  padding: "10px 16px",
-                  fontSize: 13,
-                  fontWeight: isActive ? 700 : 500,
-                  color: isActive ? "#155EEF" : "#6b7280",
-                  background: "none",
-                  border: "none",
-                  borderBottom: isActive
-                    ? "2px solid #155EEF"
-                    : "2px solid transparent",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  marginBottom: -1,
-                  letterSpacing: 0.3,
-                }}
+                className={`px-4 py-2 text-sm transition-all border-b-2
+                  ${isActive
+                    ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 font-semibold"
+                    : "text-gray-500 dark:text-gray-400 border-transparent"}
+                `}
               >
                 {tab.label}
               </button>
@@ -197,87 +138,48 @@ export default function ScheduleChart() {
           })}
         </div>
 
-        {/* Vaqt oralig'i dropdown */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            paddingBottom: 12,
-          }}
-        >
-          <span style={{ fontSize: 12, color: "#9ca3af" }}>Vaqt oralig'i</span>
+        <div className="flex items-center gap-2 pb-3">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Vaqt oralig'i
+          </span>
           <Select
             value={stepMinutes}
             onChange={setStepMinutes}
             options={TIME_STEP_OPTIONS}
             size="small"
-            style={{ width: 120 }}
+            className="w-[120px]"
           />
         </div>
       </div>
 
-      {/* ── Jadval tanasi ── */}
-      <div style={{ overflowX: "auto" }}>
+      {/* BODY */}
+      <div className="overflow-x-auto">
         {loading ? (
-          <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div className="text-center py-16">
             <Spin size="large" />
           </div>
         ) : rooms.length === 0 ? (
-          <div style={{ padding: "60px 20px" }}>
+          <div className="py-16">
             <Empty description="Jadval ma'lumotlari topilmadi" />
           </div>
         ) : (
-          <table
-            style={{
-              width: "100%",
-              minWidth: 900,
-              borderCollapse: "collapse",
-              tableLayout: "fixed",
-            }}
-          >
-            {/* ── Ustun kengliklari ── */}
+          <table className="w-full min-w-[900px] table-fixed border-collapse">
             <colgroup>
-              {/* Xona nomi ustuni */}
               <col style={{ width: 110 }} />
-              {/* Vaqt ustunlari */}
               {timeSlots.map((_, i) => (
                 <col key={i} style={{ width: `${100 / timeSlots.length}%` }} />
               ))}
             </colgroup>
 
-            {/* ── Sarlavha qatori ── */}
             <thead>
               <tr>
-                <th
-                  style={{
-                    padding: "8px 12px",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "#6b7280",
-                    textAlign: "left",
-                    background: "#f9fafb",
-                    borderBottom: "1px solid #e5e7eb",
-                    borderRight: "1px solid #e5e7eb",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <th className="px-3 py-2 text-xs font-semibold text-left bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-b border-r border-gray-200 dark:border-gray-700">
                   Xonalar / Soat
                 </th>
                 {timeSlots.map((slot) => (
                   <th
                     key={slot}
-                    style={{
-                      padding: "8px 4px",
-                      fontSize: 11,
-                      fontWeight: 500,
-                      color: "#6b7280",
-                      textAlign: "left",
-                      background: "#f9fafb",
-                      borderBottom: "1px solid #e5e7eb",
-                      borderRight: "1px solid #f3f4f6",
-                      whiteSpace: "nowrap",
-                    }}
+                    className="px-2 py-2 text-[11px] font-medium text-left bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700"
                   >
                     {slot}
                   </th>
@@ -285,73 +187,36 @@ export default function ScheduleChart() {
               </tr>
             </thead>
 
-            {/* ── Xona satrlari ── */}
             <tbody>
               {rooms.map((room, roomIdx) => (
-                <tr
-                  key={roomIdx}
-                  style={{
-                    borderBottom: "1px solid #f3f4f6",
-                  }}
-                >
-                  {/* Xona nomi */}
-                  <td
-                    style={{
-                      padding: "8px 12px",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      color: "#374151",
-                      borderRight: "1px solid #e5e7eb",
-                      whiteSpace: "nowrap",
-                      verticalAlign: "middle",
-                    }}
-                  >
+                <tr key={roomIdx} className="border-b border-gray-100 dark:border-gray-800">
+
+                  <td className="px-3 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700 whitespace-nowrap">
                     {room.roomName}
                   </td>
 
-                  {/* Vaqt katakchalari — bitta katta position:relative cell */}
-                  <td
-                    colSpan={timeSlots.length}
-                    style={{
-                      padding: 0,
-                      position: "relative",
-                      height: 56,
-                    }}
-                  >
-                    {/* Vertikal chiziqlar (vaqt ajratuvchi) */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        pointerEvents: "none",
-                      }}
-                    >
+                  <td colSpan={timeSlots.length} className="relative h-14 p-0">
+
+                    {/* Vertical grid */}
+                    <div className="absolute inset-0 flex pointer-events-none">
                       {timeSlots.map((_, i) => (
                         <div
                           key={i}
-                          style={{
-                            flex: 1,
-                            borderRight: "1px solid #f3f4f6",
-                          }}
+                          className="flex-1 border-r border-gray-100 dark:border-gray-800"
                         />
                       ))}
                     </div>
 
-                    {/* Guruh bloklari */}
+                    {/* Blocks */}
                     {room.groups.map((group, groupIdx) => {
-                      const { leftPercent, widthPercent } = getBlockStyle(
-                        group.startTime,
-                        group.endTime,
-                      );
-                      // Har bir xonadagi guruh uchun rang
-                      const colorIndex = groupIdx;
+                      const { leftPercent, widthPercent } =
+                        getBlockStyle(group.startTime, group.endTime);
 
                       return (
                         <ScheduleBlock
                           key={groupIdx}
                           group={group}
-                          colorIndex={colorIndex}
+                          colorIndex={groupIdx}
                           leftPercent={leftPercent}
                           widthPercent={widthPercent}
                         />

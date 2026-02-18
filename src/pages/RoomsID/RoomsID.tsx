@@ -1,19 +1,20 @@
-'use client'
+"use client";
 
-import { Layout, Tabs, Spin, Alert } from 'antd'
-import { useParams } from 'react-router-dom'
-import RoomInfo from '../../components/rooms/RoomInfo'
-import ScheduleList from '../../components/rooms/ScheduleLists'
-import WeeklyAvailability from '../../components/rooms/WeeklyStatisticsDashboard'
-import { useRoomId } from '../../hooks/useRoomsId'
+import { Layout, Tabs, Spin, Alert } from "antd";
+import { useParams } from "react-router-dom";
+import RoomInfo from "../../components/rooms/RoomInfo";
+import ScheduleList from "../../components/rooms/ScheduleLists";
+import WeeklyAvailability from "../../components/rooms/WeeklyStatisticsDashboard";
+import { useRoomId } from "../../hooks/useRoomsId";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
-const { Content } = Layout
+const { Content } = Layout;
 
 export default function Page() {
-  const params = useParams()
-  const roomId = params.id as string
+  const params = useParams();
+  const roomId = params.id as string;
 
-  const { room, loading, error } = useRoomId(roomId)
+  const { room, loading, error } = useRoomId(roomId);
 
   if (loading) {
     return (
@@ -24,7 +25,7 @@ export default function Page() {
           </div>
         </Content>
       </Layout>
-    )
+    );
   }
 
   if (error || !room) {
@@ -41,34 +42,43 @@ export default function Page() {
           </div>
         </Content>
       </Layout>
-    )
+    );
   }
 
   const items = [
     {
-      key: 'info',
+      key: "info",
       label: "Xona Ma'lumotlari",
       children: <RoomInfo room={room} />,
     },
     {
-      key: 'schedule',
-      label: 'Xonadagi Guruhlar',
+      key: "schedule",
+      label: "Xonadagi Guruhlar",
       children: <ScheduleList schedules={room.schedules || []} />,
     },
     {
-      key: 'availability',
+      key: "availability",
       label: "Haftaviy Band/Bo'sh Vaqtlar",
       children: <WeeklyAvailability weeklyStats={room.weeklyStats || []} />,
     },
-  ]
+  ];
 
   return (
-    <Layout className="min-h-screen">
-      <Content className="p-8 bg-[#fff] dark:bg-[#101828]">
-        <div className="max-w-6xl mx-auto">
-          <Tabs defaultActiveKey="info" items={items} />
-        </div>
-      </Content>
-    </Layout>
-  )
+    <>
+      <AppBreadcrumb
+        items={[
+          { title: "Dashboard", path: "/" },
+          { title: "Xonalar", path: "/rooms" },
+          { title: room?.name || "Xona" },
+        ]}
+      />
+      <Layout className="min-h-screen">
+        <Content className="p-8 bg-[#fff] dark:bg-[#101828]">
+          <div className="max-w-6xl mx-auto">
+            <Tabs defaultActiveKey="info" items={items} />
+          </div>
+        </Content>
+      </Layout>
+    </>
+  );
 }

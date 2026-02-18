@@ -30,6 +30,7 @@ import DetailDescriptions, {
 } from "../../components/DetailDescriptions/DetailDescriptions";
 import PhoneInput from "../../components/Input/PhoneInput";
 import { useTeacherDetail } from "../../hooks/useTeacherDetail";
+import AppBreadcrumb from "../../components/common/AppBreadcrumb";
 
 const { Title, Text } = Typography;
 
@@ -78,6 +79,13 @@ const TeachersDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
+      <AppBreadcrumb
+        items={[
+          { title: "Dashboard", path: "/" },
+          { title: "O'qituvchilar", path: "/teachers" },
+          { title: teacher?.fullName || "O'qituvchi" },
+        ]}
+      />
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <Title level={3} className="!mb-0">
