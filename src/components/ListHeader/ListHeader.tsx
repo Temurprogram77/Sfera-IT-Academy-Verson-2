@@ -32,14 +32,17 @@ const ListHeader: React.FC<ListHeaderProps> = ({
             placeholder={t(searchPlaceholder)}
             prefix={<SearchOutlined className="text-gray-400" />}
             value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
+            // Explicitly type the event 'e' here
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+              onSearchChange(e.target.value)
+            }
             className="w-full sm:w-80"
           />
 
           <IconButton
-            icon={<PlusOutlined />} // Example icon, replace as needed
+            icon={<PlusOutlined />}
             text={buttonText}
-            onClick={onButtonClick} // original click handler
+            onClick={onButtonClick}
           />
         </div>
       </div>

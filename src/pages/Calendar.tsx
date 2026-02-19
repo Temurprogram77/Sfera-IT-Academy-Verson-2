@@ -237,7 +237,7 @@ const Calendar = () => {
         }
         cancelText={isFormMode ? "Bekor qilish" : undefined}
         confirmLoading={isCreating || isUpdating}
-        width={800}
+        // width={800}
       >
         {isFormMode ? (
           <EventFormView

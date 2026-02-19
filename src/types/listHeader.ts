@@ -9,4 +9,5 @@ export interface ListHeaderProps {
   buttonText: string;
   onButtonClick: () => void;
   children?: ReactNode;
+  buttonStyle?: React.CSSProperties;
 }

@@ -1,4 +1,3 @@
-// components/Event/EventFormView.tsx
 import React from "react";
 import { IEventFormValues } from "../../types/event";
 import FormWrapper from "../FormWrapper/FormWrapper";
@@ -28,12 +27,14 @@ const EventFormView: React.FC<EventFormViewProps> = ({
     onChange({ ...formValues, ...partial });
 
   return (
-    <FormWrapper>
+    <FormWrapper form={""}>
       {/* Event nomi */}
       <InputComponent
         label="Event nomi"
         value={formValues.name}
-        onChange={(e) => set({ name: e.target.value })}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          set({ name: e.target.value })
+        }
         placeholder="Masalan: Bayram"
       />
 
@@ -41,7 +42,9 @@ const EventFormView: React.FC<EventFormViewProps> = ({
       <InputComponent
         label="Tavsif"
         value={formValues.description}
-        onChange={(e) => set({ description: e.target.value })}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+          set({ description: e.target.value })
+        }
         placeholder="Event haqida batafsil ma'lumot..."
         variant="textarea"
       />
@@ -57,13 +60,17 @@ const EventFormView: React.FC<EventFormViewProps> = ({
         <InputComponent
           label="Boshlanish vaqti"
           value={formValues.startTime}
-          onChange={(e) => set({ startTime: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            set({ startTime: e.target.value })
+          }
           placeholder="00:00"
         />
         <InputComponent
           label="Tugash vaqti"
           value={formValues.endTime}
-          onChange={(e) => set({ endTime: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            set({ endTime: e.target.value })
+          }
           placeholder="23:59"
         />
       </div>

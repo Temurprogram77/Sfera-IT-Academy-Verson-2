@@ -39,10 +39,8 @@ const SingleAssessment = () => {
 
       setStudents((prev) =>
         prev.map((s) =>
-          s.id === selectedStudent.id
-            ? { ...s, assessed: true }
-            : s
-        )
+          s.id === selectedStudent.id ? { ...s, assessed: true } : s,
+        ),
       );
 
       setIsModalOpen(false); // saqlangach yopiladi
@@ -66,35 +64,33 @@ const SingleAssessment = () => {
           {
             key: "index",
             title: "O‘rni",
-            render: (_, __, index) => index + 1,
+            // Fix: Add explicit types to parameters
+            render: (_: any, __: Student, index: number) => index + 1,
           },
           {
             key: "student",
             title: "Ismi Familiyasi",
-            render: (record) => (
+            // Fix: Type the record parameter
+            render: (record: Student) => (
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white">
                   <UserOutlined />
                 </div>
-                <span className="font-semibold">
-                  {record.fullName}
-                </span>
+                <span className="font-semibold">{record.fullName}</span>
               </div>
             ),
           },
           {
             key: "action",
             title: "Holat",
-            render: (record) =>
+            // Fix: Type the record parameter
+            render: (record: Student) =>
               record.assessed ? (
                 <Tag color="green" icon={<CheckCircleOutlined />}>
                   Baholangan
                 </Tag>
               ) : (
-                <Button
-                  type="primary"
-                  onClick={() => openModal(record)}
-                >
+                <Button type="primary" onClick={() => openModal(record)}>
                   Baholash
                 </Button>
               ),
@@ -143,12 +139,8 @@ const SingleAssessment = () => {
             rules={[{ required: true }]}
           >
             <Select>
-              <Select.Option value="KUNLIK_BAHO">
-                Kunlik
-              </Select.Option>
-              <Select.Option value="IMTIHON_BAHO">
-                Imtihon
-              </Select.Option>
+              <Select.Option value="KUNLIK_BAHO">Kunlik</Select.Option>
+              <Select.Option value="IMTIHON_BAHO">Imtihon</Select.Option>
             </Select>
           </FormWrapper.Item>
 

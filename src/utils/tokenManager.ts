@@ -4,8 +4,11 @@ class TokenManager {
   private readonly LAST_ACTIVITY_KEY = 'last_activity';
   private readonly TOKEN_EXPIRY_TIME = 30 * 60 * 1000;
 
-  private activityCheckInterval: NodeJS.Timeout | null = null;
-  private inactivityTimeout: NodeJS.Timeout | null = null;
+  // private activityCheckInterval: NodeJS.Timeout | null = null;
+  // private inactivityTimeout: NodeJS.Timeout | null = null;
+
+  private activityCheckInterval: ReturnType<typeof setInterval> | null = null;
+  private inactivityTimeout: ReturnType<typeof setTimeout> | null = null;
 
   saveToken(token: string, role: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);

@@ -10,7 +10,7 @@ export default function StudentInfoCard() {
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      <h2 className="text-lg font-semibold mb-5">Mening kursim</h2>
+      <h2 className="text-lg font-semibold text-black dark:text-white mb-5">Mening kursim</h2>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
         {user.fullName && (
