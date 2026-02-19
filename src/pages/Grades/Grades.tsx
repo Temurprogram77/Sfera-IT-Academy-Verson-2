@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { Spin, Tag, Badge, Form, InputNumber, Select } from "antd";
+import { Spin, Tag, Form, InputNumber, Select } from "antd";
 import {
   TrophyOutlined,
-  UserOutlined,
   StarOutlined,
-  CheckCircleOutlined,
-  FireOutlined,
   BookOutlined,
 } from "@ant-design/icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
