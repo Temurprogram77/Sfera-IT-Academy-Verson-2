@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import IconButton from "../IconButton/IconButton";
 import InputComponent from "../Input/Input";
 import { ListHeaderProps } from "../../types/listHeader";
+import SelectComponent from "../Select/Select";
 
 const ListHeader: React.FC<ListHeaderProps> = ({
   title,
@@ -10,9 +11,12 @@ const ListHeader: React.FC<ListHeaderProps> = ({
   searchValue,
   onSearchChange,
   searchPlaceholder = "search",
+  selectOption,
   buttonText,
   onButtonClick,
   children,
+  onSelectChange,
+  selectValue,
 }) => {
   const { t } = useTranslation();
   return (
@@ -27,23 +31,29 @@ const ListHeader: React.FC<ListHeaderProps> = ({
 
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto">
           {children}
-
           <InputComponent
             placeholder={t(searchPlaceholder)}
             prefix={<SearchOutlined className="text-gray-400" />}
             value={searchValue}
-            // Explicitly type the event 'e' here
-            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-              onSearchChange(e.target.value)
-            }
+            onChange={(e) => onSearchChange(e.target.value)}
             className="w-full sm:w-80"
           />
-
-          <IconButton
-            icon={<PlusOutlined />}
-            text={buttonText}
-            onClick={onButtonClick}
-          />
+          {selectOption && (
+            <SelectComponent
+              options={selectOption}
+              placeholder="Guruhlarni tanlang"
+              className="min-w-[200px]"
+              onChange={onSelectChange}
+              value={selectValue}
+            />
+          )}
+          {buttonText && onButtonClick && (
+            <IconButton
+              icon={<PlusOutlined />}
+              text={buttonText}
+              onClick={onButtonClick}
+            />
+          )}
         </div>
       </div>
     </div>

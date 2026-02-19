@@ -1,3 +1,4 @@
+import { OptionType } from "dayjs";
 import { ReactNode } from "react";
 
 export interface ListHeaderProps {
@@ -6,8 +7,11 @@ export interface ListHeaderProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
-  buttonText: string;
-  onButtonClick: () => void;
+   selectOption?: OptionType[];
+  buttonText?: string;
+  onButtonClick?: () => void;
+  onSelectChange?: (value: number) => void;
+  selectValue?: number | string;
   children?: ReactNode;
   buttonStyle?: React.CSSProperties;
 }

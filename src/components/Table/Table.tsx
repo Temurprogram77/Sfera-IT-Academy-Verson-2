@@ -8,7 +8,7 @@ import { TableComponentProps } from "../../types/table";
 import IconButton from "../IconButton/IconButton";
 import { EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-
+ 
 const TableComponent = <T extends { id: number }>({
   data,
   columnsConfig,
@@ -82,7 +82,6 @@ const TableComponent = <T extends { id: number }>({
         ? col.render
         : (_: any, record: T) => String(record[col.key as keyof T]),
     })),
-    // Agar onEdit/onDelete/viewPath bo'lsa, "Amallar" ustuni qo'shiladi
     ...(onEdit || onDelete || viewPath
       ? [
           {
