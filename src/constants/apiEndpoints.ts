@@ -21,6 +21,12 @@ export const API_ENDPOINTS = {
     UPDATE_GROUP: "/student/update-group",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
   },
+  ATTENDANCE: {
+    CREATE: "/attendance",
+    STREAM: (groupId: number | string) => `/attendance/stream/${groupId}`,
+    DELETE: (attendanceId: number | string) => `/attendance/${attendanceId}`,
+  },
+
   TEACHER: {
     All: "/teacher/list",
     LIST: "/teacher",

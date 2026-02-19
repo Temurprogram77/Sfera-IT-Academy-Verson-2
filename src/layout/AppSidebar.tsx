@@ -62,9 +62,9 @@ const AppSidebar: React.FC = () => {
         roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"],
         subItems: [
           { name: t("admins"), path: "/admins", pro: false, roles: ["ROLE_SUPER_ADMIN"] },
-          { name: t("teachers"), path: "/teachers", pro: false },
-          { name: t("parents"), path: "/parents", pro: false },
-          { name: t("students"), path: "/students", pro: false },
+          { name: t("teachers"), path: "/teachers", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+          { name: t("parents"), path: "/parents", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+          { name: t("students"), path: "/students", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
         ],
       },
       {
@@ -77,21 +77,21 @@ const AppSidebar: React.FC = () => {
           { name: t("rooms"), path: "/rooms", pro: false },
         ],
       },
-      { icon: <UserCircleIcon />, name: t("students"), path: "/students", roles: ["ROLE_TEACHER"] },
       {
         icon: <BoltIcon />,
         name: t("grades"),
         roles: ["ROLE_TEACHER"],
         subItems: [
           { name: t("grades"), path: "/grades", pro: false },
-          { name: t("assessment"), path: "/assessment", pro: false },
+          { name: "Baholash", path: "/assessment", pro: false },
         ],
       },
       { icon: <BoltIcon />, name: t("mygrades"), path: "/my-grades", roles: ["ROLE_STUDENT"] },
       { icon: <BoltIcon />, name: t("mychildsgrades"), path: "/my-childs-grades", roles: ["ROLE_PARENT"] },
       { icon: <BoltIcon />, name: t("grades"), roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"], subItems: [{ name: t("grades"), path: "/grades", pro: false }] },
 
-      { name: t("attendance"), path: "/attendance", icon: <ListIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+      { name: t("attendance"), path: "/attendance", icon: <ListIcon />, roles: [ "ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+      { name: t("attendance"), path: "/presence", icon: <ListIcon />, roles: [ "ROLE_TEACHER"] },
       { name: t("news"), path: "/news", icon: <DocsIcon />, roles: ["ROLE_TEACHER", "ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_STUDENT", "ROLE_PARENT"] },
       { icon: <CalenderIcon />, name: t("calendar"), path: "/calendar", roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT", "ROLE_PARENT"] },
       { icon: <UserCircleIcon />, name: t("profile"), path: "/profile", roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT", "ROLE_PARENT"] },

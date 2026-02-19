@@ -52,7 +52,7 @@ export default function GroupsGrid({
                 <UserOutlined style={{ fontSize: 16, marginRight: 8 }} />
                 {group.studentCount} talaba
               </div>
-              <Link to={`/attendance/group/${group.id}`}>
+              <Link to={`/presence/${group.id}`}>
                 <Button
                   type="primary"
                   block

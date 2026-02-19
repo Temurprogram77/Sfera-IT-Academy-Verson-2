@@ -57,6 +57,8 @@ import News from "./pages/News/News";
 import TeacherGroups from "./pages/Grades/Assessment";
 import SingleAssessment from "./pages/Grades/GroupAssessment";
 import MyGrades from "./pages/myGrades/MyGrades";
+import Presence from "./pages/Attendance/Presence";
+import PresenceGroup from "./pages/Attendance/PresenceGroup";
 
 interface Props {
   children: React.ReactNode;
@@ -260,6 +262,8 @@ export default function App() {
           {/* Attendance */}
           <Route path="attendance/group/:id" element={<Attendance />} />
           <Route path="attendance" element={<AttendanceGroup />} />
+          <Route path="presence/:id" element={<Presence />} />
+          <Route path="presence" element={<PresenceGroup />} />
 
           {/* News */}
           <Route path="news" element={<News />} />
