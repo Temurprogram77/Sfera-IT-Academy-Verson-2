@@ -1,9 +1,4 @@
-import {
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -96,8 +91,10 @@ function ProtectedRoute({ children, allowedRoles }: Props) {
   }
 
   if (allowedRoles && !allowedRoles.includes(role || "")) {
-    if (role === "ROLE_ADMIN") return <Navigate to="/dashboard/admin" replace />;
-    if (role === "ROLE_TEACHER") return <Navigate to="/dashboard/teacher" replace />;
+    if (role === "ROLE_ADMIN")
+      return <Navigate to="/dashboard/admin" replace />;
+    if (role === "ROLE_TEACHER")
+      return <Navigate to="/dashboard/teacher" replace />;
     return <Navigate to="/signin" replace />;
   }
 

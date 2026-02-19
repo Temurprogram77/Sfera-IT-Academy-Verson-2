@@ -36,3 +36,16 @@ export interface UpdatePasswordResponse {
   message: string;
   data?: any;
 }
+
+export interface UpdateProfileRequest {
+  id: number;
+  fullName: string;
+  phone: string;
+  imageUrl?: string;
+}
+
+export interface UpdateProfileResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}

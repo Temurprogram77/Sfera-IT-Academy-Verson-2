@@ -93,6 +93,17 @@ export const API_ENDPOINTS = {
   DASHBOARD_ENDPOINTS: {
     METRICS: "/dashboard",
     SCHEDULE: "/dashboard/schedule",
+    TOP_STUDENTS: "/dashboard/top-students",
+  },
+  NOTIFICATION: {
+    LIST: "/notification",
+    MY: "/notification/my",
+    COUNT: "/notification/count",
+    GET_BY_ID: (id: string | number) => `/notification/${id}`,
+    CREATE: "/notification",
+    CREATE_WITH_GROUP: "/notification/withGroup",
+    READ: "/notification/read",
+    DELETE: (id: string | number) => `/notification/${id}`,
   },
   FILE: {
     UPLOAD: "/api/v1/files/upload",

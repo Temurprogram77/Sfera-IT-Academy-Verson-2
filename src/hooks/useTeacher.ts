@@ -23,7 +23,7 @@ export const useTeacher = (params?: TeacherListParams) => {
   } = useQuery({
     queryKey: [QUERY_KEYS.TEACHERS, params],
     queryFn: () => teacherService.getTeachers(params),
-    staleTime: 1000 * 60 * 5, // 5 daqiqa
+    staleTime: 1000 * 60 * 5,
   });
 
   // Create Teacher Mutation

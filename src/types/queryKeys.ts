@@ -53,4 +53,9 @@ export const QUERY_KEYS = {
     BY_DATE: ["events", "byDate"],
     DETAIL: (id: string | number) => ["events", id] as const,
   },
+  DASHBOARD: {
+    METRICS: ["dashboard", "metrics"] as const,
+    SCHEDULE: ["dashboard", "schedule"] as const,
+    TOP_STUDENTS: ["dashboard", "top-students"] as const,
+  },
 } as const;
