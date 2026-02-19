@@ -1,7 +1,5 @@
-// pages/Grades/Grades.tsx
-
 import { useState } from "react";
-import { Spin, Tag, Badge } from "antd";
+import { Spin, Tag, Badge, Form, InputNumber, Select } from "antd";
 import {
   TrophyOutlined,
   UserOutlined,
@@ -13,11 +11,9 @@ import {
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
-import { useMarks } from "../../hooks/useMark";
-import { Mark, MarkCategoryStatus, MarkStatus } from "../../types/marks";
+import { useMark } from "../../hooks/useMyMarks";
+import { Mark, MarkCategoryStatus, MarkStatus } from "../../types/mark";
 import NotFoundData from "../OtherPage/NotFoundData";
-import FormWrapper from "../../components/FormWrapper/FormWrapper";
-import { InputNumber, Select } from "antd";
 
 const Grades = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,141 +21,72 @@ const Grades = () => {
   const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMark, setEditingMark] = useState<Mark | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [markStatus, setMarkStatus] = useState<string | null>(null);
 
-  const [form] = FormWrapper.useForm();
+  const [form] = Form.useForm();
 
-  const {
-    marks,
-    loading,
-    pagination,
-    createMark,
-    updateMark,
-    deleteMark,
-    isCreating,
-    isUpdating,
-  } = useMarks({ keyword: searchTerm, page: currentPage, size: pageSize });
+  const { marks, loading, pagination, updateMark, deleteMark, isUpdating } =
+    useMark({ keyword: searchTerm, page: currentPage, size: pageSize });
 
-  // Helper functions
   const getMarkStatusBadge = (status: MarkStatus) => {
     const statusConfig = {
-      KUNLIK_BAHO: {
-        color: "blue",
-        icon: <BookOutlined />,
-        text: "Kunlik",
-      },
-      IMTIHON_BAHO: {
-        color: "purple",
-        icon: <TrophyOutlined />,
-        text: "Imtihon",
-      },
-      YAKUNIY_BAHO: {
-        color: "gold",
-        icon: <StarOutlined />,
-        text: "Yakuniy",
-      },
+      KUNLIK_BAHO: { color: "blue", icon: <BookOutlined />, text: "Kunlik" },
+      IMTIHON_BAHO: { color: "purple", icon: <TrophyOutlined />, text: "Imtihon" },
+      YAKUNIY_BAHO: { color: "gold", icon: <StarOutlined />, text: "Yakuniy" },
     };
-
     const config = statusConfig[status] || statusConfig.KUNLIK_BAHO;
-    return (
-      <Tag color={config.color} icon={config.icon}>
-        {config.text}
-      </Tag>
-    );
+    return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>;
   };
 
   const getCategoryStatusColor = (status: MarkCategoryStatus) => {
-    const colorMap = {
-      YASHIL: "#52c41a", // Green
-      SARIQ: "#faad14", // Yellow
-      QIZIL: "#ff4d4f", // Red
-    };
+    const colorMap = { YASHIL: "#52c41a", SARIQ: "#faad14", QIZIL: "#ff4d4f" };
     return colorMap[status] || colorMap.YASHIL;
   };
 
   const getCategoryStatusText = (status: MarkCategoryStatus) => {
-    const textMap = {
-      YASHIL: "A'lo",
-      SARIQ: "Yaxshi",
-      QIZIL: "Qoniqarsiz",
-    };
+    const textMap = { YASHIL: "A'lo", SARIQ: "Yaxshi", QIZIL: "Qoniqarsiz" };
     return textMap[status] || status;
   };
 
-  // Modal functions
-  const openAddModal = () => {
-    setIsEditMode(false);
-    setEditingMark(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-
   const openEditModal = (mark: Mark) => {
-    setIsEditMode(true);
     setEditingMark(mark);
+    setMarkStatus(mark.markStatus);
     form.setFieldsValue({
-      studentId: mark.studentId,
       totalScore: mark.totalScore,
       activityScore: mark.activityScore,
       homeworkScore: mark.homeworkScore,
-      markCategoryStatus: mark.markCategoryStatus,
       markStatus: mark.markStatus,
     });
     setIsModalVisible(true);
   };
 
-  const handleSave = async () => {
-    try {
-      const values = await form.validateFields();
+  const handleClose = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+    setMarkStatus(null);
+    setEditingMark(null);
+  };
 
-      if (isEditMode && editingMark) {
-        updateMark(
-          {
-            markId: editingMark.markId,
-            studentId: values.studentId,
-            totalScore: values.totalScore,
-            activityScore: values.activityScore,
-            homeworkScore: values.homeworkScore,
-            markCategoryStatus: values.markCategoryStatus,
-            markStatus: values.markStatus,
-          },
-          {
-            onSuccess: () => {
-              setIsModalVisible(false);
-              form.resetFields();
-            },
-          }
-        );
-      } else {
-        createMark(
-          {
-            studentId: values.studentId,
-            totalScore: values.totalScore,
-            activityScore: values.activityScore,
-            homeworkScore: values.homeworkScore,
-            markCategoryStatus: values.markCategoryStatus,
-            markStatus: values.markStatus,
-          },
-          {
-            onSuccess: () => {
-              setIsModalVisible(false);
-              form.resetFields();
-            },
-          }
-        );
-      }
-    } catch (error) {
-      console.error("Validation error:", error);
+  const handleSave = async () => {
+    const values = await form.validateFields();
+    if (editingMark) {
+      updateMark(
+        {
+          markId: editingMark.markId,
+          studentId: editingMark.studentId,
+          totalScore: values.totalScore,
+          activityScore: values.activityScore,
+          homeworkScore: values.homeworkScore,
+          markStatus: values.markStatus,
+        },
+        { onSuccess: handleClose },
+      );
     }
   };
 
-  const handleDelete = (id: number) => {
-    deleteMark(id);
-  };
-
-  const handlePageChange = (page: number, pageSize: number) => {
+  const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page - 1);
-    setPageSize(pageSize);
+    setPageSize(size);
   };
 
   return (
@@ -170,8 +97,6 @@ const Grades = () => {
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder="O'quvchi qidirish..."
-        buttonText="Baho qo'shish"
-        onButtonClick={openAddModal}
       />
 
       {loading ? (
@@ -188,7 +113,6 @@ const Grades = () => {
           <TableComponent<Mark>
             data={marks}
             itemName="baholar"
-            searchKeys={["studentName"]}
             columnsConfig={[
               {
                 key: "student",
@@ -198,11 +122,9 @@ const Grades = () => {
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold">
                       <UserOutlined />
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {record.studentName}
-                      </span>
-                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {record.studentName}
+                    </span>
                   </div>
                 ),
               },
@@ -213,25 +135,16 @@ const Grades = () => {
                   <div className="flex gap-2">
                     <Badge
                       count={record.totalScore}
-                      style={{
-                        backgroundColor: getCategoryStatusColor(
-                          record.markCategoryStatus
-                        ),
-                      }}
-                      className="px-3 py-1"
+                      style={{ backgroundColor: getCategoryStatusColor(record.markCategoryStatus) }}
                     >
                       <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-                          Umumiy
-                        </span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Umumiy</span>
                       </div>
                     </Badge>
                     <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <div className="flex items-center gap-1">
-                        <FireOutlined className="text-blue-600 dark:text-blue-400 text-xs" />
-                        <span className="text-xs text-gray-600 dark:text-gray-400">
-                          Faollik:
-                        </span>
+                        <FireOutlined className="text-blue-600 text-xs" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Faollik:</span>
                         <span className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                           {record.activityScore}
                         </span>
@@ -239,10 +152,8 @@ const Grades = () => {
                     </div>
                     <div className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                       <div className="flex items-center gap-1">
-                        <BookOutlined className="text-purple-600 dark:text-purple-400 text-xs" />
-                        <span className="text-xs text-gray-600 dark:text-gray-400">
-                          Uy ishi:
-                        </span>
+                        <BookOutlined className="text-purple-600 text-xs" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Uy ishi:</span>
                         <span className="text-sm font-semibold text-purple-900 dark:text-purple-100">
                           {record.homeworkScore}
                         </span>
@@ -268,7 +179,7 @@ const Grades = () => {
               },
             ]}
             onEdit={openEditModal}
-            onDelete={handleDelete}
+            onDelete={(id) => deleteMark(id)}
             pagination={{
               current: currentPage + 1,
               pageSize: pageSize,
@@ -289,89 +200,18 @@ const Grades = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
               <TrophyOutlined className="text-white text-sm" />
             </div>
-            <span>
-              {editingMark ? "Bahoni tahrirlash" : "Yangi baho qo'shish"}
-            </span>
+            <span>Bahoni tahrirlash</span>
           </div>
         }
         onOk={handleSave}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-        }}
+        onCancel={handleClose}
         okText="Saqlash"
         cancelText="Bekor qilish"
-        confirmLoading={isCreating || isUpdating}
+        confirmLoading={isUpdating}
       >
-        <FormWrapper form={form} layout="vertical">
-          <FormWrapper.Item
-            name="studentId"
-            label="O'quvchi ID"
-            rules={[{ required: true, message: "O'quvchi ID ni kiriting" }]}
-          >
-            <InputNumber
-              className="w-full"
-              placeholder="32"
-              prefix={<UserOutlined className="text-gray-400" />}
-            />
-          </FormWrapper.Item>
-
-          <div className="grid grid-cols-3 gap-4">
-            <FormWrapper.Item
-              name="totalScore"
-              label="Umumiy ball"
-              rules={[
-                { required: true, message: "Umumiy ballni kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                max={100}
-                className="w-full"
-                placeholder="10"
-              />
-            </FormWrapper.Item>
-
-            <FormWrapper.Item
-              name="activityScore"
-              label="Faollik bali"
-              rules={[
-                { required: true, message: "Faollik balini kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                max={100}
-                className="w-full"
-                placeholder="0"
-              />
-            </FormWrapper.Item>
-
-            <FormWrapper.Item
-              name="homeworkScore"
-              label="Uy ishi bali"
-              rules={[
-                { required: true, message: "Uy ishi balini kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                max={100}
-                className="w-full"
-                placeholder="0"
-              />
-            </FormWrapper.Item>
-          </div>
-
-          <FormWrapper.Item
-            name="markStatus"
-            label="Baho turi"
-            rules={[{ required: true, message: "Baho turini tanlang" }]}
-          >
-            <Select placeholder="Baho turini tanlang">
+        <Form form={form} layout="vertical">
+          <Form.Item name="markStatus" label="Baho turi">
+            <Select disabled>
               <Select.Option value="KUNLIK_BAHO">
                 <BookOutlined /> Kunlik baho
               </Select.Option>
@@ -379,26 +219,52 @@ const Grades = () => {
                 <TrophyOutlined /> Imtihon bahosi
               </Select.Option>
             </Select>
-          </FormWrapper.Item>
+          </Form.Item>
 
-          <FormWrapper.Item
-            name="markCategoryStatus"
-            label="Baho darajasi"
-            rules={[{ required: true, message: "Baho darajasini tanlang" }]}
-          >
-            <Select placeholder="Baho darajasini tanlang">
-              <Select.Option value="YASHIL">
-                <Tag color="green">A'lo</Tag>
-              </Select.Option>
-              <Select.Option value="SARIQ">
-                <Tag color="yellow">Yaxshi</Tag>
-              </Select.Option>
-              <Select.Option value="QIZIL">
-                <Tag color="red">Qoniqarsiz</Tag>
-              </Select.Option>
-            </Select>
-          </FormWrapper.Item>
-        </FormWrapper>
+          <div className="grid grid-cols-3 gap-4">
+            <Form.Item
+              name="totalScore"
+              label="Umumiy ball"
+              rules={[
+                { required: markStatus === "IMTIHON_BAHO", message: "Umumiy ballni kiriting" },
+                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+              ]}
+            >
+              <InputNumber
+                min={0} max={100} className="w-full" placeholder="0"
+                disabled={markStatus !== "IMTIHON_BAHO"}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="activityScore"
+              label="Faollik bali"
+              rules={[
+                { required: markStatus === "KUNLIK_BAHO", message: "Faollik balini kiriting" },
+                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+              ]}
+            >
+              <InputNumber
+                min={0} max={100} className="w-full" placeholder="0"
+                disabled={markStatus !== "KUNLIK_BAHO"}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="homeworkScore"
+              label="Uy ishi bali"
+              rules={[
+                { required: markStatus === "KUNLIK_BAHO", message: "Uy ishi balini kiriting" },
+                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+              ]}
+            >
+              <InputNumber
+                min={0} max={100} className="w-full" placeholder="0"
+                disabled={markStatus !== "KUNLIK_BAHO"}
+              />
+            </Form.Item>
+          </div>
+        </Form>
       </ModalComponent>
     </div>
   );

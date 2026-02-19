@@ -1,5 +1,3 @@
-// hooks/useMark.ts
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { markService } from "../services/markService";
 import {
@@ -17,24 +15,18 @@ import { toast } from "sonner";
 export const useMark = (params?: MyMarksParams) => {
   const queryClient = useQueryClient();
 
-  // ─── Get My Marks Query ────────────────────────────────────────
   const {
     data: marksData,
     isLoading,
     error,
     refetch,
-  } = useQuery({
+  } = useQuery<MyMarksResponse, Error>({
     queryKey: [QUERY_KEYS.MARKS, params],
     queryFn: () => markService.getMyMarks(params),
-    staleTime: 1000 * 60 * 5, // 5 daqiqa
+    staleTime: 1000 * 60 * 5,
   });
 
-  // ─── Create Mark Mutation ──────────────────────────────────────
-  const createMarkMutation = useMutation<
-    CreateMarkResponse,
-    Error,
-    CreateMarkDto
-  >({
+  const createMarkMutation = useMutation<CreateMarkResponse, Error, CreateMarkDto>({
     mutationFn: (data: CreateMarkDto) => markService.createMark(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.MARKS] });
@@ -46,12 +38,7 @@ export const useMark = (params?: MyMarksParams) => {
     },
   });
 
-  // ─── Update Mark Mutation ──────────────────────────────────────
-  const updateMarkMutation = useMutation<
-    UpdateMarkResponse,
-    Error,
-    UpdateMarkDto
-  >({
+  const updateMarkMutation = useMutation<UpdateMarkResponse, Error, UpdateMarkDto>({
     mutationFn: (data: UpdateMarkDto) => markService.updateMark(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.MARKS] });
@@ -63,7 +50,6 @@ export const useMark = (params?: MyMarksParams) => {
     },
   });
 
-  // ─── Delete Mark Mutation ──────────────────────────────────────
   const deleteMarkMutation = useMutation<DeleteMarkResponse, Error, number>({
     mutationFn: (id: number) => markService.deleteMark(id),
     onSuccess: () => {
@@ -77,7 +63,6 @@ export const useMark = (params?: MyMarksParams) => {
   });
 
   return {
-    // ─── Get Marks ───────────────────────────────────────────────
     marks: marksData?.data?.body || [],
     pagination: {
       page: marksData?.data?.page || 0,
@@ -85,19 +70,16 @@ export const useMark = (params?: MyMarksParams) => {
       totalPage: marksData?.data?.totalPage || 0,
       totalElements: marksData?.data?.totalElements || 0,
     },
-    isLoading,
+    loading: isLoading,
     error,
     refetch,
 
-    // ─── Create Mark ─────────────────────────────────────────────
     createMark: createMarkMutation.mutate,
     isCreating: createMarkMutation.isPending,
 
-    // ─── Update Mark ─────────────────────────────────────────────
     updateMark: updateMarkMutation.mutate,
     isUpdating: updateMarkMutation.isPending,
 
-    // ─── Delete Mark ─────────────────────────────────────────────
     deleteMark: deleteMarkMutation.mutate,
     isDeleting: deleteMarkMutation.isPending,
   };
