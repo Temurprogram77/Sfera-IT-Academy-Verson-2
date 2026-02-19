@@ -17,7 +17,6 @@ import { useMarks } from "../../hooks/useMark";
 import { Mark, MarkCategoryStatus, MarkStatus } from "../../types/marks";
 import NotFoundData from "../OtherPage/NotFoundData";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
-import InputComponent from "../../components/Input/Input";
 import { InputNumber, Select } from "antd";
 
 const Grades = () => {

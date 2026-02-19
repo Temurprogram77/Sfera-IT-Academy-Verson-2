@@ -4,7 +4,7 @@ export type ColumnConfig<T> = {
   key?: string;
   title?: string;
   dataIndex?: string;
-  render?: (value: any, record: T) => React.ReactNode;
+  render?: (value: any, record: T, index: number) => React.ReactNode;
 };
 
 export type ModalField<T> = {

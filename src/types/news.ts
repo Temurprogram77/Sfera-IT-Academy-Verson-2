@@ -17,7 +17,7 @@ export interface NewsResponse {
   success: boolean;
   message: string;
   data: NewsItem;
-} 
+}
 
 export interface NewsActionResponse {
   success: boolean;
@@ -43,4 +43,5 @@ export interface NewsListParams {
   page?: number;
   size?: number;
   search?: string;
+  [key: string]: string | number | boolean | null | undefined; // IGNORE - vaqtincha error yo'qotish uchun
 }

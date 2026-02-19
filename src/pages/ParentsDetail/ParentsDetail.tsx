@@ -254,7 +254,7 @@ const ParentDetail: React.FC = () => {
         cancelText="Bekor qilish"
         confirmLoading={confirmLoading}
       >
-        <FormWrapper form={form} layout="vertical" className="mt-4">
+        <FormWrapper form={form} layout="vertical">
           <FormWrapper.Item
             name="currentPassword"
             label="Joriy parol"

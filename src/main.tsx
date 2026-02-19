@@ -52,7 +52,6 @@ createRoot(document.getElementById("root")!).render(
             <AuthProvider>
               <AppWrapper>
                 <AppWithTokenManager />
-                <Toaster position="top-right" richColors />
               </AppWrapper>
             </AuthProvider>
           </ThemeProvider>

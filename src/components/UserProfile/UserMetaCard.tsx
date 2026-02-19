@@ -1,9 +1,8 @@
 import { useModal } from "../../hooks/useModal";
-import { useTranslation } from "react-i18next";
 import { formatPhone } from "../../utils/phoneFormatter";
 import IconButton from "../IconButton/IconButton";
 import ModalComponent from "../Modal/Modal";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import PasswordInput from "../ui/input/PasswordInput";
 import PhoneInput from "../ui/input/PhoneInput";
@@ -33,7 +32,6 @@ interface UserMetaCardProps {
 }
 
 export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
-  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const inputRef = useMaskito({ options: phoneOptions });
   const { uploadFile, isUploading, uploadProgress } = useFileUpload();
@@ -46,8 +44,7 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // API imgUrl yoki imageUrl ni birlashtirish
-  const avatarUrl = user?.imgUrl || user?.imageUrl;
+  const avatarUrl = user?.imageUrl;
 
   useEffect(() => {
     if (user) {
@@ -60,20 +57,23 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
       setImageUrl(avatarUrl || "");
       setPassword("");
     }
-  }, [user]);
+  }, [user, avatarUrl]);
 
   const handleModalClose = () => {
     closeModal();
     setSelectedFile(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (mode === "password") {
-        if (!password) return toast.error("Parol kiriting");
+        if (!password) {
+            toast.error("Parol kiriting");
+            return;
+        }
 
         const cleanPhone = phone.replace(/\D/g, "");
         const response = await userService.updatePassword({
@@ -89,7 +89,10 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
           toast.error(response.message);
         }
       } else {
-        if (!fullName || !phone) return toast.error("To'liq ma'lumot kiriting");
+        if (!fullName || !phone) {
+            toast.error("To'liq ma'lumot kiriting");
+            return;
+        }
 
         let finalImageUrl = imageUrl;
 
@@ -114,8 +117,9 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
           toast.error(response.message);
         }
       }
-    } catch (error: any) {
-      toast.error(error.message || "Xatolik yuz berdi");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Xatolik yuz berdi";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -123,18 +127,16 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
 
   return (
     <>
-      {/* CARD */}
       <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border dark:border-gray-800">
         <div className="flex items-center justify-between flex-wrap gap-6">
-          {/* User Info */}
           <div className="flex items-center gap-5">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500 shadow flex-shrink-0">
               {avatarUrl ? (
                 <Image
-                  src={user.imgUrl || ""}
+                  src={user.imageUrl || ""}
                   alt={user.fullName}
                   preview={{
-                    mask: <div className="text-white text-sm">Ko‘rish</div>, // optional, ustiga yozuv
+                    mask: <div className="text-white text-sm">Ko‘rish</div>,
                   }}
                   className="w-full h-full object-cover"
                 />
@@ -159,7 +161,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
             </div>
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-3">
             <IconButton
               text="Parolni yangilash"
@@ -181,7 +182,6 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
         </div>
       </div>
 
-      {/* MODAL */}
       <ModalComponent
         open={isOpen}
         title={
@@ -201,7 +201,7 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
                 <Label>Yangi parol</Label>
                 <PasswordInput
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
@@ -213,19 +213,19 @@ export default function UserMetaCard({ user, refetch }: UserMetaCardProps) {
               <InputComponent
                 label="To'liq ism"
                 value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFullName(e.target.value)}
               />
               <div>
                 <Label>Telefon</Label>
                 <PhoneInput
                   ref={inputRef}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
               <FileUpload
-                onFileSelect={(file) => setSelectedFile(file)}
+                onFileSelect={(file: File | null) => setSelectedFile(file)}
                 uploadedImageUrl={imageUrl}
                 onRemove={() => {
                   setImageUrl("");

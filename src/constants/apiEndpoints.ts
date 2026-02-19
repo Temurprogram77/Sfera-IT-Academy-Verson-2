@@ -68,6 +68,7 @@ export const API_ENDPOINTS = {
   },
   MARK: {
     LIST: "/mark",
+    MY_MARKS: "/mark/myMarks", // ✅ yangi endpoint
     GET_BY_ID: (id: string | number) => `/mark/${id}`,
     CREATE: "/mark",
     UPDATE: "/mark/update",

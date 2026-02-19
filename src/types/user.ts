@@ -3,7 +3,7 @@ export interface User {
   fullName?: string;
   phone?: string;
   role?: string;
-  imgUrl?: string;
+  imageUrl?: string;
   groupName?: string;
   parentName?: string;
   groupId?: number;

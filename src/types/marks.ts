@@ -9,6 +9,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface Mark {
+  id: number;
   markId: number;
   studentId: number;
   studentName: string;
@@ -20,15 +21,16 @@ export interface Mark {
 }
 
 export type MarkCategoryStatus =
-  | "YASHIL"    // Green
-  | "SARIQ"     // Yellow
-  | "QIZIL";    // Red
+  | "YASHIL" // Green
+  | "SARIQ" // Yellow
+  | "QIZIL"; // Red
 
-export type MarkStatus =
-  | "KUNLIK_BAHO"
-  | "IMTIHON_BAHO"
+export type MarkStatus = "KUNLIK_BAHO" | "IMTIHON_BAHO";
 
-export interface MarkListParams extends Record<string, string | number | undefined> {
+export interface MarkListParams extends Record<
+  string,
+  string | number | undefined
+> {
   keyword?: string;
   page?: number;
   size?: number;

@@ -1,4 +1,5 @@
 import { Form, Input } from "antd";
+import React from "react";
 import { InputComponentProps } from "../../types/input";
 
 const InputComponent = ({
@@ -13,6 +14,11 @@ const InputComponent = ({
   variant = "default",
   max,
 }: InputComponentProps) => {
+
+  // Create a helper to safely cast the shared onChange handler
+  const inputHandler = onChange as React.ChangeEventHandler<HTMLInputElement>;
+  const textAreaHandler = onChange as React.ChangeEventHandler<HTMLTextAreaElement>;
+
   const renderInput = () => {
     switch (variant) {
       case "password":
@@ -22,7 +28,7 @@ const InputComponent = ({
             prefix={prefix}
             className={className}
             value={value}
-            onChange={onChange}
+            onChange={inputHandler}
           />
         );
 
@@ -32,7 +38,7 @@ const InputComponent = ({
             placeholder={placeholder}
             className={className}
             value={value}
-            onChange={onChange}
+            onChange={textAreaHandler}
             rows={4}
             showCount
             maxLength={max}
@@ -46,7 +52,7 @@ const InputComponent = ({
             prefix={prefix}
             className={className}
             value={value}
-            onChange={onChange}
+            onChange={inputHandler}
           />
         );
     }

@@ -44,8 +44,8 @@ export const useCategories = (params?: CategoryListParams) => {
     if (!categoryData?.data) return [];
 
     // Agar data.body bo'lsa (pagination format)
-    if (categoryData.data.body && Array.isArray(categoryData.data.body)) {
-      return categoryData.data.body;
+    if (categoryData.data && Array.isArray(categoryData.data)) {
+      return categoryData.data;
     }
 
     // Agar data to'g'ridan-to'g'ri array bo'lsa

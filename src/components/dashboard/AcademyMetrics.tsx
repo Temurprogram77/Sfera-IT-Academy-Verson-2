@@ -66,6 +66,8 @@ export default function AcademyMetrics() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
       {METRIC_CONFIGS.map((config, i) => {
+        console.log(config.badgeColor);
+
         const value = metrics ? metrics[config.dataKey] : null;
 
         return (
@@ -101,7 +103,7 @@ export default function AcademyMetrics() {
               </div>
 
               {!loading && value !== null && (
-                <Badge color={config.badgeColor}>
+                <Badge color={"info"}>
                   {config.format(value!)}
                 </Badge>
               )}

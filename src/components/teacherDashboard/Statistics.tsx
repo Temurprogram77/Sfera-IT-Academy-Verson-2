@@ -1,11 +1,8 @@
 import { useTranslation } from "react-i18next";
 import {
   UsergroupAddOutlined,
-  BookOutlined,
   CalendarOutlined,
-  HomeOutlined,
   TeamOutlined,
-  AppstoreOutlined,
 } from "@ant-design/icons";
 import { Skeleton } from "antd";
 import Badge from "../ui/badge/Badge";
@@ -80,7 +77,7 @@ export default function AcademyMetrics() {
               </div>
 
               {!loading && value !== null && (
-                <Badge color={config.badgeColor}>
+                <Badge color="info">
                   {config.format(value!)}
                 </Badge>
               )}

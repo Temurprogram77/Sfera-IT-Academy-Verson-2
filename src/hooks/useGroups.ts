@@ -9,7 +9,6 @@ import {
   UpdateGroupDto,
   GroupActionResponse,
   GroupListParams,
-  GroupDaysParams,
   GroupDetailResponse,
 } from "../types/group";
 import { QUERY_KEYS } from "../types/queryKeys";
@@ -145,7 +144,7 @@ export const useGroupDetails = (groupId: string | number) => {
   };
 };
 
-export const useGroupDays = (params: GroupDaysParams, enabled = true) => {
+export const useGroupDays = (params: GroupListParams, enabled = true) => {
   const { data, isLoading, error, refetch } = useQuery<
     GroupDaysResponse,
     Error

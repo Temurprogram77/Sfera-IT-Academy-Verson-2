@@ -7,7 +7,7 @@ const MyGrades = () => {
   const [view, setView] = useState<"weekly" | "monthly" | "yearly">("weekly");
 
   return (
-    <div className="space-y-8 p-6 lg:p-10">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -23,7 +23,7 @@ const MyGrades = () => {
           <button
             className={`px-4 py-2 rounded-full font-medium ${
               view === "weekly"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#03906D] text-white"
                 : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
             }`}
             onClick={() => setView("weekly")}
@@ -33,7 +33,7 @@ const MyGrades = () => {
           <button
             className={`px-4 py-2 rounded-full font-medium ${
               view === "monthly"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#03906D] text-white"
                 : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
             }`}
             onClick={() => setView("monthly")}
@@ -43,7 +43,7 @@ const MyGrades = () => {
           <button
             className={`px-4 py-2 rounded-full font-medium ${
               view === "yearly"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#03906D] text-white"
                 : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
             }`}
             onClick={() => setView("yearly")}

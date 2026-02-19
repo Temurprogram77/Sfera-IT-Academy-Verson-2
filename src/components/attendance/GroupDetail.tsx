@@ -4,9 +4,9 @@ import { Card, DatePicker, Breadcrumb, Row, Col } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import type { Group } from '../../lib/mockData'
 import StatisticsBar from './StatisticsBar'
-import AttendanceTable from './AttendanceTable'
+// import AttendanceTable from './AttendanceTable'
 import { useState } from 'react'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 
 interface GroupDetailProps {
   group: Group
@@ -14,7 +14,8 @@ interface GroupDetailProps {
 }
 
 export default function GroupDetail({ group, onBack }: GroupDetailProps) {
-  const [selectedDate, setSelectedDate] = useState(dayjs())
+  // Explicitly allow Dayjs or null to match Ant Design's DatePicker output
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
 
   return (
     <div className="space-y-6">
@@ -23,7 +24,6 @@ export default function GroupDetail({ group, onBack }: GroupDetailProps) {
         <Breadcrumb
           items={[
             {
-              onClick: onBack,
               title: (
                 <button
                   onClick={onBack}
@@ -57,7 +57,7 @@ export default function GroupDetail({ group, onBack }: GroupDetailProps) {
               <div className="text-xs font-semibold text-gray-500 uppercase mb-2">
                 O'qituvchi
               </div>
-              <div className="text-lg font-bold text-gray-900">{group.teacher}</div>
+              <div className="text-lg font-bold text-gray-900">{group.teacherName}</div>
             </div>
           </Col>
           <Col xs={24} sm={12} lg={8}>
@@ -80,8 +80,11 @@ export default function GroupDetail({ group, onBack }: GroupDetailProps) {
             </div>
             <DatePicker
               value={selectedDate}
+              // This now correctly handles Dayjs | null
               onChange={(date) => setSelectedDate(date)}
               style={{ width: '100%', maxWidth: 300 }}
+              // Optional: prevents the user from clearing the date if null breaks your logic
+              allowClear={false}
             />
           </div>
         </div>
@@ -95,7 +98,7 @@ export default function GroupDetail({ group, onBack }: GroupDetailProps) {
       />
 
       {/* Attendance Table Section */}
-      <AttendanceTable students={group.students} />
+      {/* <AttendanceTable students={group.students} /> */}
     </div>
   )
 }

@@ -9,7 +9,7 @@ import {
   MarkResponse,
   CreateMarkDto,
   UpdateMarkDto,
-} from "../types/mark";
+} from "../types/marks";
 
 class MarkService {
   async getMarks(params?: MarkListParams): Promise<MarkListResponse> {

@@ -2,7 +2,7 @@
 
 import { Card, Row, Col, Statistic } from 'antd'
 import { TeamOutlined, ClockCircleOutlined } from '@ant-design/icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Room } from '../../types/room'
 
 interface RoomInfoProps {
@@ -14,7 +14,7 @@ const WORK_END = 20
 
 const parseTimeToDecimal = (time: string): number => {
   const [h, m] = time.split(':').map(Number)
-  return h + m / 60
+  return h + (m || 0) / 60
 }
 
 export default function RoomInfo({ room }: RoomInfoProps) {
@@ -25,12 +25,15 @@ export default function RoomInfo({ room }: RoomInfoProps) {
     (room.schedules || []).flatMap((s) => s.weekDays)
   ).size
 
-  const checkCurrentStatus = () => {
+  const checkCurrentStatus = useCallback(() => {
     const now = new Date()
-    const currentDay = now.getDay()
+    const currentDay = now.getDay();
+    // FIX: Convert currentDay (number) to string to match weekDays array type
+    const currentDayStr = String(currentDay);
+
     const currentTime = now.getHours() + now.getMinutes() / 60
 
-    if (currentDay === 0) {
+    if (currentDay === 0) { // Sunday
       setIsBusy(false)
       return
     }
@@ -41,7 +44,8 @@ export default function RoomInfo({ room }: RoomInfoProps) {
     }
 
     const todaySchedules = (room.schedules || []).filter((s) =>
-      s.weekDays.includes(currentDay)
+      // FIX: Ensure types match for the .includes check
+      s.weekDays.map(String).includes(currentDayStr)
     )
 
     const busyNow = todaySchedules.some((s) => {
@@ -51,13 +55,13 @@ export default function RoomInfo({ room }: RoomInfoProps) {
     })
 
     setIsBusy(busyNow)
-  }
+  }, [room.schedules])
 
   useEffect(() => {
     checkCurrentStatus()
     const interval = setInterval(checkCurrentStatus, 60000)
     return () => clearInterval(interval)
-  }, [room])
+  }, [checkCurrentStatus])
 
   return (
     <div className="space-y-6">
@@ -75,7 +79,7 @@ export default function RoomInfo({ room }: RoomInfoProps) {
                 title="Xonadagi Guruhlar Soni"
                 value={totalSchedules}
                 prefix={<TeamOutlined />}
-                styles={{ content: { color: '#1890ff'} }}
+                valueStyle={{ color: '#1890ff' }}
               />
             </Card>
           </Col>
@@ -86,7 +90,7 @@ export default function RoomInfo({ room }: RoomInfoProps) {
                 title="Haftaning Darsli Kunlari"
                 value={daysWithSchedules}
                 suffix="kun"
-                styles={{ content: { color: '#52c41a'} }}
+                valueStyle={{ color: '#52c41a' }}
               />
             </Card>
           </Col>
@@ -96,7 +100,7 @@ export default function RoomInfo({ room }: RoomInfoProps) {
               <Statistic
                 title="Xonaning Holati"
                 value={isBusy ? 'Band' : "Bo'sh"}
-                styles={{ content: { color: isBusy ? '#ff4d4f' : '#52c41a' } }}
+                valueStyle={{ color: isBusy ? '#ff4d4f' : '#52c41a' }}
                 prefix={<ClockCircleOutlined />}
               />
             </Card>
