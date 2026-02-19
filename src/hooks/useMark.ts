@@ -1,5 +1,3 @@
-// hooks/useMarks.ts
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { markService } from "../services/marksService";
@@ -27,7 +25,16 @@ export const useMarks = (params?: MarkListParams) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log("Mark API Response:", markData);
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({
+      queryKey: [QUERY_KEYS.MARKS.ALL],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: [QUERY_KEYS.MARKS],
+      exact: false,
+    });
+  };
 
   const createMarkMutation = useMutation<
     MarkActionResponse,
@@ -36,7 +43,7 @@ export const useMarks = (params?: MarkListParams) => {
   >({
     mutationFn: (data: CreateMarkDto) => markService.createMark(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.MARKS.ALL] });
+      invalidateAll();
       toast.success("Baho muvaffaqiyatli qo'shildi");
     },
     onError: (error: Error) => {
@@ -52,10 +59,7 @@ export const useMarks = (params?: MarkListParams) => {
   >({
     mutationFn: (data: UpdateMarkDto) => markService.updateMark(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MARKS.ALL],
-        exact: false,
-      });
+      invalidateAll();
       toast.success("Baho muvaffaqiyatli yangilandi");
     },
     onError: (error: Error) => {
@@ -71,10 +75,7 @@ export const useMarks = (params?: MarkListParams) => {
   >({
     mutationFn: (markId: number | string) => markService.deleteMark(markId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MARKS.ALL],
-        exact: false,
-      });
+      invalidateAll();
       toast.success("Baho muvaffaqiyatli o'chirildi");
     },
     onError: (error: Error) => {
@@ -91,19 +92,13 @@ export const useMarks = (params?: MarkListParams) => {
       totalPage: markData?.data?.totalPage || 0,
       totalElements: markData?.data?.totalElements || 0,
     },
-
-    // States
     loading: isLoading,
     error,
     refetch,
     isRefetching,
-
-    // Mutations
     createMark: createMarkMutation.mutate,
-    updateMark: updateMarkMutation.mutate,
+    updateMark: updateMarkMutation.mutateAsync,
     deleteMark: deleteMarkMutation.mutate,
-
-    // Loading states
     isCreating: createMarkMutation.isPending,
     isUpdating: updateMarkMutation.isPending,
     isDeleting: deleteMarkMutation.isPending,

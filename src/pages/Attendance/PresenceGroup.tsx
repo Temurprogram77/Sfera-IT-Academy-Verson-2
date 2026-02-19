@@ -16,10 +16,10 @@ export default function AttendancePage() {
       <Space orientation="vertical" style={{ width: "100%" }} size="large">
         <div>
           <Title level={2} className="mb-2 text-gray-900">
-            Guruhlar
+            Guruhlar   
           </Title>
           <Text type="secondary">
-            Talabalarning davomat ma'lumotlarini ko'rish uchun guruhni tanlang
+            Talabalarning davomat ma'lumotlarini ko'rish uchun guruhni 
           </Text>
         </div>
 

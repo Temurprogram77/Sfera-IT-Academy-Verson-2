@@ -10,7 +10,6 @@ export interface PaginatedResponse<T> {
 
 export interface Mark {
   id: number;
-  markId: number;
   studentId: number;
   studentName: string;
   totalScore: number;
@@ -65,16 +64,16 @@ export interface CreateMarkDto {
   totalScore: number;
   activityScore: number;
   homeworkScore: number;
-  markCategoryStatus: MarkCategoryStatus;
+  markCategoryStatus?: MarkCategoryStatus;
   markStatus: MarkStatus;
 }
 
 export interface UpdateMarkDto {
-  markId: number;
+  id: number;
   studentId: number;
-  totalScore: number;
-  activityScore: number;
   homeworkScore: number;
-  markCategoryStatus: MarkCategoryStatus;
+  activityScore: number;
+  totalScore: number;
   markStatus: MarkStatus;
+  date: string; // ISO format date string
 }

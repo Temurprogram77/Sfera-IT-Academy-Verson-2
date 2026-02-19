@@ -1,15 +1,19 @@
 import { useState } from "react";
-import { Spin, Tag, Form, InputNumber, Select } from "antd";
+import { Spin, Tag, Form, InputNumber, Select, Badge } from "antd";
 import {
   TrophyOutlined,
   StarOutlined,
   BookOutlined,
+  UserOutlined,
+  FireOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import ListHeader from "../../components/ListHeader/ListHeader";
 import ModalComponent from "../../components/Modal/Modal";
 import TableComponent from "../../components/Table/Table";
 import { useMark } from "../../hooks/useMyMarks";
-import { Mark, MarkCategoryStatus, MarkStatus } from "../../types/mark";
+import { useMarks } from "../../hooks/useMark";
+import { Mark, MarkCategoryStatus, MarkStatus } from "../../types/marks";
 import NotFoundData from "../OtherPage/NotFoundData";
 
 const Grades = () => {
@@ -22,17 +26,32 @@ const Grades = () => {
 
   const [form] = Form.useForm();
 
-  const { marks, loading, pagination, updateMark, deleteMark, isUpdating } =
-    useMark({ keyword: searchTerm, page: currentPage, size: pageSize });
+  // MY_MARKS endpointidan o'z baholarini olish
+  const { marks, loading, pagination } = useMark({
+    keyword: searchTerm,
+    page: currentPage,
+    size: pageSize,
+  });
+
+  // MARK endpointi orqali tahrirlash va o'chirish
+  const { updateMark, deleteMark, isUpdating } = useMarks();
 
   const getMarkStatusBadge = (status: MarkStatus) => {
     const statusConfig = {
       KUNLIK_BAHO: { color: "blue", icon: <BookOutlined />, text: "Kunlik" },
-      IMTIHON_BAHO: { color: "purple", icon: <TrophyOutlined />, text: "Imtihon" },
+      IMTIHON_BAHO: {
+        color: "purple",
+        icon: <TrophyOutlined />,
+        text: "Imtihon",
+      },
       YAKUNIY_BAHO: { color: "gold", icon: <StarOutlined />, text: "Yakuniy" },
     };
     const config = statusConfig[status] || statusConfig.KUNLIK_BAHO;
-    return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>;
+    return (
+      <Tag color={config.color} icon={config.icon}>
+        {config.text}
+      </Tag>
+    );
   };
 
   const getCategoryStatusColor = (status: MarkCategoryStatus) => {
@@ -65,21 +84,24 @@ const Grades = () => {
   };
 
   const handleSave = async () => {
+  try {
     const values = await form.validateFields();
     if (editingMark) {
-      updateMark(
-        {
-          markId: editingMark.markId,
-          studentId: editingMark.studentId,
-          totalScore: values.totalScore,
-          activityScore: values.activityScore,
-          homeworkScore: values.homeworkScore,
-          markStatus: values.markStatus,
-        },
-        { onSuccess: handleClose },
-      );
+      await updateMark({
+        id: editingMark.id,
+        studentId: editingMark.studentId,
+        totalScore: values.totalScore,
+        activityScore: values.activityScore,
+        homeworkScore: values.homeworkScore,
+        markStatus: values.markStatus,
+        date: new Date().toISOString().split("T")[0]
+      });
+      handleClose();
     }
-  };
+  } catch (error) {
+    console.error("Xatolik:", error);
+  }
+};
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page - 1);
@@ -107,8 +129,8 @@ const Grades = () => {
         />
       ) : (
         <div className="mt-6">
-          <TableComponent<Mark>
-            data={marks}
+          <TableComponent<Mark & { id: number }>
+            data={marks.map((m) => ({ ...m, id: m.markId }))}
             itemName="baholar"
             columnsConfig={[
               {
@@ -132,16 +154,24 @@ const Grades = () => {
                   <div className="flex gap-2">
                     <Badge
                       count={record.totalScore}
-                      style={{ backgroundColor: getCategoryStatusColor(record.markCategoryStatus) }}
+                      style={{
+                        backgroundColor: getCategoryStatusColor(
+                          record.markCategoryStatus,
+                        ),
+                      }}
                     >
                       <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Umumiy</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                          Umumiy
+                        </span>
                       </div>
                     </Badge>
                     <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <div className="flex items-center gap-1">
                         <FireOutlined className="text-blue-600 text-xs" />
-                        <span className="text-xs text-gray-600 dark:text-gray-400">Faollik:</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          Faollik:
+                        </span>
                         <span className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                           {record.activityScore}
                         </span>
@@ -150,7 +180,9 @@ const Grades = () => {
                     <div className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                       <div className="flex items-center gap-1">
                         <BookOutlined className="text-purple-600 text-xs" />
-                        <span className="text-xs text-gray-600 dark:text-gray-400">Uy ishi:</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          Uy ishi:
+                        </span>
                         <span className="text-sm font-semibold text-purple-900 dark:text-purple-100">
                           {record.homeworkScore}
                         </span>
@@ -223,12 +255,23 @@ const Grades = () => {
               name="totalScore"
               label="Umumiy ball"
               rules={[
-                { required: markStatus === "IMTIHON_BAHO", message: "Umumiy ballni kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+                {
+                  required: markStatus === "IMTIHON_BAHO",
+                  message: "Umumiy ballni kiriting",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  max: 100,
+                  message: "0-100 oralig'ida",
+                },
               ]}
             >
               <InputNumber
-                min={0} max={100} className="w-full" placeholder="0"
+                min={0}
+                max={100}
+                className="w-full"
+                placeholder="0"
                 disabled={markStatus !== "IMTIHON_BAHO"}
               />
             </Form.Item>
@@ -237,12 +280,23 @@ const Grades = () => {
               name="activityScore"
               label="Faollik bali"
               rules={[
-                { required: markStatus === "KUNLIK_BAHO", message: "Faollik balini kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+                {
+                  required: markStatus === "KUNLIK_BAHO",
+                  message: "Faollik balini kiriting",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  max: 100,
+                  message: "0-100 oralig'ida",
+                },
               ]}
             >
               <InputNumber
-                min={0} max={100} className="w-full" placeholder="0"
+                min={0}
+                max={100}
+                className="w-full"
+                placeholder="0"
                 disabled={markStatus !== "KUNLIK_BAHO"}
               />
             </Form.Item>
@@ -251,12 +305,23 @@ const Grades = () => {
               name="homeworkScore"
               label="Uy ishi bali"
               rules={[
-                { required: markStatus === "KUNLIK_BAHO", message: "Uy ishi balini kiriting" },
-                { type: "number", min: 0, max: 100, message: "0-100 oralig'ida" },
+                {
+                  required: markStatus === "KUNLIK_BAHO",
+                  message: "Uy ishi balini kiriting",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  max: 100,
+                  message: "0-100 oralig'ida",
+                },
               ]}
             >
               <InputNumber
-                min={0} max={100} className="w-full" placeholder="0"
+                min={0}
+                max={100}
+                className="w-full"
+                placeholder="0"
                 disabled={markStatus !== "KUNLIK_BAHO"}
               />
             </Form.Item>
