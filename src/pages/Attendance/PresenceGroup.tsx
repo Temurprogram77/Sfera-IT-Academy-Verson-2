@@ -12,7 +12,6 @@ import { calcStudentRate, calcMonthStats, calcTodayStats, getStudentName } from 
 
 import StatsBar from "../../components/attendance/StatsBar";
 import AttendanceTable from "../../components/attendance/Attendancetable";
-import LowAttendanceList from "../../components/attendance/Lowattendancelist";
 import DescriptionModal, { openStatusSelector } from "../../components/attendance/DescriptionModal";
 
 const PresenceGroup = () => {
@@ -170,8 +169,6 @@ const PresenceGroup = () => {
         onPrevMonth={prevMonth}
         onNextMonth={nextMonth}
       />
-
-      <LowAttendanceList students={lowAttendanceStudents} />
 
       <DescriptionModal
         open={modalOpen}
