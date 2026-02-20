@@ -22,12 +22,16 @@ export const useNews = (params?: NewsListParams) => {
     refetch,
     isRefetching,
   } = useQuery<NewsListResponse, Error>({
-    queryKey: [QUERY_KEYS.NEWS.ALL, params],
+    queryKey: [QUERY_KEYS.NEWS.ALL, params?.page, params?.size, params?.search],
     queryFn: () => newsService.getNews(params),
     staleTime: 1000 * 60 * 5,
   });
 
-  const createNewsMutation = useMutation<NewsActionResponse, Error, CreateNewsDto>({
+  const createNewsMutation = useMutation<
+    NewsActionResponse,
+    Error,
+    CreateNewsDto
+  >({
     mutationFn: (data: CreateNewsDto) => newsService.createNews(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NEWS.ALL] });
@@ -39,11 +43,21 @@ export const useNews = (params?: NewsListParams) => {
     },
   });
 
-  const updateNewsMutation = useMutation<NewsActionResponse, Error, UpdateNewsDto>({
+  const updateNewsMutation = useMutation<
+    NewsActionResponse,
+    Error,
+    UpdateNewsDto
+  >({
     mutationFn: (data: UpdateNewsDto) => newsService.updateNews(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NEWS.ALL], exact: false });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NEWS.DETAIL], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NEWS.ALL],
+        exact: false,
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NEWS.DETAIL],
+        exact: false,
+      });
       toast.success("Yangilik muvaffaqiyatli yangilandi");
     },
     onError: (error: Error) => {
@@ -52,10 +66,17 @@ export const useNews = (params?: NewsListParams) => {
     },
   });
 
-  const deleteNewsMutation = useMutation<NewsActionResponse, Error, number | string>({
+  const deleteNewsMutation = useMutation<
+    NewsActionResponse,
+    Error,
+    number | string
+  >({
     mutationFn: (newsId: number | string) => newsService.deleteNews(newsId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.NEWS.ALL], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NEWS.ALL],
+        exact: false,
+      });
       toast.success("Yangilik muvaffaqiyatli o'chirildi");
     },
     onError: (error: Error) => {

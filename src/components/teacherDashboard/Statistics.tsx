@@ -8,8 +8,6 @@ import { Skeleton } from "antd";
 import Badge from "../ui/badge/Badge";
 import { useDashboardMetrics } from "../../hooks/useDashboard";
 
-// ─── Metrika konfiguratsiyasi ─────────────────────────────────────────────────
-// dataKey — IDashboardMetrics field nomi
 const METRIC_CONFIGS = [
   {
     titleKey: "students",
@@ -34,13 +32,12 @@ const METRIC_CONFIGS = [
   },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function AcademyMetrics() {
   const { t } = useTranslation();
   const { metrics, loading } = useDashboardMetrics();
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {METRIC_CONFIGS.map((config, i) => {
         const value = metrics ? metrics[config.dataKey] : null;
 
@@ -49,12 +46,10 @@ export default function AcademyMetrics() {
             key={i}
             className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
           >
-            {/* Icon */}
             <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
               {config.icon}
             </div>
 
-            {/* Value + label */}
             <div className="flex items-end justify-between mt-5">
               <div className="min-w-0 flex-1">
                 <span className="text-sm text-gray-500 dark:text-gray-400 block truncate">
@@ -77,7 +72,9 @@ export default function AcademyMetrics() {
               </div>
 
               {!loading && value !== null && (
-                <Badge color="info">
+                <Badge
+                  color={config.badgeColor as "success" | "warning" | "info"}
+                >
                   {config.format(value!)}
                 </Badge>
               )}

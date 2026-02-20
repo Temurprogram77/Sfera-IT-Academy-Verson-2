@@ -2,7 +2,7 @@ import React from "react";
 import PageMeta from "../components/common/PageMeta";
 import MonthlyRevenueChart from "../components/dashboard/MonthlyRevenueChart";
 import Statistics from "../components/teacherDashboard/Statistics";
-import TopStudents from "../components/teacherDashboard/TopStudents";
+import TopStudents from "../components/dashboard/TopStudents";
 
 const Teacher = () => {
   return (
