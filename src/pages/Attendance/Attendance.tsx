@@ -1,23 +1,12 @@
-"use client";
+'use client'
 
 import { useEffect, useState } from "react";
-import {
-  Card,
-  DatePicker,
-  Breadcrumb,
-  Row,
-  Col,
-  Spin,
-  Alert,
-  Table,
-  Tag,
-} from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import dayjs, { Dayjs } from "dayjs";
-import { createSSE } from "../../services/sseService";
-import StatisticsBar from "../../components/attendance/StatisticsBar";
-import { useParams, useNavigate } from "react-router-dom";
-import { useGroupDetails } from "../../hooks/useGroups";
+import { Card, DatePicker, Breadcrumb, Row, Col, Spin, message } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import dayjs, { Dayjs } from 'dayjs';
+import { createSSE } from '../../services/sseService';
+import StatisticsBar from '../../components/attendance/StatisticsBar';
+import AttendanceTable from './AttendanceTable';
 
 interface AttendanceRecord {
   id: number;
@@ -28,260 +17,174 @@ interface AttendanceRecord {
   date: string;
 }
 
-export default function Attendance() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+interface Group {
+  id: number;
+  name: string;
+  teacherName: string;
+  studentCount: number;
+}
+
+interface AttendanceProps {
+  groupId: string;
+  onBack: () => void;
+}
+
+export default function Attendance({ groupId, onBack }: AttendanceProps) {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [group, setGroup] = useState<Group | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const { group, students, loading, error } = useGroupDetails(id!);
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  // Guruh ma'lumotlarini olish
   useEffect(() => {
-    if (!id) return;
+    const fetchGroup = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching group with ID:', groupId);
+        
+        const response = await fetch(`http://5.189.158.5:8082/groups/${groupId}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Group data received:', data);
+        setGroup(data);
+      } catch (error) {
+        console.error('Guruh ma\'lumotlarini olishda xato:', error);
+        message.error('Guruh ma\'lumotlarini yuklab bo\'lmadi');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (groupId) {
+      fetchGroup();
+    }
+  }, [groupId]);
+
+  // Davomat ma'lumotlarini SSE orqali olish
+  useEffect(() => {
+    if (!groupId) {
+      console.log('GroupId yo\'q, SSE ochilmaydi');
+      return;
+    }
+
+    console.log('SSE ulanish ochilmoqda:', groupId);
 
     const sse = createSSE({
-      url: `${baseUrl}/attendance/stream/${id}`,
+      url: `http://5.189.158.5:8082/attendance/stream/${groupId}`,
       eventName: "attendance",
       onMessage: (data: AttendanceRecord[]) => {
-        console.log("Attendance data received:", data);
+        console.log('Davomat ma\'lumotlari keldi:', data);
         setAttendance(data);
       },
+      onError: (error) => {
+        console.error('SSE xatosi:', error);
+        message.error('Davomat ma\'lumotlarini olishda xato');
+      },
+      onOpen: () => {
+        console.log('SSE muvaffaqiyatli ulandi');
+      }
     });
 
-    return () => sse.close();
-  }, [id]);
-
-  const handleBack = () => {
-    navigate("/attendance");
-  };
-
-  const filteredAttendance = attendance.filter((record) => {
-    const recordDate = dayjs(record.date).format("YYYY-MM-DD");
-    const selected = selectedDate.format("YYYY-MM-DD");
-    return recordDate === selected;
-  });
-
-  const columns = [
-    {
-      title: "№",
-      key: "index",
-      width: 70,
-      render: (_: any, __: any, index: number) => (
-        <span className="font-medium">{index + 1}</span>
-      ),
-    },
-    {
-      title: "F.I.SH",
-      dataIndex: "fullName",
-      key: "fullName",
-      render: (text: string) => (
-        <span className="font-medium text-gray-900">{text}</span>
-      ),
-    },
-    {
-      title: "Holat",
-      dataIndex: "status",
-      key: "status",
-      width: 130,
-      align: "center" as const,
-      render: (status: string) => {
-        let color = "default";
-        let text = status;
-
-        if (status === "KELDI") {
-          color = "green";
-          text = "Keldi";
-        } else if (status === "KECHIKTI") {
-          color = "orange";
-          text = "Kechikdi";
-        } else if (status === "KELMADI") {
-          color = "red";
-          text = "Kelmadi";
-        }
-
-        return (
-          <Tag color={color} className="font-medium">
-            {text}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: "Izoh",
-      dataIndex: "description",
-      key: "description",
-      render: (description: string | null) => (
-        <span className="text-gray-600">{description || "Izoh yo'q"}</span>
-      ),
-    },
-  ];
+    return () => {
+      console.log('SSE yopilmoqda');
+      sse.close();
+    };
+  }, [groupId]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto p-6">
-        <Alert
-          title="Xatolik"
-          description="Guruh ma'lumotlarini yuklashda xatolik yuz berdi"
-          type="error"
-          showIcon
-        />
+      <div className="flex justify-center items-center h-64">
+        <Spin size="large" tip="Yuklanmoqda..." />
       </div>
     );
   }
 
   if (!group) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
-        <Alert
-          title="Guruh topilmadi"
-          description={`ID: ${id} bo'yicha guruh topilmadi`}
-          type="warning"
-          showIcon
-        />
+      <div className="text-center py-12">
+        <div className="text-gray-500 text-lg">Guruh topilmadi</div>
+        <button 
+          onClick={onBack}
+          className="mt-4 text-green-600 hover:text-green-700"
+        >
+          Orqaga qaytish
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="space-y-6">
-        <Breadcrumb
-          items={[
-            {
-              title: (
-                <button
-                  onClick={handleBack}
-                  className="flex items-center mb-[1rem] gap-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 font-medium transition-colors"
-                >
-                  <ArrowLeftOutlined />
-                  Guruhlar
-                </button>
-              ),
-            },
-            {
-              title: (
-                <span className="font-medium dark:text-white text-gray-900">
-                  {group.name}
-                </span>
-              ),
-            },
-          ]}
-        />
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb
+        items={[
+          {
+            onClick: onBack,
+            title: (
+              <button
+                onClick={onBack}
+                className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium transition-colors"
+              >
+                <ArrowLeftOutlined />
+                Guruhlar
+              </button>
+            ),
+          },
+          { title: <span className="font-medium text-gray-900">{group.name}</span> },
+        ]}
+      />
 
-        <div className="grid grid-cols-1 gap-[1rem]">
-          {/* Guruh ma'lumotlari */}
-          <Card className="shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <Row gutter={[32, 24]}>
-              <Col xs={24} sm={8}>
-                <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                    Guruh nomi
-                  </div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                    {group.name}
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={8}>
-                <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                    O'qituvchi
-                  </div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                    {group.teacherName || "Belgilanmagan"}
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={8}>
-                <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                    Talabalar soni
-                  </div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                    {students.length}
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Card>
-
-          {/* Sana tanlash */}
-          <Card className="shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              Sana tanlang
+      {/* Group Info */}
+      <Card className="shadow-sm border border-gray-200">
+        <Row gutter={[24, 16]}>
+          <Col xs={24} sm={12} lg={8}>
+            <div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Guruh nomi</div>
+              <div className="text-lg font-bold text-gray-900">{group.name}</div>
             </div>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">O'qituvchi</div>
+              <div className="text-lg font-bold text-gray-900">{group.teacherName}</div>
+            </div>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Talabalar soni</div>
+              <div className="text-lg font-bold text-gray-900">{group.studentCount}</div>
+            </div>
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Date Picker */}
+      <Card className="shadow-sm border border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div>
+            <div className="text-sm font-semibold text-gray-700 mb-2">Sana tanlang</div>
             <DatePicker
               value={selectedDate}
-              onChange={(date) => date && setSelectedDate(date)}
-              style={{ width: "100%", maxWidth: 300 }}
-              format="DD.MM.YYYY"
-              size="large"
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              onChange={date => date && setSelectedDate(date)}
+              style={{ width: '100%', maxWidth: 300 }}
             />
-          </Card>
-
-          {/* Statistika */}
-          <StatisticsBar
-            presentCount={
-              filteredAttendance.filter((a) => a.status === "KELDI").length
-            }
-            lateCount={
-              filteredAttendance.filter((a) => a.status === "KECHIKTI").length
-            }
-            absentCount={
-              filteredAttendance.filter((a) => a.status === "KELMADI").length
-            }
-          />
-
-          {/* Davomat jadvali */}
-          <Card
-            title={
-              <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                Davomat ro'yxati - {selectedDate.format("DD MMMM YYYY")}
-              </span>
-            }
-            className="shadow-sm dark:bg-gray-800 dark:border-gray-700"
-          >
-            <Table
-              columns={columns}
-              dataSource={filteredAttendance}
-              rowKey="id"
-              pagination={false}
-              className="dark:text-white [&_.ant-table]:dark:bg-gray-800 [&_.ant-table-thead_th]:dark:bg-gray-700 [&_.ant-table-thead_th]:dark:text-gray-200 [&_.ant-table-tbody_td]:dark:text-gray-300 [&_.ant-table-tbody_tr:hover_td]:dark:bg-gray-700 [&_.ant-table-bordered_.ant-table-cell]:dark:border-gray-600"
-              locale={{
-                emptyText: (
-                  <div className="py-12">
-                    <Alert
-                      title={
-                        <span className="dark:text-white">Ma'lumot yo'q</span>
-                      }
-                      description={
-                        <span className="dark:text-gray-400">
-                          {selectedDate.format("DD.MM.YYYY")} sanasi uchun
-                          davomat ma'lumotlari topilmadi
-                        </span>
-                      }
-                      type="info"
-                      showIcon
-                      className="dark:bg-gray-700 dark:border-gray-600"
-                    />
-                  </div>
-                ),
-              }}
-              bordered
-              size="middle"
-            />
-          </Card>
+          </div>
         </div>
-      </div>
+      </Card>
+
+      {/* Statistics */}
+      <StatisticsBar
+        presentCount={attendance.filter(a => a.status === 'KELDI').length}
+        lateCount={attendance.filter(a => a.status === 'KECHIKTI').length}
+        absentCount={attendance.filter(a => a.status === 'KELMADI').length}
+      />
+
+      {/* Attendance Table */}
+      {/* <AttendanceTable students={attendance} /> */}
     </div>
   );
 }

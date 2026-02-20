@@ -35,7 +35,7 @@ export function createSSE({
       console.error("❌ JSON Parse Error:", err);
     }
   });
-
+ 
   return {
     close: () => {
       console.log("🔌 SSE Closed");

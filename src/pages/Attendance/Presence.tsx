@@ -166,7 +166,8 @@ export default function Attendance() {
       setDescription("");
     }
   };
-
+  console.log(attendance);
+  
   // ================= UI =================
   if (loading) {
     return (
