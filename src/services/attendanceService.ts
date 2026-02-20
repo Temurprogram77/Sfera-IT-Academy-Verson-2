@@ -11,7 +11,7 @@ export interface AttendanceDto {
   studentId: number;
   status: AttendanceStatus;
   description?: string | null;
-  date: string;
+  date: string; 
 }
 
 class AttendanceService {
