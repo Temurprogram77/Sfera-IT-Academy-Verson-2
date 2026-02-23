@@ -54,6 +54,9 @@ import SingleAssessment from "./pages/Grades/GroupAssessment";
 import MyGrades from "./pages/myGrades/MyGrades";
 import Presence from "./pages/Attendance/Presence";
 import PresenceGroup from "./pages/Attendance/PresenceGroup";
+import MyChildsGrades from "./pages/MyChildsGrades/MyChildsGrades";
+import MyChildsDetail from "./pages/MyChildsDetail/MyChildsDetail";
+import RegisterForm from "./components/auth/RegisterForm";
 
 interface Props {
   children: React.ReactNode;
@@ -156,6 +159,16 @@ export default function App() {
             colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
             activeBorderColor: theme === "dark" ? "#3b82f6" : "#1890ff",
           },
+          Popconfirm: {
+            colorBgElevated: theme === "dark" ? "#1f2937" : "#ffffff",
+            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
+          },
+          Table: {
+            colorBgContainer: theme === "dark" ? "#1f2937" : "#ffffff",
+            colorText: theme === "dark" ? "#e5e7eb" : "#111827",
+            colorBorder: theme === "dark" ? "#374151" : "#d1d5db",
+          },
         },
       }}
     >
@@ -184,6 +197,15 @@ export default function App() {
           element={
             <PublicRoute>
               <SignIn />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterForm />
             </PublicRoute>
           }
         />
@@ -250,6 +272,8 @@ export default function App() {
           <Route path="students/:id" element={<StudentsDetail />} />
           <Route path="parents" element={<Parents />} />
           <Route path="parents/:id" element={<ParentsDetail />} />
+          <Route path="my-childs-grades" element={<MyChildsGrades />} />
+          <Route path="my-childs/:id" element={<MyChildsDetail />} />
 
           {/* Messages & Grades */}
           <Route path="messages" element={<Messages />} />

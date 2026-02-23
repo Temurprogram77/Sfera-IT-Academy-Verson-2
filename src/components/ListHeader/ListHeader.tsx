@@ -35,7 +35,9 @@ const ListHeader: React.FC<ListHeaderProps> = ({
             placeholder={t(searchPlaceholder)}
             prefix={<SearchOutlined className="text-gray-400" />}
             value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onSearchChange(e.target.value)
+            }
             className="w-full sm:w-80"
           />
           {selectOption && (

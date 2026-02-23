@@ -1,6 +1,5 @@
-// components/Event/EventCard.tsx
 import React from "react";
-import { Card, Tag, Popconfirm } from "antd";
+import { Card, Tag, Popconfirm, Button } from "antd";
 import {
   ClockCircleOutlined,
   TeamOutlined,
@@ -38,7 +37,7 @@ const EventCard: React.FC<EventCardProps> = ({
           ? "0 2px 8px rgba(0,0,0,0.3)"
           : "0 2px 8px rgba(0,0,0,0.06)",
       }}
-      bodyStyle={{ padding: 20 }}
+      styles={{ body: { padding: 20 } }} // ✅ bodyStyle deprecated — styles.body
     >
       <div
         style={{
@@ -170,21 +169,29 @@ const EventCard: React.FC<EventCardProps> = ({
             type="text"
             text="Tahrirlash"
           />
+
+          {/* ✅ Popconfirm ichida oddiy Ant Design Button — IconButton emas */}
           <Popconfirm
             title="Eventni o'chirish"
             description="Bu event butunlay o'chiriladi. Davom etasizmi?"
-            onConfirm={() => onDelete(event.id)}
+            onConfirm={() => {
+              console.log("O'chirish tasdiqlandi, id:", event.id);
+              onDelete(event.id);
+            }}
             okText="Ha, o'chirish"
             cancelText="Bekor qilish"
             okButtonProps={{ danger: true }}
             placement="topRight"
           >
-            <IconButton
-              icon={<DeleteOutlined />}
+            {/* ✅ Ant Design Button — Popconfirm bilan to'g'ri ishlaydi */}
+            <Button
               danger
+              icon={<DeleteOutlined />}
               loading={isDeleting}
-              text="O'chirish"
-            />
+              style={{ display: "flex", alignItems: "center", gap: 4 }}
+            >
+              O'chirish
+            </Button>
           </Popconfirm>
         </div>
       </div>

@@ -113,11 +113,17 @@ export const useGroups = (params?: GroupListParams) => {
   };
 };
 
-export const useAllGroups = () => {
+// ✅ enabled parametri qo'shildi — ROLE_STUDENT / ROLE_PARENT uchun so'rov ketmaydi
+interface UseAllGroupsOptions {
+  enabled?: boolean;
+}
+
+export const useAllGroups = ({ enabled = true }: UseAllGroupsOptions = {}) => {
   const { data, isLoading, error } = useQuery<GroupAllResponse, Error>({
     queryKey: [QUERY_KEYS.GROUPS.ALL_LIST],
     queryFn: () => groupService.getAllGroups(),
     staleTime: 1000 * 60 * 5,
+    enabled, // ✅ false bo'lsa so'rov ketmaydi
   });
 
   return {

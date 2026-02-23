@@ -7,10 +7,10 @@ import { AttendanceRecord, AttendanceStatus } from "../types/type";
 export const getAttendanceStatus = (
   attendance: AttendanceRecord[],
   studentId: number,
-  date: Dayjs
+  date: Dayjs,
 ): AttendanceStatus | undefined =>
   attendance.find(
-    (a) => a.studentId === studentId && dayjs(a.date).isSame(date, "day")
+    (a) => a.studentId === studentId && dayjs(a.date).isSame(date, "day"),
   )?.status;
 
 // ─── Stats calculations ───────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ export const getAttendanceStatus = (
 export const calcStudentRate = (
   attendance: AttendanceRecord[],
   studentId: number,
-  pastDays: Dayjs[]
+  pastDays: Dayjs[],
 ): number => {
   if (pastDays.length === 0) return 0;
   const present = pastDays.filter((d) => {
@@ -37,23 +37,40 @@ export const calcStudentRate = (
  * Har bir studentId FAQAT bir marta hisoblanadi — dublikat yo'q.
  * kechikkan = SABABLI + KECHIKTI statusi bo'lganlar
  */
+// utils/attendance.ts
 export const calcTodayStats = (
-  attendance: AttendanceRecord[],
+  attendance: any[],
   studentIds: number[],
-  today: Dayjs
+  now: Dayjs,
 ) => {
+  const todayStr = now.format("YYYY-MM-DD");
+
   let keldi = 0;
   let kelmadi = 0;
   let kechikkan = 0;
+  let sababli = 0; // Add this counter
 
-  for (const id of studentIds) {
-    const status = getAttendanceStatus(attendance, id, today);
-    if (status === "KELDI") keldi++;
-    else if (status === "KELMADI") kelmadi++;
-    else if (status === "SABABLI" || status === "KECHIKTI") kechikkan++;
-  }
+  studentIds.forEach((id) => {
+    const record = attendance.find(
+      (a) =>
+        a.studentId === id && dayjs(a.date).format("YYYY-MM-DD") === todayStr,
+    );
 
-  return { keldi, kelmadi, kechikkan, total: studentIds.length };
+    if (record) {
+      if (record.status === "KELDI") keldi++;
+      else if (record.status === "KELMADI") kelmadi++;
+      else if (record.status === "KECHIKKAN") kechikkan++;
+      else if (record.status === "SABABLI" || record.description) sababli++; // Logic for excused
+    }
+  });
+
+  return {
+    keldi,
+    kelmadi,
+    kechikkan,
+    sababli, // Now included
+    total: studentIds.length,
+  };
 };
 
 /**
@@ -62,7 +79,7 @@ export const calcTodayStats = (
 export const calcMonthStats = (
   attendance: AttendanceRecord[],
   studentIds: number[],
-  pastDays: Dayjs[]
+  pastDays: Dayjs[],
 ) => {
   let totalKeldi = 0;
   let totalKelmadi = 0;

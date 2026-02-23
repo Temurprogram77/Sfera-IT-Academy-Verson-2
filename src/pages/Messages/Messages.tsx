@@ -26,7 +26,6 @@ function NotificationDetailModal({
 
   const handleMarkAsRead = () => {
     if (!notification) return;
-    // ✅ { idList: [id] } — to'g'ri format
     markAsRead({ idList: [notification.id] }, { onSuccess: onClose });
   };
 
@@ -87,7 +86,6 @@ function NotificationDetailModal({
             </div>
           </div>
 
-          {/* ✅ O'qilmagan bo'lsa ko'rsatiladi */}
           {!notification.read && (
             <div className="flex justify-end pt-2">
               <IconButton
@@ -106,9 +104,9 @@ function NotificationDetailModal({
     </Modal>
   );
 }
+
 function NotificationCard({
   notif,
-  isAdmin,
   onView,
   onDelete,
   isDeleting,
@@ -165,7 +163,6 @@ function NotificationCard({
         className="flex items-center gap-1 flex-shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Ko'rish */}
         <button
           onClick={() => onView(notif.id)}
           className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-500 transition-colors"
@@ -174,7 +171,6 @@ function NotificationCard({
           <EyeOutlined />
         </button>
 
-        {/* O'qildi — faqat o'qilmagan bo'lsa */}
         {!notif.read && (
           <button
             onClick={() => onMarkRead(notif.id)}
@@ -186,7 +182,6 @@ function NotificationCard({
           </button>
         )}
 
-        {/* ✅ Delete — isAdmin sharti olib tashlandi, HAR DOIM chiqadi */}
         {onDelete && (
           <Popconfirm
             title="O'chirishni tasdiqlaysizmi?"
@@ -230,7 +225,11 @@ export default function Messages() {
     useDeleteNotification();
   const { mutate: markAsRead, isPending: isMarking } = useMarkAsRead();
 
-  const notifications = isAdmin ? adminNotifs : myNotifs;
+  // ✅ Eng yangi xabarnomalar tepada chiqadi (id bo'yicha kamayish tartibida)
+  const notifications = (isAdmin ? adminNotifs : myNotifs)
+    .slice()
+    .sort((a, b) => b.id - a.id);
+
   const isLoading = isAdmin ? adminLoading : myLoading;
 
   const openDetail = (id: number) => {
@@ -239,7 +238,6 @@ export default function Messages() {
   };
 
   const handleMarkRead = (id: number) => {
-    // ✅ TO'G'RI FORMAT: { idList: [id] }
     markAsRead({ idList: [id] });
   };
 
@@ -284,7 +282,7 @@ export default function Messages() {
               notif={notif}
               isAdmin={isAdmin}
               onView={openDetail}
-              onDelete={(id) => deleteNotif(id)} // ✅ isAdmin sharti yo'q — hammaga chiqadi
+              onDelete={(id) => deleteNotif(id)}
               isDeleting={isDeleting}
               onMarkRead={handleMarkRead}
               isMarking={isMarking}

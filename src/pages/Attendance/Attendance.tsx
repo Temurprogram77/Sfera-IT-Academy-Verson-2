@@ -1,12 +1,13 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
-import { Card, DatePicker, Breadcrumb, Row, Col, Spin, message } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import dayjs, { Dayjs } from 'dayjs';
-import { createSSE } from '../../services/sseService';
-import StatisticsBar from '../../components/attendance/StatisticsBar';
-import AttendanceTable from './AttendanceTable';
+import { Card, DatePicker, Breadcrumb, Row, Col, Spin, message } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import dayjs, { Dayjs } from "dayjs";
+import { createSSE } from "../../services/sseService";
+import StatisticsBar from "../../components/attendance/StatisticsBar";
+// import AttendanceTable from './AttendanceTable';
+import { useParams, useNavigate } from "react-router-dom";
 
 interface AttendanceRecord {
   id: number;
@@ -24,12 +25,13 @@ interface Group {
   studentCount: number;
 }
 
-interface AttendanceProps {
-  groupId: string;
-  onBack: () => void;
-}
+export default function Attendance() {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-export default function Attendance({ groupId, onBack }: AttendanceProps) {
+  const groupId = id as string;
+
+  const onBack = () => navigate(-1);
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [group, setGroup] = useState<Group | null>(null);
@@ -40,20 +42,22 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
     const fetchGroup = async () => {
       try {
         setLoading(true);
-        console.log('Fetching group with ID:', groupId);
-        
-        const response = await fetch(`http://5.189.158.5:8082/groups/${groupId}`);
-        
+        console.log("Fetching group with ID:", groupId);
+
+        const response = await fetch(
+          `http://5.189.158.5:8082/groups/${groupId}`,
+        );
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        console.log('Group data received:', data);
+        console.log("Group data received:", data);
         setGroup(data);
       } catch (error) {
-        console.error('Guruh ma\'lumotlarini olishda xato:', error);
-        message.error('Guruh ma\'lumotlarini yuklab bo\'lmadi');
+        console.error("Guruh ma'lumotlarini olishda xato:", error);
+        message.error("Guruh ma'lumotlarini yuklab bo'lmadi");
       } finally {
         setLoading(false);
       }
@@ -67,30 +71,30 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
   // Davomat ma'lumotlarini SSE orqali olish
   useEffect(() => {
     if (!groupId) {
-      console.log('GroupId yo\'q, SSE ochilmaydi');
+      console.log("GroupId yo'q, SSE ochilmaydi");
       return;
     }
 
-    console.log('SSE ulanish ochilmoqda:', groupId);
+    console.log("SSE ulanish ochilmoqda:", groupId);
 
     const sse = createSSE({
       url: `http://5.189.158.5:8082/attendance/stream/${groupId}`,
       eventName: "attendance",
       onMessage: (data: AttendanceRecord[]) => {
-        console.log('Davomat ma\'lumotlari keldi:', data);
+        console.log("Davomat ma'lumotlari keldi:", data);
         setAttendance(data);
       },
       onError: (error) => {
-        console.error('SSE xatosi:', error);
-        message.error('Davomat ma\'lumotlarini olishda xato');
+        console.error("SSE xatosi:", error);
+        message.error("Davomat ma'lumotlarini olishda xato");
       },
       onOpen: () => {
-        console.log('SSE muvaffaqiyatli ulandi');
-      }
+        console.log("SSE muvaffaqiyatli ulandi");
+      },
     });
 
     return () => {
-      console.log('SSE yopilmoqda');
+      console.log("SSE yopilmoqda");
       sse.close();
     };
   }, [groupId]);
@@ -107,7 +111,7 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
     return (
       <div className="text-center py-12">
         <div className="text-gray-500 text-lg">Guruh topilmadi</div>
-        <button 
+        <button
           onClick={onBack}
           className="mt-4 text-green-600 hover:text-green-700"
         >
@@ -134,7 +138,11 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
               </button>
             ),
           },
-          { title: <span className="font-medium text-gray-900">{group.name}</span> },
+          {
+            title: (
+              <span className="font-medium text-gray-900">{group.name}</span>
+            ),
+          },
         ]}
       />
 
@@ -143,20 +151,32 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
         <Row gutter={[24, 16]}>
           <Col xs={24} sm={12} lg={8}>
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Guruh nomi</div>
-              <div className="text-lg font-bold text-gray-900">{group.name}</div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                Guruh nomi
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {group.name}
+              </div>
             </div>
           </Col>
           <Col xs={24} sm={12} lg={8}>
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">O'qituvchi</div>
-              <div className="text-lg font-bold text-gray-900">{group.teacherName}</div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                O'qituvchi
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {group.teacherName}
+              </div>
             </div>
           </Col>
           <Col xs={24} sm={12} lg={8}>
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">Talabalar soni</div>
-              <div className="text-lg font-bold text-gray-900">{group.studentCount}</div>
+              <div className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                Talabalar soni
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {group.studentCount}
+              </div>
             </div>
           </Col>
         </Row>
@@ -166,11 +186,13 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
       <Card className="shadow-sm border border-gray-200">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div>
-            <div className="text-sm font-semibold text-gray-700 mb-2">Sana tanlang</div>
+            <div className="text-sm font-semibold text-gray-700 mb-2">
+              Sana tanlang
+            </div>
             <DatePicker
               value={selectedDate}
-              onChange={date => date && setSelectedDate(date)}
-              style={{ width: '100%', maxWidth: 300 }}
+              onChange={(date) => date && setSelectedDate(date)}
+              style={{ width: "100%", maxWidth: 300 }}
             />
           </div>
         </div>
@@ -178,9 +200,9 @@ export default function Attendance({ groupId, onBack }: AttendanceProps) {
 
       {/* Statistics */}
       <StatisticsBar
-        presentCount={attendance.filter(a => a.status === 'KELDI').length}
-        lateCount={attendance.filter(a => a.status === 'KECHIKTI').length}
-        absentCount={attendance.filter(a => a.status === 'KELMADI').length}
+        presentCount={attendance.filter((a) => a.status === "KELDI").length}
+        lateCount={attendance.filter((a) => a.status === "KECHIKTI").length}
+        absentCount={attendance.filter((a) => a.status === "KELMADI").length}
       />
 
       {/* Attendance Table */}

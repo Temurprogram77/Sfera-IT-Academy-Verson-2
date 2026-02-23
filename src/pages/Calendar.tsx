@@ -1,6 +1,6 @@
 // pages/Calendar/Calendar.tsx
 import { useState, useEffect } from "react";
-import { Calendar as AntCalendar, Spin } from "antd";
+import { Calendar as AntCalendar, Spin, Form } from "antd";
 import type { Dayjs } from "dayjs";
 import { useTheme } from "../context/ThemeContext";
 import ModalComponent from "../components/Modal/Modal";
@@ -30,6 +30,10 @@ const Calendar = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  // ── Role tekshiruvi ────────────────────────────────────────────────────────
+  const role = localStorage.getItem("user_role");
+  const isStudentOrParent = role === "ROLE_STUDENT" || role === "ROLE_PARENT";
+
   // ── State ──────────────────────────────────────────────────────────────────
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -37,8 +41,13 @@ const Calendar = () => {
   const [editingEvent, setEditingEvent] = useState<IEvent | null>(null);
   const [formValues, setFormValues] = useState<IEventFormValues>(EMPTY_FORM);
 
+  // ── Ant Design form instance ───────────────────────────────────────────────
+  const [form] = Form.useForm<IEventFormValues>();
+
   // ── Data hooks ─────────────────────────────────────────────────────────────
-  const { groups: groupsData, loading: groupsLoading } = useAllGroups();
+  const { groups: groupsData, loading: groupsLoading } = useAllGroups({
+    enabled: !isStudentOrParent,
+  });
 
   const {
     events: allEvents,
@@ -58,7 +67,7 @@ const Calendar = () => {
     refetch: refetchEvents,
   } = useEventsByDate(selectedDate, isModalVisible);
 
-  // ── Global CSS inject (rang klasslari) ─────────────────────────────────────
+  // ── Global CSS inject ──────────────────────────────────────────────────────
   useEffect(() => {
     injectCalendarStyles(isDark);
     return () => {
@@ -77,6 +86,7 @@ const Calendar = () => {
   const resetForm = (date?: string) => {
     setFormValues({ ...EMPTY_FORM, date: date ?? selectedDate ?? "" });
     setEditingEvent(null);
+    form.resetFields();
   };
 
   // ── Kalendar sanani tanlash ────────────────────────────────────────────────
@@ -100,16 +110,25 @@ const Calendar = () => {
     setEditingEvent(event);
     setIsFormMode(true);
 
-    // groupNames → groupIds mapping
     const selectedGroupIds: number[] = [];
     event.groupNames?.forEach((groupName) => {
       const found = groupsData?.find(
-        (g: any) => g.groupName === groupName || g.name === groupName,
+        (g: any) => g.groupName === groupName || g.name === groupName
       );
       if (found) selectedGroupIds.push(found.id);
     });
 
     setFormValues({
+      name: event.name,
+      description: event.description,
+      date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      groupIds: selectedGroupIds,
+    });
+
+    // Form fields set
+    form.setFieldsValue({
       name: event.name,
       description: event.description,
       date: event.date,
@@ -125,7 +144,7 @@ const Calendar = () => {
     await refetchAllEvents();
   };
 
-  // ── Modal OK (saqlash / yangilash / yopish) ────────────────────────────────
+  // ── Modal OK ───────────────────────────────────────────────────────────────
   const handleOk = async () => {
     if (!isFormMode) {
       setIsModalVisible(false);
@@ -175,7 +194,7 @@ const Calendar = () => {
     }
   };
 
-  // ── cellRender — Ant Design Calendar ──────────────────────────────────────
+  // ── cellRender ────────────────────────────────────────────────────────────
   const cellRender = (current: Dayjs, info: any) => {
     if (info.type !== "date") return info.originNode;
 
@@ -232,15 +251,13 @@ const Calendar = () => {
         open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-        okText={
-          isFormMode ? (editingEvent ? "Yangilash" : "Saqlash") : "Yopish"
-        }
+        okText={isFormMode ? (editingEvent ? "Yangilash" : "Saqlash") : "Yopish"}
         cancelText={isFormMode ? "Bekor qilish" : undefined}
         confirmLoading={isCreating || isUpdating}
-        // width={800}
       >
         {isFormMode ? (
           <EventFormView
+            form={form} // ✅ shu qo‘shildi
             formValues={formValues}
             onChange={setFormValues}
             groups={groupsData}

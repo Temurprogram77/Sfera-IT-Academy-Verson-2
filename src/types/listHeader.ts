@@ -1,13 +1,15 @@
-import { OptionType } from "dayjs";
 import { ReactNode } from "react";
-
+export type SelectOption = {
+  label: string;
+  value: string | number;
+};
 export interface ListHeaderProps {
   title: string;
   count: number | undefined;
   searchValue: string;
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
-   selectOption?: OptionType[];
+  selectOption?: SelectOption[];
   buttonText?: string;
   onButtonClick?: () => void;
   onSelectChange?: (value: number) => void;

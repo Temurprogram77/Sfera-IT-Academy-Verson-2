@@ -13,7 +13,7 @@ export const eventService = {
   getAllEvents: async (): Promise<IEvent[]> => {
     try {
       const response = await apiClient.get<IEventListResponse>(
-        API_ENDPOINTS.EVENT.LIST
+        API_ENDPOINTS.EVENT.LIST,
       );
       if (response.data && Array.isArray(response.data)) {
         return response.data;
@@ -30,7 +30,7 @@ export const eventService = {
   getEventsByDate: async (date: string): Promise<IEvent[]> => {
     try {
       const response = await apiClient.get<IEventListResponse>(
-        `${API_ENDPOINTS.EVENT.GET_BY_DATE}?date=${date}`
+        `${API_ENDPOINTS.EVENT.GET_BY_DATE}?date=${date}`,
       );
       // To'g'ri parsing — success va data ni tekshiramiz
       if (response.data && Array.isArray(response.data)) {
@@ -47,7 +47,7 @@ export const eventService = {
   createEvent: async (data: ICreateEvent): Promise<IEvent | null> => {
     const response = await apiClient.post<IEventActionResponse>(
       API_ENDPOINTS.EVENT.CREATE,
-      data
+      data,
     );
     if (response.data) {
       return response.data;
@@ -59,7 +59,7 @@ export const eventService = {
   updateEvent: async (data: IUpdateEvent): Promise<IEvent | null> => {
     const response = await apiClient.put<IEventActionResponse>(
       API_ENDPOINTS.EVENT.UPDATE,
-      data
+      data,
     );
     if (response.data) {
       return response.data;
@@ -69,6 +69,7 @@ export const eventService = {
 
   // Event o'chirish — DELETE /event/{eventId}
   deleteEvent: async (eventId: number | string): Promise<void> => {
+    console.log("DELETE eventId:", eventId); // ✅ id kelayaptimi?
     await apiClient.delete(API_ENDPOINTS.EVENT.DELETE(eventId));
   },
 };

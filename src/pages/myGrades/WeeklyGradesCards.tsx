@@ -36,7 +36,7 @@ function getMarkStatusLabel(status: string): string {
 
 export default function WeeklyGradesCards() {
   const navigate = useNavigate();
-  const { marks, isLoading, error } = useMark({ page: 0, size: 10 });
+  const { marks, loading, error } = useMark({ page: 0, size: 10 });
 
   return (
     <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] space-y-6">
@@ -58,7 +58,7 @@ export default function WeeklyGradesCards() {
       </div>
 
       {/* Cards */}
-      {isLoading ? (
+      {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-7 gap-4">
           {Array.from({ length: 7 }).map((_, i) => (
             <div
