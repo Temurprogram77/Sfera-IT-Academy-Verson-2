@@ -1,45 +1,42 @@
-export type SSECallback<T = any> = (data: T) => void;
+// services/sseService.ts
 
-export interface SSEOptions {
+interface SSEOptions<T> {
   url: string;
   eventName: string;
-  onMessage: SSECallback;
+  onMessage: (data: T) => void;
   onError?: (error: Event) => void;
-  onOpen?: () => void;
 }
 
-export function createSSE({
+export function createSSE<T>({
   url,
   eventName,
   onMessage,
   onError,
-  onOpen,
-}: SSEOptions) {
-  const es = new EventSource(url);
+}: SSEOptions<T>) {
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
 
-  es.onopen = () => {
-    console.log("✅ SSE Connected:", url);
-    onOpen?.();
-  };
+  // EventSource natively doesn't support custom headers,
+  // so we append token as query param if needed
+  const fullUrl = token ? `${url}?token=${token}` : url;
 
-  es.onerror = (error) => {
-    console.error("❌ SSE Error:", error);
-    onError?.(error);
-  };
+  const eventSource = new EventSource(fullUrl);
 
-  es.addEventListener(eventName, (event: MessageEvent) => {
+  eventSource.addEventListener(eventName, (e: MessageEvent) => {
     try {
-      const parsed = JSON.parse(event.data);
-      onMessage(parsed);
+      const data = JSON.parse(e.data) as T;
+      onMessage(data);
     } catch (err) {
-      console.error("❌ JSON Parse Error:", err);
+      console.error("SSE parse error:", err);
     }
   });
- 
+
+  eventSource.onerror = (e) => {
+    console.error("SSE error:", e);
+    onError?.(e);
+  };
+
   return {
-    close: () => {
-      console.log("🔌 SSE Closed");
-      es.close();
-    },
+    close: () => eventSource.close(),
+    eventSource,
   };
 }

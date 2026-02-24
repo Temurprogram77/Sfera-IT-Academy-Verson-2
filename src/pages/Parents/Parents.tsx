@@ -138,8 +138,6 @@ const Parents = () => {
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder={t("searchParent")}
-        buttonText={t("addParent")}
-        onButtonClick={openAddModal}
       />
 
       {loading ? (

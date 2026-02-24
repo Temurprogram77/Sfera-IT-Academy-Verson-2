@@ -1,5 +1,5 @@
 // src/pages/groups/GroupsDetail.tsx
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Spin,
@@ -15,6 +15,7 @@ import {
   Divider,
   Empty,
   Alert,
+  Tabs,
 } from "antd";
 import {
   UserOutlined,
@@ -24,11 +25,13 @@ import {
   TeamOutlined,
   BookOutlined,
   HomeOutlined,
+  TrophyOutlined,
 } from "@ant-design/icons";
 import NotFoundData from "../OtherPage/NotFoundData";
 import { useGroupDetails, useGroupDays } from "../../hooks/useGroups";
 import type { GroupStudent } from "../../types/group";
 import AppBreadcrumb from "../../components/common/AppBreadcrumb";
+import StudentMarksSection from "../../components/StudentMarksSection/StudentMarksSection";
 
 const { Title, Text } = Typography;
 
@@ -37,6 +40,7 @@ const PRIMARY_COLOR = "#00A67D";
 const GroupsDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("students");
 
   const {
     group,
@@ -45,7 +49,6 @@ const GroupsDetail = () => {
     error: groupError,
   } = useGroupDetails(id || "");
 
-  // Joriy oy uchun guruh kunlarini olish
   const currentYearMonth = useMemo(() => {
     const now = new Date();
     const year = now.getFullYear();
@@ -58,11 +61,8 @@ const GroupsDetail = () => {
     loading: daysLoading,
     error: daysError,
   } = useGroupDays(
-    {
-      groupId: Number(id),
-      yearMonth: currentYearMonth,
-    },
-    !!id && !groupLoading,
+    { groupId: Number(id), yearMonth: currentYearMonth },
+    !!id && !groupLoading
   );
 
   const getDayLabel = (day: string) => {
@@ -78,7 +78,6 @@ const GroupsDetail = () => {
     return labels[day] || day;
   };
 
-  // Loading state
   if (groupLoading || daysLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -87,7 +86,6 @@ const GroupsDetail = () => {
     );
   }
 
-  // Error state
   if (groupError || !group) {
     return (
       <NotFoundData
@@ -107,14 +105,13 @@ const GroupsDetail = () => {
             { title: group?.categoryName || "Guruh" },
           ]}
         />
-        {/* Guruh nomi va tahrirlash tugmasi */}
+
+        {/* Group Header Card */}
         <Card className="mb-6! rounded-lg shadow-md">
           <Row justify="space-between" align="middle">
             <Col>
               <Title level={2} className="m-0 dark:text-white">
-                <TeamOutlined
-                  style={{ color: PRIMARY_COLOR, marginRight: 12 }}
-                />
+                <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 12 }} />
                 {group.name}
               </Title>
               {group.categoryName && (
@@ -128,10 +125,7 @@ const GroupsDetail = () => {
                 type="primary"
                 icon={<EditOutlined />}
                 size="large"
-                style={{
-                  backgroundColor: PRIMARY_COLOR,
-                  borderColor: PRIMARY_COLOR,
-                }}
+                style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
                 onClick={() => navigate(`/groups/${id}/edit`)}
               >
                 Tahrirlash
@@ -140,77 +134,99 @@ const GroupsDetail = () => {
           </Row>
         </Card>
 
-        {/* Asosiy kontent */}
+        {/* Main content */}
         <Row gutter={[24, 24]}>
-          {/* Chap tomon - O'quvchilar ro'yxati */}
+          {/* Left - Tabs: Students & Marks */}
           <Col xs={24} lg={16}>
-            <Card
-              title={
-                <span>
-                  <UserOutlined
-                    style={{ marginRight: 8, color: PRIMARY_COLOR }}
-                  />
-                  O'quvchilar
-                </span>
-              }
-              extra={
-                <Tag
-                  color={PRIMARY_COLOR}
-                  style={{ fontSize: 14, padding: "4px 12px" }}
-                >
-                  {students.length} ta
-                </Tag>
-              }
-              className="rounded-lg shadow-md"
-              style={{ minHeight: 400 }}
-            >
-              {students.length > 0 ? (
-                <List
-                  dataSource={students}
-                  renderItem={(student: GroupStudent) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        avatar={
-                          student.imgUrl ? (
-                            <Avatar size={48} src={student.imgUrl} />
-                          ) : (
-                            <Avatar
-                              size={48}
-                              icon={<UserOutlined />}
-                              style={{ backgroundColor: PRIMARY_COLOR }}
-                            />
-                          )
-                        }
-                        title={
-                          <Text strong className="dark:text-white">
-                            {student.fulName}
-                          </Text>
-                        }
-                        description={
-                          <span className="dark:text-gray-400">
-                            📞 {student.phoneNumber}
-                          </span>
-                        }
+            <Card className="rounded-lg shadow-md">
+              <Tabs
+                activeKey={activeTab}
+                onChange={setActiveTab}
+                tabBarStyle={{ marginBottom: 20 }}
+                items={[
+                  {
+                    key: "students",
+                    label: (
+                      <span className="flex items-center gap-1.5">
+                        <UserOutlined />
+                        O'quvchilar
+                        <Tag
+                          color={PRIMARY_COLOR}
+                          style={{ marginLeft: 4, fontSize: 11, padding: "0 6px" }}
+                        >
+                          {students.length}
+                        </Tag>
+                      </span>
+                    ),
+                    children:
+                      students.length > 0 ? (
+                        <List
+                          dataSource={students}
+                          renderItem={(student: GroupStudent) => (
+                            <List.Item>
+                              <List.Item.Meta
+                                avatar={
+                                  student.imgUrl ? (
+                                    <Avatar size={48} src={student.imgUrl} />
+                                  ) : (
+                                    <Avatar
+                                      size={48}
+                                      icon={<UserOutlined />}
+                                      style={{ backgroundColor: PRIMARY_COLOR }}
+                                    />
+                                  )
+                                }
+                                title={
+                                  <Text strong className="dark:text-white">
+                                    {student.fulName}
+                                  </Text>
+                                }
+                                description={
+                                  <span className="dark:text-gray-400">
+                                    📞 {student.phoneNumber}
+                                  </span>
+                                }
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      ) : (
+                        <Empty
+                          description="Hozircha o'quvchilar yo'q"
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        />
+                      ),
+                  },
+                  {
+                    key: "marks",
+                    label: (
+                      <span className="flex items-center gap-1.5">
+                        <TrophyOutlined />
+                        Baholar
+                      </span>
+                    ),
+                    children: (
+                      <StudentMarksSection
+                        groupId={Number(id)}
+                        students={students.map((s: GroupStudent) => ({
+                          // ✅ studentId mavjud bo'lmasa id ishlatamiz
+                          studentId: (s as any).studentId ?? s.id,
+                          fulName: s.fulName,
+                        }))}
                       />
-                    </List.Item>
-                  )}
-                />
-              ) : (
-                <Empty
-                  description="Hozircha o'quvchilar yo'q"
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                />
-              )}
+                    ),
+                  },
+                ]}
+              />
             </Card>
           </Col>
 
+          {/* Right - Group Info + Calendar */}
           <Col xs={24} lg={8}>
             <Card
               title={
                 <span>
-                  <BookOutlined
-                    style={{ marginRight: 8, color: PRIMARY_COLOR }}
-                  />
+                  <BookOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
                   Guruh ma'lumotlari
                 </span>
               }
@@ -220,9 +236,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <UserOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <UserOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       O'qituvchi
                     </span>
                   }
@@ -235,9 +249,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <BookOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <BookOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       Kategoriya
                     </span>
                   }
@@ -250,9 +262,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <HomeOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <HomeOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       Xona
                     </span>
                   }
@@ -265,9 +275,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <ClockCircleOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <ClockCircleOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       Dars vaqti
                     </span>
                   }
@@ -280,9 +288,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <CalendarOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <CalendarOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       Dars kunlari
                     </span>
                   }
@@ -290,11 +296,7 @@ const GroupsDetail = () => {
                   <div>
                     {group.weekDays && group.weekDays.length > 0 ? (
                       group.weekDays.map((day) => (
-                        <Tag
-                          key={day}
-                          color={PRIMARY_COLOR}
-                          style={{ marginBottom: 4 }}
-                        >
+                        <Tag key={day} color={PRIMARY_COLOR} style={{ marginBottom: 4 }}>
                           {getDayLabel(day)}
                         </Tag>
                       ))
@@ -307,9 +309,7 @@ const GroupsDetail = () => {
                 <Descriptions.Item
                   label={
                     <span>
-                      <TeamOutlined
-                        style={{ color: PRIMARY_COLOR, marginRight: 8 }}
-                      />
+                      <TeamOutlined style={{ color: PRIMARY_COLOR, marginRight: 8 }} />
                       O'quvchilar soni
                     </span>
                   }
@@ -325,9 +325,7 @@ const GroupsDetail = () => {
               <Card
                 title={
                   <span>
-                    <CalendarOutlined
-                      style={{ marginRight: 8, color: PRIMARY_COLOR }}
-                    />
+                    <CalendarOutlined style={{ marginRight: 8, color: PRIMARY_COLOR }} />
                     {currentYearMonth} - dars kunlari
                   </span>
                 }
@@ -355,11 +353,7 @@ const GroupsDetail = () => {
                         <Tag
                           key={index}
                           color="blue"
-                          style={{
-                            marginBottom: 8,
-                            padding: "4px 12px",
-                            fontSize: 13,
-                          }}
+                          style={{ marginBottom: 8, padding: "4px 12px", fontSize: 13 }}
                         >
                           {new Date(day).toLocaleDateString("uz-UZ", {
                             year: "numeric",

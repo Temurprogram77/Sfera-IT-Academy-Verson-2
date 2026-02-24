@@ -1,106 +1,79 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { markService } from "../services/marksService";
+// hooks/useMark.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { markService } from "../services/markService";
 import {
-  MarkListResponse,
+  MyMarksParams,
+  MyMarksResponse,
   CreateMarkDto,
+  CreateMarkResponse,
   UpdateMarkDto,
-  MarkActionResponse,
-  MarkListParams,
-} from "../types/marks";
+  UpdateMarkResponse,
+  DeleteMarkResponse,
+} from "../types/mark";
 import { QUERY_KEYS } from "../types/queryKeys";
+import { toast } from "sonner";
 
-export const useMarks = (params?: MarkListParams) => {
+export const useMark = (params?: MyMarksParams) => {
   const queryClient = useQueryClient();
 
-  const {
-    data: markData,
-    isLoading,
-    error,
-    refetch,
-    isRefetching,
-  } = useQuery<MarkListResponse, Error>({
-    queryKey: [QUERY_KEYS.MARKS.ALL, params],
-    queryFn: () => markService.getMarks(params),
+  const { data, isLoading, error, refetch } = useQuery<MyMarksResponse, Error>({
+    queryKey: [...QUERY_KEYS.MARKS.ALL, "myMarks", params],
+    queryFn: () => markService.getMyMarks(params),
     staleTime: 1000 * 60 * 5,
   });
 
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({
-      queryKey: [QUERY_KEYS.MARKS.ALL],
-      exact: false,
-    });
-    queryClient.invalidateQueries({
-      queryKey: [QUERY_KEYS.MARKS],
-      exact: false,
-    });
-  };
-
-  const createMarkMutation = useMutation<
-    MarkActionResponse,
-    Error,
-    CreateMarkDto
-  >({
-    mutationFn: (data: CreateMarkDto) => markService.createMark(data),
+  const createMarkMutation = useMutation<CreateMarkResponse, Error, CreateMarkDto>({
+    mutationFn: (dto) => markService.createMark(dto),
     onSuccess: () => {
-      invalidateAll();
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MARKS.ALL });
       toast.success("Baho muvaffaqiyatli qo'shildi");
     },
-    onError: (error: Error) => {
+    onError: () => {
       toast.error("Baho qo'shishda xatolik yuz berdi");
-      console.error("Create Mark error:", error);
     },
   });
 
-  const updateMarkMutation = useMutation<
-    MarkActionResponse,
-    Error,
-    UpdateMarkDto
-  >({
-    mutationFn: (data: UpdateMarkDto) => markService.updateMark(data),
+  const updateMarkMutation = useMutation<UpdateMarkResponse, Error, UpdateMarkDto>({
+    mutationFn: (dto) => markService.updateMark(dto),
     onSuccess: () => {
-      invalidateAll();
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MARKS.ALL });
       toast.success("Baho muvaffaqiyatli yangilandi");
     },
-    onError: (error: Error) => {
+    onError: () => {
       toast.error("Baho yangilashda xatolik yuz berdi");
-      console.error("Update Mark error:", error);
     },
   });
 
-  const deleteMarkMutation = useMutation<
-    MarkActionResponse,
-    Error,
-    number | string
-  >({
-    mutationFn: (markId: number | string) => markService.deleteMark(markId),
+  const deleteMarkMutation = useMutation<DeleteMarkResponse, Error, number>({
+    mutationFn: (id) => markService.deleteMark(id),
     onSuccess: () => {
-      invalidateAll();
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MARKS.ALL });
       toast.success("Baho muvaffaqiyatli o'chirildi");
     },
-    onError: (error: Error) => {
+    onError: () => {
       toast.error("Baho o'chirishda xatolik yuz berdi");
-      console.error("Delete Mark error:", error);
     },
   });
 
   return {
-    marks: markData?.data?.body || [],
+    marks: data?.data?.body || [],
     pagination: {
-      page: markData?.data?.page || 0,
-      size: markData?.data?.size || 10,
-      totalPage: markData?.data?.totalPage || 0,
-      totalElements: markData?.data?.totalElements || 0,
+      page: data?.data?.page || 0,
+      size: data?.data?.size || 10,
+      totalPage: data?.data?.totalPage || 0,
+      totalElements: data?.data?.totalElements || 0,
     },
     loading: isLoading,
     error,
     refetch,
-    isRefetching,
-    createMark: createMarkMutation.mutate,
-    updateMark: updateMarkMutation.mutateAsync,
-    deleteMark: deleteMarkMutation.mutate,
+
+    createMark: createMarkMutation.mutateAsync,
     isCreating: createMarkMutation.isPending,
+
+    updateMark: updateMarkMutation.mutateAsync,
     isUpdating: updateMarkMutation.isPending,
+
+    deleteMark: deleteMarkMutation.mutate,
     isDeleting: deleteMarkMutation.isPending,
   };
 };

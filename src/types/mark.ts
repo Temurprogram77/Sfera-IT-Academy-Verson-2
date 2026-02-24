@@ -8,11 +8,13 @@ export interface Mark {
   markId: number;
   studentId: number;
   studentName: string;
+  imageUrl?: string;
   totalScore: number;
   activityScore: number;
   homeworkScore: number;
   markCategoryStatus: MarkCategoryStatus;
   markStatus: MarkStatus;
+  markDate?: string;
 }
 
 // ─── Shared pagination wrapper ─────────────────────────────────
@@ -37,6 +39,20 @@ export interface MyMarksResponse {
   data: PaginationData<Mark>;
 }
 
+// ─── By Group (GET /mark/byGroup/:groupId) ────────────────────
+export interface MarksByGroupParams
+  extends Record<string, string | number | undefined> {
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface MarksByGroupResponse {
+  success: boolean;
+  message: string;
+  data: PaginationData<Mark>;
+}
+
 // ─── Get Mark by ID ────────────────────────────────────────────
 export interface MarkDetailResponse {
   success: boolean;
@@ -47,31 +63,34 @@ export interface MarkDetailResponse {
 // ─── Create Mark ───────────────────────────────────────────────
 export interface CreateMarkDto {
   studentId: number;
-  totalScore: number;
-  activityScore: number;
   homeworkScore: number;
+  activityScore: number;
+  totalScore: number;
   markStatus: MarkStatus;
+  date: string; // YYYY-MM-DD
 }
 
 export interface CreateMarkResponse {
   success: boolean;
   message: string;
-  data: null;
+  data: Mark | null;
 }
 
 // ─── Update Mark ───────────────────────────────────────────────
 export interface UpdateMarkDto {
   id: number;
-  totalScore: number;
-  activityScore: number;
+  studentId: number;
   homeworkScore: number;
+  activityScore: number;
+  totalScore: number;
   markStatus: MarkStatus;
+  date: string; // YYYY-MM-DD
 }
 
 export interface UpdateMarkResponse {
   success: boolean;
   message: string;
-  data: string;
+  data: Mark | string;
 }
 
 // ─── Delete Mark ───────────────────────────────────────────────

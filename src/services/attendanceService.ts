@@ -1,31 +1,32 @@
+// services/attendanceService.ts
+
 import { apiClient } from "../lib/api/client";
-import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
+import {
+  CreateAttendanceDto,
+  AttendanceDetailResponse,
+  DeleteAttendanceResponse,
+} from "../types/attendance";
 
-export type AttendanceStatus =
-  | "KELDI"
-  | "KELMADI"
-  | "SABABLI"
-  | "KECHIKTI";
-
-export interface AttendanceDto {
-  studentId: number;
-  status: AttendanceStatus;
-  description?: string | null;
-  date: string; 
-}
+const BASE = "/attendance";
 
 class AttendanceService {
-  async createAttendance(groupId: number, records: AttendanceDto[]) {
-    const url = buildUrlWithParams(API_ENDPOINTS.ATTENDANCE.CREATE, {
-      groupId,
-    });
-
-    return apiClient.post(url, records);
+  // POST /attendance?groupId=17
+  async createAttendance(
+    groupId: number | string,
+    data: CreateAttendanceDto[]
+  ): Promise<void> {
+    await apiClient.post(`${BASE}?groupId=${groupId}`, data);
   }
 
-  async deleteAttendance(attendanceId: number | string) {
-    return apiClient.delete(
-      API_ENDPOINTS.ATTENDANCE.DELETE(attendanceId),
+  // GET /attendance/:attendanceId
+  async getAttendanceById(id: number | string): Promise<AttendanceDetailResponse> {
+    return apiClient.get<AttendanceDetailResponse>(`${BASE}/${id}`);
+  }
+
+  // ✅ DELETE /attendance/attendanceId?attendanceId=48
+  async deleteAttendance(attendanceId: number | string): Promise<DeleteAttendanceResponse> {
+    return apiClient.delete<DeleteAttendanceResponse>(
+      `${BASE}/attendanceId?attendanceId=${attendanceId}`
     );
   }
 }

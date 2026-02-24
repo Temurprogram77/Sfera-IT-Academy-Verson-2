@@ -56,7 +56,6 @@ import Presence from "./pages/Attendance/Presence";
 import PresenceGroup from "./pages/Attendance/PresenceGroup";
 import MyChildsGrades from "./pages/MyChildsGrades/MyChildsGrades";
 import MyChildsDetail from "./pages/MyChildsDetail/MyChildsDetail";
-import RegisterForm from "./components/auth/RegisterForm";
 
 interface Props {
   children: React.ReactNode;
@@ -200,16 +199,7 @@ export default function App() {
             </PublicRoute>
           }
         />
-
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <RegisterForm />
-            </PublicRoute>
-          }
-        />
-
+        
         {/* Dashboard */}
         <Route
           path="/"
@@ -281,7 +271,7 @@ export default function App() {
           <Route path="my-grades" element={<MyGrades />} />
 
           {/* Attendance */}
-          <Route path="attendance/group/:id" element={<Attendance />} />
+          <Route path="attendance/:id" element={<Attendance />} />
           <Route path="attendance" element={<AttendanceGroup />} />
           <Route path="presence/:id" element={<Presence />} />
           <Route path="presence" element={<PresenceGroup />} />

@@ -209,7 +209,7 @@ const Categories = () => {
                           Davomiyligi
                         </span>
                         <span className="text-sm font-semibold text-amber-900 dark:text-amber-100">
-                          {record.duration} daqiqa
+                          {record.duration} oy
                         </span>
                       </div>
                     </div>
@@ -291,19 +291,19 @@ const Categories = () => {
           <div className="grid grid-cols-2 gap-4">
             <FormWrapper.Item
               name="duration"
-              label="Davomiyligi (daqiqa)"
+              label="Davomiyligi (oy)"
               rules={[
                 { required: true, message: "Davomiyligini kiriting" },
                 {
                   type: "number",
                   min: 1,
-                  message: "Davomiyligi 1 daqiqadan kam bo'lmasligi kerak",
+                  message: "Davomiyligi 1 oydan kam bo'lmasligi kerak",
                 },
               ]}
             >
               <InputNumber
                 min={1}
-                placeholder={"60"}
+                placeholder={"1"}
                 className="w-full"
                 prefix={<ClockCircleOutlined className="text-gray-400" />}
               />

@@ -128,7 +128,7 @@ const News = () => {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl min-h-screen">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl">
       <ListHeader
         title="Yangiliklar soni"
         count={total}

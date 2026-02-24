@@ -1,13 +1,11 @@
-
-
 import { Dayjs } from "dayjs";
-import { AttendanceStatus } from "../services/attendanceService";
 
-export type { AttendanceStatus };
+// ✅ attendanceService emas, attendance types dan import
+export type { AttendanceStatus } from "./attendance";
 
 export interface AttendanceRecord {
   studentId: number;
-  status: AttendanceStatus;
+  status: string;
   description?: string | null;
   date: string;
 }
@@ -21,6 +19,11 @@ export interface Student {
 export interface Group {
   id: number;
   name: string;
+  startTime?: string;
+  endTime?: string;
+  teacherName?: string;
+  categoryName?: string;
+  studentCount?: number;
 }
 
 export interface SelectedCell {

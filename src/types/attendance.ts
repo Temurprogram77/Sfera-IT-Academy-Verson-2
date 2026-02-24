@@ -1,31 +1,38 @@
-/**
- * TypeScript interfaces for Attendance Management System
- */
+// types/attendance.ts
 
-// Talabaning davomat holatlari
-export type AttendanceStatus = 'KELDI' | 'KELMADI' | 'KECHIKTI' | 'BUGUN_YOQ';
+export type AttendanceStatus = "KELDI" | "KELMADI" | "SABABLI";
 
-// Bir talabaning davomat ma'lumotlari
-export interface Attendance {
-  id: string;          // Unikal identifikator
-  fullName: string;    // Talabaning to‘liq ismi
-  studentId: string;   // Talabaning ID raqami
-  status: AttendanceStatus;  // Davomat holati
-  date: string;        // Sana (ISO formatida bo‘lishi ma’qul)
-  notes?: string;      // Qo‘shimcha eslatmalar (ixtiyoriy)
+export interface AttendanceRecord {
+  id?: number;
+  studentId: number;
+  fullName?: string;
+  status: AttendanceStatus;
+  description?: string | null;
+  date: string; // YYYY-MM-DD
 }
 
-// Guruh va uning talabalari
-export interface Group {
-  id: string;              // Guruh ID
-  groupName: string;       // Guruh nomi
-  students: Attendance[];  // Guruhdagi talabalarning davomat ro‘yxati
+export interface CreateAttendanceDto {
+  studentId: number;
+  status: AttendanceStatus;
+  description: string | null;
+  date: string;
 }
 
-// Status badge konfiguratsiyasi (rang va label)
-export const STATUS_CONFIG: Record<AttendanceStatus, { color: string; label: string }> = {
-  KELDI: { color: 'green', label: 'Keldi' },
-  KELMADI: { color: 'red', label: 'Kelmadi' },
-  KECHIKTI: { color: 'orange', label: 'Kechikti' },
-  BUGUN_YOQ: { color: 'blue', label: "Bugun yo'q" },
-};
+export interface AttendanceDetailResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    fullName: string;
+    studentId: number;
+    status: AttendanceStatus;
+    description: string | null;
+    date: string;
+  };
+}
+
+export interface DeleteAttendanceResponse {
+  success: boolean;
+  message: string;
+  data: string | null;
+}

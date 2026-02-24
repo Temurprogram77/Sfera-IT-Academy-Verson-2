@@ -144,7 +144,7 @@ export default function SignInForm() {
               </div>
               <div className="mt-4 text-center text-sm text-gray-500 w-full flex items-center justify-between gap-1">
                 {t("dontHaveAccount")}{" "}
-                <Link to="/register" className="text-green-600 hover:underline">
+                <Link to="https://t.me/sfera_nazorat_bot" className="text-green-600 hover:underline">
                   {t("registerHere")}
                 </Link>
               </div>

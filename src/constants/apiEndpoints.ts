@@ -15,14 +15,16 @@ export const API_ENDPOINTS = {
   },
   STUDENT: {
     LIST: "/student",
-    CREATE_STUDENT: "/student/saveStudent",
+    CREATE_STUDENT: "/auth/register",
     GET_BY_ID: (studentId: string | number) => `/student/${studentId}`,
     UPDATE: "/student",
     UPDATE_GROUP: "/student/update-group",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
   },
   ATTENDANCE: {
+    BASE: "/attendance",
     CREATE: "/attendance",
+    GET_BY_ID: (id: number | string) => `/attendance/${id}`,
     STREAM: (groupId: number | string) => `/attendance/stream/${groupId}`,
     DELETE: (attendanceId: number | string) => `/attendance/${attendanceId}`,
   },
@@ -68,9 +70,10 @@ export const API_ENDPOINTS = {
   },
   MARK: {
     LIST: "/mark",
-    MY_MARKS: "/mark/myMarks", // ✅ yangi endpoint
+    MY_MARKS: "/mark/myMarks",
     GET_BY_ID: (id: string | number) => `/mark/${id}`,
     CREATE: "/mark",
+    BY_GROUP: (groupId: string | number) => `/mark/byGroup/${groupId}`,
     UPDATE: "/mark/update",
     DELETE: (id: string | number) => `/mark/${id}`,
   },
@@ -83,12 +86,12 @@ export const API_ENDPOINTS = {
   },
   EVENT: {
     LIST: "/event/list",
-    STREAM: "/event/stream", // GET - real-time
-    CREATE: "/event", // POST
-    UPDATE: "/event/update", // PUT
+    STREAM: "/event/stream",
+    CREATE: "/event",
+    UPDATE: "/event/update",
     GET_BY_DATE: "/event/byDate",
 
-    DELETE: (eventId: string | number) => `/event/${eventId}`, // DELETE
+    DELETE: (eventId: string | number) => `/event/${eventId}`, 
   },
   DASHBOARD_ENDPOINTS: {
     METRICS: "/dashboard",

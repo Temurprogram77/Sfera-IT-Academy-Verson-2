@@ -5,6 +5,8 @@ import { apiClient } from "../lib/api/client";
 import {
   MyMarksParams,
   MyMarksResponse,
+  MarksByGroupParams,
+  MarksByGroupResponse,
   MarkDetailResponse,
   CreateMarkDto,
   CreateMarkResponse,
@@ -14,78 +16,78 @@ import {
 } from "../types/mark";
 
 class MarkService {
-  // Mening baholarim — GET /mark/myMarks?page=0&size=10
+  // GET /mark/myMarks?page=0&size=10
   async getMyMarks(params?: MyMarksParams): Promise<MyMarksResponse> {
     try {
       const url = buildUrlWithParams(API_ENDPOINTS.MARK.MY_MARKS, params);
-      const response = await apiClient.get<MyMarksResponse>(url);
-      return response;
+      return await apiClient.get<MyMarksResponse>(url);
     } catch (error) {
       console.error("Get my marks error", error);
       throw error;
     }
   }
 
-  // Barcha baholar — GET /mark?page=0&size=10
-  async getMarks(params?: MyMarksParams): Promise<MyMarksResponse> {
+  // GET /mark/byGroup/:groupId?keyword=&page=0&size=10  (admin only)
+  async getMarksByGroup(
+    groupId: number | string,
+    params?: MarksByGroupParams
+  ): Promise<MarksByGroupResponse> {
     try {
-      const url = buildUrlWithParams(API_ENDPOINTS.MARK.LIST, params);
-      const response = await apiClient.get<MyMarksResponse>(url);
-      return response;
+      const url = buildUrlWithParams(
+        API_ENDPOINTS.MARK.BY_GROUP(groupId),
+        params
+      );
+      return await apiClient.get<MarksByGroupResponse>(url);
     } catch (error) {
-      console.error("Get marks error", error);
+      console.error("Get marks by group error", error);
       throw error;
     }
   }
 
-  // Bitta baho — GET /mark/:id
+  // GET /mark/:markId
   async getMarkById(id: string | number): Promise<MarkDetailResponse> {
     try {
-      const response = await apiClient.get<MarkDetailResponse>(
-        API_ENDPOINTS.MARK.GET_BY_ID(id),
+      return await apiClient.get<MarkDetailResponse>(
+        API_ENDPOINTS.MARK.GET_BY_ID(id)
       );
-      return response;
     } catch (error) {
       console.error("Get mark detail error", error);
       throw error;
     }
   }
 
-  // Baho qo'shish — POST /mark
+  // POST /mark
   async createMark(data: CreateMarkDto): Promise<CreateMarkResponse> {
     try {
-      const response = await apiClient.post<CreateMarkResponse>(
+      return await apiClient.post<CreateMarkResponse>(
         API_ENDPOINTS.MARK.CREATE,
-        data,
+        data
       );
-      return response;
     } catch (error) {
       console.error("Create mark error", error);
       throw error;
     }
   }
 
-  // Baho yangilash — PUT /mark/update
+  // PUT /mark/update
   async updateMark(data: UpdateMarkDto): Promise<UpdateMarkResponse> {
     try {
-      const response = await apiClient.put<UpdateMarkResponse>(
+      return await apiClient.put<UpdateMarkResponse>(
         API_ENDPOINTS.MARK.UPDATE,
-        data,
+        data
       );
-      return response;
     } catch (error) {
       console.error("Update mark error", error);
       throw error;
     }
   }
 
-  // Baho o'chirish — DELETE /mark/:id
+  // DELETE /mark/:markId
   async deleteMark(id: number): Promise<DeleteMarkResponse> {
     try {
-      const response = await apiClient.delete<DeleteMarkResponse>(
-        API_ENDPOINTS.MARK.DELETE(id),
+      return await apiClient.delete<DeleteMarkResponse>(
+        API_ENDPOINTS.MARK.DELETE(id)
       );
-      return response;
     } catch (error) {
       console.error("Delete mark error", error);
       throw error;
