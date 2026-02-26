@@ -95,12 +95,6 @@ const Students = () => {
 
         // Agar guruh o'zgargan bo'lsa
         if (hasGroupChanged) {
-          console.log("📝 Guruh o'zgargan! updateStudentGroup ishga tushadi");
-          console.log(
-            `Old group: ${editingStudent.groupId}, New group: ${values.groupId}`,
-          );
-
-          // 1. Avval guruhni o'zgartirish (update-group API ga)
           updateStudentGroup(
             {
               studentId: editingStudent.id,
@@ -108,9 +102,6 @@ const Students = () => {
             },
             {
               onSuccess: () => {
-                console.log("✅ Guruh muvaffaqiyatli o'zgartirildi");
-
-                // 2. Keyin boshqa ma'lumotlarni yangilash (update API ga)
                 updateStudent(
                   {
                     id: editingStudent.id,
@@ -121,7 +112,6 @@ const Students = () => {
                   },
                   {
                     onSuccess: () => {
-                      console.log("✅ Student ma'lumotlari yangilandi");
                       setIsModalVisible(false);
                       form.resetFields();
                       setUploadedImageUrl("");
@@ -136,9 +126,6 @@ const Students = () => {
             },
           );
         } else {
-          // Agar guruh o'zgarmagan bo'lsa, faqat boshqa ma'lumotlarni yangilash
-          console.log("📝 Guruh o'zgarmagan, faqat ma'lumotlarni yangilash");
-
           updateStudent(
             {
               id: editingStudent.id,
@@ -149,7 +136,6 @@ const Students = () => {
             },
             {
               onSuccess: () => {
-                console.log("✅ Student ma'lumotlari yangilandi");
                 setIsModalVisible(false);
                 form.resetFields();
                 setUploadedImageUrl("");
@@ -159,9 +145,6 @@ const Students = () => {
           );
         }
       } else {
-        // Create mode
-        console.log("📝 Yangi student yaratish");
-
         createStudent(
           {
             fullName: values.fullName,
@@ -174,7 +157,6 @@ const Students = () => {
           },
           {
             onSuccess: () => {
-              console.log("✅ Student yaratildi");
               setIsModalVisible(false);
               form.resetFields();
               setUploadedImageUrl("");

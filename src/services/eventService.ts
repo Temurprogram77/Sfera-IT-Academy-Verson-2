@@ -69,7 +69,6 @@ export const eventService = {
 
   // Event o'chirish — DELETE /event/{eventId}
   deleteEvent: async (eventId: number | string): Promise<void> => {
-    console.log("DELETE eventId:", eventId); // ✅ id kelayaptimi?
     await apiClient.delete(API_ENDPOINTS.EVENT.DELETE(eventId));
   },
 };

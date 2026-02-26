@@ -1,68 +1,83 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import SignIn from "./pages/AuthPages/SignIn";
-import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import Blank from "./pages/Blank";
-import AppLayout from "./layout/AppLayout";
-
-import Admin from "./dashboards/admin";
-import SuperAdmin from "./dashboards/super_admin";
-import Teacher from "./dashboards/teacher";
-import Student from "./dashboards/student";
-import Parent from "./dashboards/parent";
-
-import Teachers from "./pages/Teachers/Teachers";
-import Students from "./pages/Students/Students";
-import Parents from "./pages/Parents/Parents";
-import Groups from "./pages/Groups/Groups";
-import Rooms from "./pages/Rooms/Rooms";
-import Grades from "./pages/Grades/Grades";
-import Messages from "./pages/Messages/Messages";
-import Admins from "./pages/Admins/Admins";
-import RoomsID from "./pages/RoomsID/RoomsID";
-import Attendance from "./pages/Attendance/Attendance";
-
+import { useEffect, useState, Suspense, lazy } from "react";
+import { Spin } from "antd";
 import { Toaster } from "sonner";
+import { ConfigProvider, theme as antdTheme } from "antd";
+
 import { useTheme } from "./context/ThemeContext";
 import { useAuthContext } from "./context/AuthContext";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import "./i18n";
-import { ConfigProvider, theme as antdTheme } from "antd";
 
-import GroupsDetail from "./pages/groupsDetail/groupsDetail";
-import StudentsDetail from "./pages/StudentsDetail/StudentsDetail";
-import TeachersDetail from "./pages/TeachersDetail/TeachersDetail";
-import AdminsDetail from "./pages/AdminsDetail/AdminsDetail";
-import ParentsDetail from "./pages/ParentsDetail/ParentsDetail";
-import Categories from "./pages/Categories/Categories";
-import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
-import AttendanceGroup from "./pages/Attendance/AttendanceGroup";
-import News from "./pages/News/News";
-import TeacherGroups from "./pages/Grades/Assessment";
-import SingleAssessment from "./pages/Grades/GroupAssessment";
-import MyGrades from "./pages/myGrades/MyGrades";
-import Presence from "./pages/Attendance/Presence";
-import PresenceGroup from "./pages/Attendance/PresenceGroup";
-import MyChildsGrades from "./pages/MyChildsGrades/MyChildsGrades";
-import MyChildsDetail from "./pages/MyChildsDetail/MyChildsDetail";
+// Kichik, darhol kerak bo'ladigan sahifalar — lazy EMAS
+import SignIn from "./pages/AuthPages/SignIn";
+import NotFound from "./pages/OtherPage/NotFound";
+import AppLayout from "./layout/AppLayout";
+
+// ─── Lazy imports ─────────────────────────────────────────────────────────────
+
+// Dashboards
+const Admin = lazy(() => import("./dashboards/admin"));
+const SuperAdmin = lazy(() => import("./dashboards/super_admin"));
+const Teacher = lazy(() => import("./dashboards/teacher"));
+const Student = lazy(() => import("./dashboards/student"));
+const Parent = lazy(() => import("./dashboards/parent"));
+
+// Users
+const Teachers = lazy(() => import("./pages/Teachers/Teachers"));
+const TeachersDetail = lazy(() => import("./pages/TeachersDetail/TeachersDetail"));
+const Admins = lazy(() => import("./pages/Admins/Admins"));
+const AdminsDetail = lazy(() => import("./pages/AdminsDetail/AdminsDetail"));
+const Students = lazy(() => import("./pages/Students/Students"));
+const StudentsDetail = lazy(() => import("./pages/StudentsDetail/StudentsDetail"));
+const Parents = lazy(() => import("./pages/Parents/Parents"));
+const ParentsDetail = lazy(() => import("./pages/ParentsDetail/ParentsDetail"));
+const MyChildsGrades = lazy(() => import("./pages/MyChildsGrades/MyChildsGrades"));
+const MyChildsDetail = lazy(() => import("./pages/MyChildsDetail/MyChildsDetail"));
+
+// Grades
+const Grades = lazy(() => import("./pages/Grades/Grades"));
+const MyGrades = lazy(() => import("./pages/myGrades/MyGrades"));
+const TeacherGroups = lazy(() => import("./pages/Grades/Assessment"));
+const SingleAssessment = lazy(() => import("./pages/Grades/GroupAssessment"));
+
+// Attendance
+const Attendance = lazy(() => import("./pages/Attendance/Attendance"));
+const AttendanceGroup = lazy(() => import("./pages/Attendance/AttendanceGroup"));
+const Presence = lazy(() => import("./pages/Attendance/Presence"));
+const PresenceGroup = lazy(() => import("./pages/Attendance/PresenceGroup"));
+
+// Categories & Groups
+const Categories = lazy(() => import("./pages/Categories/Categories"));
+const CategoryDetail = lazy(() => import("./pages/CategoryDetail/CategoryDetail"));
+const Groups = lazy(() => import("./pages/Groups/Groups"));
+const GroupsDetail = lazy(() => import("./pages/groupsDetail/groupsDetail"));
+
+// Rooms
+const Rooms = lazy(() => import("./pages/Rooms/Rooms"));
+const RoomsID = lazy(() => import("./pages/RoomsID/RoomsID"));
+
+// Others
+const Messages = lazy(() => import("./pages/Messages/Messages"));
+const News = lazy(() => import("./pages/News/News"));
+const UserProfiles = lazy(() => import("./pages/UserProfiles"));
+const Calendar = lazy(() => import("./pages/Calendar"));
+
+// ─── Loading fallback ─────────────────────────────────────────────────────────
+
+const PageLoader = () => (
+  <div className="flex justify-center items-center min-h-[60vh]">
+    <Spin size="large" />
+  </div>
+);
+
+// ─── Role config ──────────────────────────────────────────────────────────────
 
 interface Props {
   children: React.ReactNode;
-  allowedRoles?: string[]; // ruxsat berilgan rollar
+  allowedRoles?: string[];
 }
 
-// 5 ta role uchun redirect xaritasi
 const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_SUPER_ADMIN: "/dashboard/super_admin",
   ROLE_ADMIN: "/dashboard/admin",
@@ -71,18 +86,14 @@ const ROLE_REDIRECTS: Record<string, string> = {
   ROLE_PARENT: "/dashboard/parent",
 };
 
-// role asosida redirect path olish
-const getRoleRedirectPath = (role: string | null) => {
-  return role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
-};
+const getRoleRedirectPath = (role: string | null) =>
+  role ? ROLE_REDIRECTS[role] || "/dashboard/teacher" : "/signin";
 
-// bosh sahifa uchun redirect
 const RootRedirect: React.FC = () => {
   const { role } = useAuthContext();
   return <Navigate to={getRoleRedirectPath(role)} replace />;
 };
 
-// Protected Route
 function ProtectedRoute({ children, allowedRoles }: Props) {
   const token = localStorage.getItem("auth_token");
   const role = localStorage.getItem("user_role");
@@ -93,17 +104,14 @@ function ProtectedRoute({ children, allowedRoles }: Props) {
   }
 
   if (allowedRoles && !allowedRoles.includes(role || "")) {
-    if (role === "ROLE_ADMIN")
-      return <Navigate to="/dashboard/admin" replace />;
-    if (role === "ROLE_TEACHER")
-      return <Navigate to="/dashboard/teacher" replace />;
+    if (role === "ROLE_ADMIN") return <Navigate to="/dashboard/admin" replace />;
+    if (role === "ROLE_TEACHER") return <Navigate to="/dashboard/teacher" replace />;
     return <Navigate to="/signin" replace />;
   }
 
   return <>{children}</>;
 }
 
-// Public Route
 function PublicRoute({ children }: Props) {
   const token = localStorage.getItem("auth_token");
   const role = localStorage.getItem("user_role");
@@ -115,7 +123,8 @@ function PublicRoute({ children }: Props) {
   return <>{children}</>;
 }
 
-// App Component
+// ─── App ──────────────────────────────────────────────────────────────────────
+
 export default function App() {
   const { theme } = useTheme();
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
@@ -174,151 +183,93 @@ export default function App() {
       {!isOnline && (
         <div
           style={{
-            background: "red",
-            color: "white",
-            padding: "10px",
-            textAlign: "center",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            zIndex: 9999,
+            background: "red", color: "white", padding: "10px",
+            textAlign: "center", position: "fixed",
+            top: 0, left: 0, width: "100%", zIndex: 9999,
           }}
         >
-          Internet yo‘q. Iltimos, tarmoqni tekshiring.
+          Internet yo'q. Iltimos, tarmoqni tekshiring.
         </div>
       )}
+
       <ScrollToTop />
-      <Routes>
-        {/* Auth */}
-        <Route
-          path="/signin"
-          element={
-            <PublicRoute>
-              <SignIn />
-            </PublicRoute>
-          }
-        />
-        
-        {/* Dashboard */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/" element={<RootRedirect />} />
 
-          {/* Dashboards */}
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Auth */}
           <Route
-            path="dashboard/admin"
+            path="/signin"
             element={
-              <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/super_admin"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}>
-                <SuperAdmin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/teacher"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_TEACHER"]}>
-                <Teacher />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/student"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_STUDENT"]}>
-                <Student />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard/parent"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_PARENT"]}>
-                <Parent />
-              </ProtectedRoute>
+              <PublicRoute>
+                <SignIn />
+              </PublicRoute>
             }
           />
 
-          {/* Users */}
-          <Route path="teachers" element={<Teachers />} />
-          <Route path="teachers/:id" element={<TeachersDetail />} />
-          <Route path="admins" element={<Admins />} />
-          <Route path="admins/:id" element={<AdminsDetail />} />
-          <Route path="students" element={<Students />} />
-          <Route path="students/:id" element={<StudentsDetail />} />
-          <Route path="parents" element={<Parents />} />
-          <Route path="parents/:id" element={<ParentsDetail />} />
-          <Route path="my-childs-grades" element={<MyChildsGrades />} />
-          <Route path="my-childs/:id" element={<MyChildsDetail />} />
+          {/* Protected layout */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<RootRedirect />} />
 
-          {/* Messages & Grades */}
-          <Route path="messages" element={<Messages />} />
-          <Route path="grades" element={<Grades />} />
-          <Route path="my-grades" element={<MyGrades />} />
+            {/* Dashboards */}
+            <Route path="dashboard/admin" element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]}><Admin /></ProtectedRoute>} />
+            <Route path="dashboard/super_admin" element={<ProtectedRoute allowedRoles={["ROLE_SUPER_ADMIN"]}><SuperAdmin /></ProtectedRoute>} />
+            <Route path="dashboard/teacher" element={<ProtectedRoute allowedRoles={["ROLE_TEACHER"]}><Teacher /></ProtectedRoute>} />
+            <Route path="dashboard/student" element={<ProtectedRoute allowedRoles={["ROLE_STUDENT"]}><Student /></ProtectedRoute>} />
+            <Route path="dashboard/parent" element={<ProtectedRoute allowedRoles={["ROLE_PARENT"]}><Parent /></ProtectedRoute>} />
 
-          {/* Attendance */}
-          <Route path="attendance/:id" element={<Attendance />} />
-          <Route path="attendance" element={<AttendanceGroup />} />
-          <Route path="presence/:id" element={<Presence />} />
-          <Route path="presence" element={<PresenceGroup />} />
+            {/* Users */}
+            <Route path="teachers" element={<Teachers />} />
+            <Route path="teachers/:id" element={<TeachersDetail />} />
+            <Route path="admins" element={<Admins />} />
+            <Route path="admins/:id" element={<AdminsDetail />} />
+            <Route path="students" element={<Students />} />
+            <Route path="students/:id" element={<StudentsDetail />} />
+            <Route path="parents" element={<Parents />} />
+            <Route path="parents/:id" element={<ParentsDetail />} />
+            <Route path="my-childs-grades" element={<MyChildsGrades />} />
+            <Route path="my-childs/:id" element={<MyChildsDetail />} />
 
-          {/* News */}
-          <Route path="news" element={<News />} />
+            {/* Grades */}
+            <Route path="grades" element={<Grades />} />
+            <Route path="my-grades" element={<MyGrades />} />
+            <Route path="assessment" element={<TeacherGroups />} />
+            <Route path="assessment/:id" element={<SingleAssessment />} />
 
-          {/* Categories & Groups */}
-          <Route path="categories" element={<Categories />} />
-          <Route path="categories/:id" element={<CategoryDetail />} />
-          <Route path="groups" element={<Groups />} />
-          <Route path="groups/:id" element={<GroupsDetail />} />
+            {/* Attendance */}
+            <Route path="attendance/:id" element={<Attendance />} />
+            <Route path="attendance" element={<AttendanceGroup />} />
+            <Route path="presence/:id" element={<Presence />} />
+            <Route path="presence" element={<PresenceGroup />} />
 
-          {/* Assessment */}
-          <Route path="assessment" element={<TeacherGroups />} />
-          <Route path="assessment/:id" element={<SingleAssessment />} />
+            {/* Categories & Groups */}
+            <Route path="categories" element={<Categories />} />
+            <Route path="categories/:id" element={<CategoryDetail />} />
+            <Route path="groups" element={<Groups />} />
+            <Route path="groups/:id" element={<GroupsDetail />} />
 
-          {/* Rooms */}
-          <Route path="rooms" element={<Rooms />} />
-          <Route path="room/:id" element={<RoomsID />} />
+            {/* Rooms */}
+            <Route path="rooms" element={<Rooms />} />
+            <Route path="room/:id" element={<RoomsID />} />
 
-          {/* Profile & Other Pages */}
-          <Route path="profile" element={<UserProfiles />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="blank" element={<Blank />} />
+            {/* Others */}
+            <Route path="messages" element={<Messages />} />
+            <Route path="news" element={<News />} />
+            <Route path="profile" element={<UserProfiles />} />
+            <Route path="calendar" element={<Calendar />} />
+          </Route>
 
-          {/* Tables */}
-          <Route path="basic-tables" element={<BasicTables />} />
+          {/* Fallback */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
 
-          {/* UI Elements */}
-          <Route path="alerts" element={<Alerts />} />
-          <Route path="avatars" element={<Avatars />} />
-          <Route path="badge" element={<Badges />} />
-          <Route path="buttons" element={<Buttons />} />
-          <Route path="images" element={<Images />} />
-          <Route path="videos" element={<Videos />} />
-
-          {/* Charts */}
-          <Route path="line-chart" element={<LineChart />} />
-          <Route path="bar-chart" element={<BarChart />} />
-        </Route>
-
-        {/* Fallback */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-
-      {/* Toaster */}
       <Toaster
         position="top-right"
         richColors
