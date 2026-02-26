@@ -11,21 +11,21 @@ import { useDashboardMetrics } from "../../hooks/useDashboard";
 const METRIC_CONFIGS = [
   {
     titleKey: "students",
-    dataKey: "countStudents" as const,
+    dataKey: "countLesson" as const,
     icon: <UsergroupAddOutlined style={{ fontSize: 24, color: "#1AA753" }} />,
     badgeColor: "success",
     format: (v: number) => v.toLocaleString(),
   },
   {
     titleKey: "groups",
-    dataKey: "countGroups" as const,
+    dataKey: "groupCount" as const,
     icon: <TeamOutlined style={{ fontSize: 24, color: "#465FFF" }} />,
     badgeColor: "success",
     format: (v: number) => String(v),
   },
   {
     titleKey: "todayLessons",
-    dataKey: "countLessons" as const,
+    dataKey: "countLesson" as const,
     icon: <CalendarOutlined style={{ fontSize: 24, color: "#F79009" }} />,
     badgeColor: "warning",
     format: (v: number) => String(v),
@@ -35,7 +35,7 @@ const METRIC_CONFIGS = [
 export default function AcademyMetrics() {
   const { t } = useTranslation();
   const { metrics, loading } = useDashboardMetrics();
-
+  
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {METRIC_CONFIGS.map((config, i) => {
@@ -64,18 +64,16 @@ export default function AcademyMetrics() {
                   />
                 ) : (
                   <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                    {value !== null && value !== undefined
-                      ? config.format(value)
-                      : "—"}
+                    {value != null ? config.format(value) : "—"}
                   </h4>
                 )}
               </div>
 
-              {!loading && value !== null && (
+              {!loading && value != null && (
                 <Badge
                   color={config.badgeColor as "success" | "warning" | "info"}
                 >
-                  {config.format(value!)}
+                  {config.format(value)}
                 </Badge>
               )}
             </div>

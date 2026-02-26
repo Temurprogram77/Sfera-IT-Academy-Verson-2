@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { dashboardService } from "../services/dashboardService";
-import { GroupEnum, IDashboardMetrics, IScheduleRoom } from "../types/dashboard";
+import { GroupEnum, IDashboardMetrics, IScheduleRoom, IDashboardMetricsTeacher } from "../types/dashboard";
 
 // ─── Query Keys ───────────────────────────────────────────────────────────────
 // Bu qatorlarni QUERY_KEYS dagi EVENTS dan keyin qo'shing:
@@ -13,7 +13,7 @@ import { GroupEnum, IDashboardMetrics, IScheduleRoom } from "../types/dashboard"
 // ─── Dashboard Metrics Hook ───────────────────────────────────────────────────
 export const useDashboardMetrics = () => {
   const { data, isLoading, error, refetch } = useQuery<
-    IDashboardMetrics | null,
+    IDashboardMetrics | IDashboardMetricsTeacher | null,
     Error
   >({
     queryKey: ["dashboard", "metrics"],
