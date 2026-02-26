@@ -7,11 +7,15 @@ export interface IDashboardMetrics {
   countEmployees: number;
   countLessons: number;
 }
-
+export interface IDashboardMetricsTeacher {
+  studentCount: number;
+  groupCount: number;
+  countLesson: number;
+}
 export interface IDashboardMetricsResponse {
   success: boolean;
   message: string;
-  data: IDashboardMetrics;
+  data: IDashboardMetrics | IDashboardMetricsTeacher;
 }
 
 // ─── Schedule (Jadval) ────────────────────────────────────────────────────────

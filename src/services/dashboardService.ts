@@ -5,16 +5,21 @@ import {
   IScheduleRoom,
   IScheduleResponse,
   GroupEnum,
+  IDashboardMetricsTeacher,
 } from "../types/dashboard";
 
+const getDashboardEndpoint = (): string => {
+  const role = localStorage.getItem("user_role");
+  return role === "ROLE_TEACHER" ? "/dashboard/teacher" : "/dashboard";
+};
+
 export const dashboardService = {
-  // GET /dashboard — umumiy statistika
-  getMetrics: async (): Promise<IDashboardMetrics | null> => {
+  // GET /dashboard or /dashboard/teacher — umumiy statistika
+  getMetrics: async (): Promise<IDashboardMetrics | IDashboardMetricsTeacher | null> => {
     try {
-      const response = await apiClient.get<IDashboardMetricsResponse>(
-        "/dashboard"
-      );
-      if (response.data && response.data) {
+      const endpoint = getDashboardEndpoint();
+      const response = await apiClient.get<IDashboardMetricsResponse>(endpoint);
+      if (response.data) {
         return response.data;
       }
       return null;
