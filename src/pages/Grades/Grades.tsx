@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useGroups } from "../../hooks/useGroups";
 import NotFoundData from "../OtherPage/NotFoundData";
+import ListHeader from "../../components/ListHeader/ListHeader";
 
 const PRIMARY_COLOR = "#00A67D";
 
@@ -36,28 +37,13 @@ const Grades = () => {
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-          Baholar
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Guruhni tanlang va o'quvchilar baholarini ko'ring
-        </p>
-      </div>
-
-      {/* Search */}
-      <div className="mb-6 max-w-md">
-        <Input
-          prefix={<SearchOutlined className="text-gray-400" />}
-          placeholder="Guruh nomi bo'yicha qidirish..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          size="large"
-          className="rounded-xl"
-          allowClear
-        />
-      </div>
+  <ListHeader
+  title="Baholar"
+  count={groups.length}
+  searchValue={searchTerm}
+  onSearchChange={setSearchTerm}
+  searchPlaceholder="Guruh nomi bo‘yicha qidirish..."
+/>
 
       {/* Content */}
       {loading ? (

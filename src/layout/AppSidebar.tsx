@@ -65,6 +65,7 @@ const AppSidebar: React.FC = () => {
           { name: t("teachers"), path: "/teachers", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
           { name: t("parents"), path: "/parents", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
           { name: t("students"), path: "/students", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
+          { name: t("inactives"), path: "/inactives", pro: false, roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"] },
         ],
       },
       {

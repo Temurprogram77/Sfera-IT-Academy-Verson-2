@@ -20,6 +20,8 @@ export const API_ENDPOINTS = {
     UPDATE: "/student",
     UPDATE_GROUP: "/student/update-group",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
+    INACTIVE: "/student/inactive-student",
+    INACTIVE_UPDATE: (studentId: string | number) => `/user/activateStudent/${studentId}`
   },
   ATTENDANCE: {
     BASE: "/attendance",

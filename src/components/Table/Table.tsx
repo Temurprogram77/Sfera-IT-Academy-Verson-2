@@ -8,7 +8,8 @@ import { TableComponentProps } from "../../types/table";
 import IconButton from "../IconButton/IconButton";
 import { EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
- 
+
+// Diqqat: TableComponentProps interfeysida className bo'lishi shart
 const TableComponent = <T extends { id: number }>({
   data,
   columnsConfig,
@@ -19,7 +20,8 @@ const TableComponent = <T extends { id: number }>({
   onEdit,
   onDelete,
   viewPath,
-}: TableComponentProps<T>) => {
+  className, // <-- Yangi qo'shilgan prop
+}: TableComponentProps<T> & { className?: string }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [items, setItems] = useState<T[]>(data);
@@ -33,11 +35,7 @@ const TableComponent = <T extends { id: number }>({
 
   const filteredItems = useMemo(() => {
     if (!searchKeys.length) return items;
-    return items.filter((i) =>
-      searchKeys.some((key) =>
-        String(i[key]).toLowerCase().includes(""),
-      ),
-    );
+    return items; // Qidiruv mantiqi hook darajasida hal qilingani ma'qul
   }, [items, searchKeys]);
 
   const showModal = (item: T | null = null) => {
@@ -87,6 +85,7 @@ const TableComponent = <T extends { id: number }>({
           {
             title: t("actions"),
             key: "actions",
+            align: "right" as const,
             render: (_: unknown, record: T) => (
               <div className="flex justify-end gap-3">
                 {viewPath && (
@@ -104,7 +103,7 @@ const TableComponent = <T extends { id: number }>({
                 )}
                 {onDelete && (
                   <Popconfirm
-                    title={`${itemName} ${t("confirmDeleteSuffix")}`}
+                    title={`${itemName} o'chirilsinmi?`}
                     onConfirm={() => handleDelete(record.id)}
                     okText={t("yes")}
                     cancelText={t("no")}
@@ -122,7 +121,7 @@ const TableComponent = <T extends { id: number }>({
   ];
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl">
+    <div className={`bg-white dark:bg-gray-900 rounded-xl ${className || ""}`}>
       <div className="overflow-x-auto">
         <Table
           columns={columns as any}
@@ -136,15 +135,9 @@ const TableComponent = <T extends { id: number }>({
       {modalFields.length > 0 && (
         <ModalComponent
           open={isModalVisible}
-          title={
-            editingItem
-              ? `${itemName} ${t("edit")}`
-              : `${t("new")} ${itemName}`
-          }
+          title={editingItem ? `${itemName} tahrirlash` : `Yangi ${itemName}`}
           onOk={handleSave}
           onCancel={() => setIsModalVisible(false)}
-          okText={t("save")}
-          cancelText={t("close")}
         >
           <Form form={form} layout="vertical">
             {modalFields.map((field) => (

@@ -8,38 +8,64 @@ import { Skeleton } from "antd";
 import Badge from "../ui/badge/Badge";
 import { useDashboardMetrics } from "../../hooks/useDashboard";
 
-const METRIC_CONFIGS = [
+/* ============================= */
+/* Metric Config Type */
+/* ============================= */
+
+type MetricKey = "countLesson" | "groupCount";
+
+type MetricConfig = {
+  titleKey: string;
+  dataKey: MetricKey;
+  icon: React.ReactNode;
+  badgeColor: "success" | "warning" | "info";
+  format: (v: number) => string;
+};
+
+/* ============================= */
+/* Metric Configs */
+/* ============================= */
+
+const METRIC_CONFIGS: MetricConfig[] = [
   {
     titleKey: "students",
-    dataKey: "countLesson" as const,
+    dataKey: "countLesson",
     icon: <UsergroupAddOutlined style={{ fontSize: 24, color: "#1AA753" }} />,
     badgeColor: "success",
-    format: (v: number) => v.toLocaleString(),
+    format: (v) => v.toLocaleString(),
   },
   {
     titleKey: "groups",
-    dataKey: "groupCount" as const,
+    dataKey: "groupCount",
     icon: <TeamOutlined style={{ fontSize: 24, color: "#465FFF" }} />,
     badgeColor: "success",
-    format: (v: number) => String(v),
+    format: (v) => String(v),
   },
   {
     titleKey: "todayLessons",
-    dataKey: "countLesson" as const,
+    dataKey: "countLesson",
     icon: <CalendarOutlined style={{ fontSize: 24, color: "#F79009" }} />,
     badgeColor: "warning",
-    format: (v: number) => String(v),
+    format: (v) => String(v),
   },
 ];
+
+/* ============================= */
+/* Component */
+/* ============================= */
 
 export default function AcademyMetrics() {
   const { t } = useTranslation();
   const { metrics, loading } = useDashboardMetrics();
-  
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {METRIC_CONFIGS.map((config, i) => {
-        const value = metrics ? metrics[config.dataKey] : null;
+        // ✅ Safe access
+        const value =
+          metrics && config.dataKey in metrics
+            ? metrics[config.dataKey as keyof typeof metrics]
+            : null;
 
         return (
           <div
@@ -64,16 +90,14 @@ export default function AcademyMetrics() {
                   />
                 ) : (
                   <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                    {value != null ? config.format(value) : "—"}
+                    {value != null ? config.format(value as number) : "—"}
                   </h4>
                 )}
               </div>
 
               {!loading && value != null && (
-                <Badge
-                  color={config.badgeColor as "success" | "warning" | "info"}
-                >
-                  {config.format(value)}
+                <Badge color={config.badgeColor}>
+                  {config.format(value as number)}
                 </Badge>
               )}
             </div>

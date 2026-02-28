@@ -15,6 +15,17 @@ export const QUERY_KEYS = {
   AUTH: {
     USER: ["auth", "user"] as const,
   },
+  INACTIVE_STUDENTS: {
+    CREATE: "inactives",
+    DETAIL: (id: string | number) => ["inactives", id] as const,
+    TEACHERS_SIMPLE: "inactives-list",
+  },
+  ASSESSMENTS: {
+    ALL: ["assessments"] as const,
+    BY_GROUP: (groupId: number | string) =>
+      ["assessments", "byGroup", groupId] as const,
+    BY_ID: (id: number | string) => ["assessments", id] as const,
+  },
   STUDENTS: {
     ALL: ["students"] as const,
     DETAIL: "student-detail",

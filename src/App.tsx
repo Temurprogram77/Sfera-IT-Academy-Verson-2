@@ -27,6 +27,7 @@ const Parent = lazy(() => import("./dashboards/parent"));
 const Teachers = lazy(() => import("./pages/Teachers/Teachers"));
 const TeachersDetail = lazy(() => import("./pages/TeachersDetail/TeachersDetail"));
 const Admins = lazy(() => import("./pages/Admins/Admins"));
+const InActives = lazy(() => import("./pages/InActives/InActives"));
 const AdminsDetail = lazy(() => import("./pages/AdminsDetail/AdminsDetail"));
 const Students = lazy(() => import("./pages/Students/Students"));
 const StudentsDetail = lazy(() => import("./pages/StudentsDetail/StudentsDetail"));
@@ -39,7 +40,7 @@ const MyChildsDetail = lazy(() => import("./pages/MyChildsDetail/MyChildsDetail"
 const Grades = lazy(() => import("./pages/Grades/Grades"));
 const MyGrades = lazy(() => import("./pages/myGrades/MyGrades"));
 const TeacherGroups = lazy(() => import("./pages/Grades/Assessment"));
-const SingleAssessment = lazy(() => import("./pages/Grades/GroupAssessment"));
+const GroupAssessmentPage = lazy(() => import("./pages/Grades/GroupAssessmentPage"));
 
 // Attendance
 const Attendance = lazy(() => import("./pages/Attendance/Attendance"));
@@ -235,12 +236,13 @@ export default function App() {
             <Route path="parents/:id" element={<ParentsDetail />} />
             <Route path="my-childs-grades" element={<MyChildsGrades />} />
             <Route path="my-childs/:id" element={<MyChildsDetail />} />
+            <Route path="inactives" element={<InActives />} />
 
             {/* Grades */}
             <Route path="grades" element={<Grades />} />
             <Route path="my-grades" element={<MyGrades />} />
             <Route path="assessment" element={<TeacherGroups />} />
-            <Route path="assessment/:id" element={<SingleAssessment />} />
+            <Route path="assessment/:id" element={<GroupAssessmentPage />} />
 
             {/* Attendance */}
             <Route path="attendance/:id" element={<Attendance />} />
