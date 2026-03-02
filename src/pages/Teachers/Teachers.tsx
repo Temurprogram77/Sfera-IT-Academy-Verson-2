@@ -252,18 +252,15 @@ const Teacher = () => {
           {/* CREATE MODE - Faqat Password */}
           {!isEditMode && (
             <FormWrapper.Item
-              name="password"
-              label="Parol"
-              rules={[
-                { required: true, message: "Parolni kiriting!" },
-                {
-                  min: 6,
-                  message: "Parol kamida 6 ta belgidan iborat bo'lishi kerak!",
-                },
-              ]}
-            >
-              <InputComponent type="password" placeholder="Parolni kiriting" />
-            </FormWrapper.Item>
+                name="password"
+                label="Password"
+                rules={[{ required: true, message: "Please enter password" }]}
+              >
+                <InputComponent
+                  variant="password"
+                  placeholder="Enter password"
+                />
+              </FormWrapper.Item>
           )}
 
           {/* EDIT MODE - Faqat File Upload */}
