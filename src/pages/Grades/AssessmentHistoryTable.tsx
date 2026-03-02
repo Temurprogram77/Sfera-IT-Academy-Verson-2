@@ -1,4 +1,3 @@
-// components/AssessmentHistoryTable.tsx
 import React, { useState } from "react";
 import {
   Table,
@@ -20,13 +19,14 @@ import {
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useAssessment } from "../../hooks/useAssessment";
+import { useArchiveMarks } from "../../hooks/useAssessment";
 import type { Assessment } from "../../types/assessment";
 
 const { Text } = Typography;
 
 interface AssessmentHistoryTableProps {
   groupId: number | string;
+  isActive: boolean;
 }
 
 const categoryColors: Record<string, string> = {
@@ -43,23 +43,24 @@ const categoryLabels: Record<string, string> = {
 
 const AssessmentHistoryTable: React.FC<AssessmentHistoryTableProps> = ({
   groupId,
+  isActive,
 }) => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
-  const { assessments, pagination, loading } = useAssessment(groupId, {
-    page,
-    size: pageSize,
-  });
+  const { archiveMarks, pagination, loading } = useArchiveMarks(
+    groupId,
+    { page, size: pageSize },
+    isActive
+  );
 
-  // Stats
-  const yashilCount = assessments.filter(
+  const yashilCount = archiveMarks.filter(
     (a) => a.markCategoryStatus === "YASHIL"
   ).length;
-  const sariqCount = assessments.filter(
+  const sariqCount = archiveMarks.filter(
     (a) => a.markCategoryStatus === "SARIQ"
   ).length;
-  const qizilCount = assessments.filter(
+  const qizilCount = archiveMarks.filter(
     (a) => a.markCategoryStatus === "QIZIL"
   ).length;
 
@@ -173,7 +174,6 @@ const AssessmentHistoryTable: React.FC<AssessmentHistoryTableProps> = ({
 
   return (
     <div>
-      {/* Stats row */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={8}>
           <Card
@@ -242,7 +242,7 @@ const AssessmentHistoryTable: React.FC<AssessmentHistoryTableProps> = ({
 
       <Table<Assessment>
         columns={columns}
-        dataSource={assessments}
+        dataSource={archiveMarks}
         loading={loading}
         rowKey="markId"
         locale={{

@@ -1,4 +1,3 @@
-// hooks/useAssessment.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { assessmentService } from "../services/assessmentService";
@@ -13,11 +12,12 @@ import type {
   UpdateAssessmentDto,
   UpdateAssessmentResponse,
   DeleteAssessmentResponse,
+  ArchiveMarksParams,
+  ArchiveMarksResponse,
 } from "../types/assessment";
 
 // ─────────────────────────────────────────────────────────────────
-// useAssessment
-// Guruh bo'yicha baholar + to'liq CRUD
+// useAssessment — Guruh bo'yicha baholar + to'liq CRUD
 // ─────────────────────────────────────────────────────────────────
 export const useAssessment = (
   groupId: number | string,
@@ -25,18 +25,15 @@ export const useAssessment = (
 ) => {
   const queryClient = useQueryClient();
 
-  // ── GET: Guruh baholarini olish ──────────────────────────────
-  const { data, isLoading, error, refetch } = useQuery<
-    AssessmentsByGroupResponse,
-    Error
-  >({
+  // GET: Guruh bo'yicha baholarni olish
+  const query = useQuery<AssessmentsByGroupResponse, Error>({
     queryKey: [...QUERY_KEYS.ASSESSMENTS.BY_GROUP(groupId), params],
     queryFn: () => assessmentService.getAssessmentsByGroup(groupId, params),
     enabled: !!groupId,
-    staleTime: 1000 * 60 * 2,
+    staleTime: 1000 * 60 * 2, // 2 daqiqa
   });
 
-  // ── POST: Yangi baho qo'shish ────────────────────────────────
+  // CREATE: Yangi baho qo'shish
   const createAssessmentMutation = useMutation<
     CreateAssessmentResponse,
     Error,
@@ -57,7 +54,7 @@ export const useAssessment = (
     },
   });
 
-  // ── PUT: Bahoni yangilash ────────────────────────────────────
+  // UPDATE: Bahoni yangilash
   const updateAssessmentMutation = useMutation<
     UpdateAssessmentResponse,
     Error,
@@ -78,16 +75,19 @@ export const useAssessment = (
     },
   });
 
-  // ── DELETE: Bahoni o'chirish ─────────────────────────────────
+  // DELETE: Bahoni o'chirish
   const deleteAssessmentMutation = useMutation<
     DeleteAssessmentResponse,
     Error,
-    number
+    number // assessment id
   >({
     mutationFn: (id) => assessmentService.deleteAssessment(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.ASSESSMENTS.BY_GROUP(groupId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.ASSESSMENTS.ALL,
       });
       toast.success("Baho muvaffaqiyatli o'chirildi");
     },
@@ -97,19 +97,22 @@ export const useAssessment = (
   });
 
   return {
-    // ── Ma'lumotlar ─────────────────────────────────────────────
-    assessments: data?.data?.body || [],
+    // query natijalari
+    assessments: query.data?.data?.body || [],
     pagination: {
-      page: data?.data?.page || 0,
-      size: data?.data?.size || 10,
-      totalPage: data?.data?.totalPage || 0,
-      totalElements: data?.data?.totalElements || 0,
+      page: query.data?.data?.page || 0,
+      size: query.data?.data?.size || 10,
+      totalPage: query.data?.data?.totalPage || 0,
+      totalElements: query.data?.data?.totalElements || 0,
     },
-    loading: isLoading,
-    error,
-    refetch,
 
-    // ── Mutatsiyalar ────────────────────────────────────────────
+    // holatlar
+    loading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
+    refetch: query.refetch,
+
+    // mutations
     createAssessment: createAssessmentMutation.mutateAsync,
     isCreating: createAssessmentMutation.isPending,
 
@@ -117,31 +120,62 @@ export const useAssessment = (
     isUpdating: updateAssessmentMutation.isPending,
 
     deleteAssessment: deleteAssessmentMutation.mutate,
+    deleteAssessmentAsync: deleteAssessmentMutation.mutateAsync,
     isDeleting: deleteAssessmentMutation.isPending,
   };
 };
 
 // ─────────────────────────────────────────────────────────────────
-// useMyMarks
-// Teacher/Student/Parent o'z baholarini ko'rish uchun
+// useArchiveMarks — Arxivdagi baholar (GET /mark/groups/:groupId/archive-marks)
 // ─────────────────────────────────────────────────────────────────
-export const useMyMarks = (params?: MyMarksParams) => {
-  const { data, isLoading, error, refetch } = useQuery<MyMarksResponse, Error>({
-    queryKey: [...QUERY_KEYS.MARKS.ALL, "myMarks", params],
-    queryFn: () => assessmentService.getMyMarks(params),
-    staleTime: 1000 * 60 * 2,
+export const useArchiveMarks = (
+  groupId: number | string,
+  params?: ArchiveMarksParams,
+  enabled = false
+) => {
+  const query = useQuery<ArchiveMarksResponse, Error>({
+    queryKey: [...QUERY_KEYS.ASSESSMENTS.BY_GROUP(groupId), "archive", params],
+    queryFn: () => assessmentService.getArchiveMarksByGroup(groupId, params),
+    enabled: !!groupId && enabled,
+    staleTime: 1000 * 60 * 5, // 5 daqiqa
   });
 
   return {
-    myMarks: data?.data?.body || [],
+    archiveMarks: query.data?.data?.body || [],
     pagination: {
-      page: data?.data?.page || 0,
-      size: data?.data?.size || 10,
-      totalPage: data?.data?.totalPage || 0,
-      totalElements: data?.data?.totalElements || 0,
+      page: query.data?.data?.page || 0,
+      size: query.data?.data?.size || 10,
+      totalPage: query.data?.data?.totalPage || 0,
+      totalElements: query.data?.data?.totalElements || 0,
     },
-    loading: isLoading,
-    error,
-    refetch,
+    loading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
+    refetch: query.refetch,
+  };
+};
+
+// ─────────────────────────────────────────────────────────────────
+// useMyMarks — O'z baholarim (o'qituvchi/talaba/ota-ona)
+// ─────────────────────────────────────────────────────────────────
+export const useMyMarks = (params?: MyMarksParams) => {
+  const query = useQuery<MyMarksResponse, Error>({
+    queryKey: [...QUERY_KEYS.MARKS.ALL, "myMarks", params],
+    queryFn: () => assessmentService.getMyMarks(params),
+    staleTime: 1000 * 60 * 2, // 2 daqiqa
+  });
+
+  return {
+    myMarks: query.data?.data?.body || [],
+    pagination: {
+      page: query.data?.data?.page || 0,
+      size: query.data?.data?.size || 10,
+      totalPage: query.data?.data?.totalPage || 0,
+      totalElements: query.data?.data?.totalElements || 0,
+    },
+    loading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
+    refetch: query.refetch,
   };
 };

@@ -1,5 +1,3 @@
-// services/assessmentService.ts
-
 import { API_ENDPOINTS, buildUrlWithParams } from "../constants/apiEndpoints";
 import { apiClient } from "../lib/api/client";
 import type {
@@ -13,6 +11,8 @@ import type {
   UpdateAssessmentDto,
   UpdateAssessmentResponse,
   DeleteAssessmentResponse,
+  ArchiveMarksParams,
+  ArchiveMarksResponse,
 } from "../types/assessment";
 
 class AssessmentService {
@@ -33,6 +33,23 @@ class AssessmentService {
     }
   }
 
+  // GET /mark/groups/:groupId/archive-marks?page=0&size=10
+  async getArchiveMarksByGroup(
+    groupId: number | string,
+    params?: ArchiveMarksParams
+  ): Promise<ArchiveMarksResponse> {
+    try {
+      const url = buildUrlWithParams(
+        API_ENDPOINTS.MARK.ARCHIVE_BY_GROUP(groupId),
+        params
+      );
+      return await apiClient.get<ArchiveMarksResponse>(url);
+    } catch (error) {
+      console.error("Get archive marks by group error", error);
+      throw error;
+    }
+  }
+
   // GET /mark/myMarks?page=0&size=10
   async getMyMarks(params?: MyMarksParams): Promise<MyMarksResponse> {
     try {
@@ -45,7 +62,9 @@ class AssessmentService {
   }
 
   // GET /mark/:markId
-  async getAssessmentById(id: string | number): Promise<AssessmentDetailResponse> {
+  async getAssessmentById(
+    id: string | number
+  ): Promise<AssessmentDetailResponse> {
     try {
       return await apiClient.get<AssessmentDetailResponse>(
         API_ENDPOINTS.MARK.GET_BY_ID(id)
@@ -57,9 +76,9 @@ class AssessmentService {
   }
 
   // POST /mark
-  // IMTIHON_BAHO => totalScore filled, activityScore & homeworkScore = 0
-  // KUNLIK_BAHO  => activityScore + homeworkScore filled, totalScore = 0
-  async createAssessment(data: CreateAssessmentDto): Promise<CreateAssessmentResponse> {
+  async createAssessment(
+    data: CreateAssessmentDto
+  ): Promise<CreateAssessmentResponse> {
     try {
       return await apiClient.post<CreateAssessmentResponse>(
         API_ENDPOINTS.MARK.CREATE,
@@ -72,7 +91,9 @@ class AssessmentService {
   }
 
   // PUT /mark/update
-  async updateAssessment(data: UpdateAssessmentDto): Promise<UpdateAssessmentResponse> {
+  async updateAssessment(
+    data: UpdateAssessmentDto
+  ): Promise<UpdateAssessmentResponse> {
     try {
       return await apiClient.put<UpdateAssessmentResponse>(
         API_ENDPOINTS.MARK.UPDATE,

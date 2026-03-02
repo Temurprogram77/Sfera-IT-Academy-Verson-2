@@ -120,17 +120,6 @@ const GroupsDetail = () => {
                 </Tag>
               )}
             </Col>
-            <Col>
-              <Button
-                type="primary"
-                icon={<EditOutlined />}
-                size="large"
-                style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
-                onClick={() => navigate(`/groups/${id}/edit`)}
-              >
-                Tahrirlash
-              </Button>
-            </Col>
           </Row>
         </Card>
 

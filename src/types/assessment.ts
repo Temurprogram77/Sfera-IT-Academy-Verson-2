@@ -1,5 +1,3 @@
-// types/assessment.ts
-
 export type MarkCategoryStatus = "YASHIL" | "SARIQ" | "QIZIL";
 export type MarkStatus = "KUNLIK_BAHO" | "IMTIHON_BAHO";
 
@@ -40,8 +38,22 @@ export interface AssessmentsByGroupResponse {
   data: PaginationData<Assessment>;
 }
 
+// ─── Archive Marks (GET /mark/groups/:groupId/archive-marks) ───
+export interface ArchiveMarksParams
+  extends Record<string, string | number | undefined> {
+  page?: number;
+  size?: number;
+}
+
+export interface ArchiveMarksResponse {
+  success: boolean;
+  message: string;
+  data: PaginationData<Assessment>;
+}
+
 // ─── My Marks (GET /mark/myMarks) ─────────────────────────────
-export interface MyMarksParams extends Record<string, string | number | undefined> {
+export interface MyMarksParams
+  extends Record<string, string | number | undefined> {
   page?: number;
   size?: number;
 }
@@ -53,15 +65,13 @@ export interface MyMarksResponse {
 }
 
 // ─── Create Assessment (POST /mark) ────────────────────────────
-// markStatus === IMTIHON_BAHO => faqat totalScore, qolgani 0
-// markStatus === KUNLIK_BAHO  => activityScore + homeworkScore, totalScore 0
 export interface CreateAssessmentDto {
   studentId: number;
   homeworkScore: number;
   activityScore: number;
   totalScore: number;
   markStatus: MarkStatus;
-  date: string; // YYYY-MM-DD
+  date: string;
 }
 
 export interface CreateAssessmentResponse {
@@ -78,7 +88,7 @@ export interface UpdateAssessmentDto {
   activityScore: number;
   totalScore: number;
   markStatus: MarkStatus;
-  date: string; // YYYY-MM-DD
+  date: string;
 }
 
 export interface UpdateAssessmentResponse {
@@ -101,7 +111,7 @@ export interface AssessmentDetailResponse {
   data: Assessment;
 }
 
-// ─── Form values (modal ichida ishlatiladi) ────────────────────
+// ─── Form values ───────────────────────────────────────────────
 export interface AssessmentFormValues {
   markStatus: MarkStatus;
   totalScore?: number;

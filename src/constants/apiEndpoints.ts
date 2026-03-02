@@ -21,7 +21,8 @@ export const API_ENDPOINTS = {
     UPDATE_GROUP: "/student/update-group",
     DELETE: (studentId: string | number) => `/student/${studentId}`,
     INACTIVE: "/student/inactive-student",
-    INACTIVE_UPDATE: (studentId: string | number) => `/user/activateStudent/${studentId}`
+    INACTIVE_UPDATE: (studentId: string | number) =>
+      `/user/activateStudent/${studentId}`,
   },
   ATTENDANCE: {
     BASE: "/attendance",
@@ -30,7 +31,6 @@ export const API_ENDPOINTS = {
     STREAM: (groupId: number | string) => `/attendance/stream/${groupId}`,
     DELETE: (attendanceId: number | string) => `/attendance/${attendanceId}`,
   },
-
   TEACHER: {
     All: "/teacher/list",
     LIST: "/teacher",
@@ -76,6 +76,8 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (id: string | number) => `/mark/${id}`,
     CREATE: "/mark",
     BY_GROUP: (groupId: string | number) => `/mark/byGroup/${groupId}`,
+    ARCHIVE_BY_GROUP: (groupId: string | number) =>
+      `/mark/groups/${groupId}/archive-marks`,
     UPDATE: "/mark/update",
     DELETE: (id: string | number) => `/mark/${id}`,
   },
@@ -92,8 +94,7 @@ export const API_ENDPOINTS = {
     CREATE: "/event",
     UPDATE: "/event/update",
     GET_BY_DATE: "/event/byDate",
-
-    DELETE: (eventId: string | number) => `/event/${eventId}`, 
+    DELETE: (eventId: string | number) => `/event/${eventId}`,
   },
   DASHBOARD_ENDPOINTS: {
     METRICS: "/dashboard",
@@ -117,7 +118,7 @@ export const API_ENDPOINTS = {
 
 export const buildUrlWithParams = (
   endpoint: string,
-  params?: Record<string, string | number | boolean | undefined | null>,
+  params?: Record<string, string | number | boolean | undefined | null>
 ): string => {
   if (!params) return endpoint;
 

@@ -1,4 +1,3 @@
-// components/AssessmentDetail.tsx
 import React, { useState } from "react";
 import { Tabs, TabsProps } from "antd";
 import { BookOutlined, HistoryOutlined } from "@ant-design/icons";
@@ -20,7 +19,7 @@ const AssessmentDetail: React.FC<AssessmentDetailProps> = ({
     {
       key: "students",
       label: (
-        <span className="flex items-center gap-2">
+        <span className="flex items-center dark:text-white gap-2">
           <BookOutlined />
           O'quvchilarni baholash
         </span>
@@ -37,7 +36,12 @@ const AssessmentDetail: React.FC<AssessmentDetailProps> = ({
           Baholash tarixi
         </span>
       ),
-      children: <AssessmentHistoryTable groupId={groupId} />,
+      children: (
+        <AssessmentHistoryTable
+          groupId={groupId}
+          isActive={activeTab === "history"}
+        />
+      ),
     },
   ];
 
@@ -46,12 +50,12 @@ const AssessmentDetail: React.FC<AssessmentDetailProps> = ({
       {groupName && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800">{groupName}</h1>
-          <p className="text-gray-500 mt-1">Guruh baholash paneli</p>
+          <p className="text-gray-500 dark:text-white mt-1">Guruh baholash paneli</p>
         </div>
       )}
       <div
+      className="bg-[#fff] dark:bg-[#1D2939]"
         style={{
-          background: "#fff",
           borderRadius: 12,
           padding: "16px",
           boxShadow: "0 1px 4px rgba(0,0,0,0.08)",

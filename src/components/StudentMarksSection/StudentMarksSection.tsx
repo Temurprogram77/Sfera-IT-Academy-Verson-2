@@ -170,14 +170,6 @@ const StudentMarksSection = ({ groupId, students }: StudentMarksSectionProps) =>
           className="flex-1 rounded-lg"
           allowClear
         />
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
-          style={{ backgroundColor: PRIMARY_COLOR }}
-        >
-          <PlusOutlined />
-          Baho qo'shish
-        </button>
       </div>
 
       {/* Marks list */}
