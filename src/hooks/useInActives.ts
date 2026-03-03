@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import InActivesService from "../services/InActivesService";
 import { IInactiveStudent } from "../types/inactives";
 
-// Parametrlarni qabul qilish (qidiruv va sahifalash uchun)
 interface UseInActivesProps {
   name?: string;
   page: number;
@@ -18,67 +17,64 @@ const useInActives = ({ name, page, size }: UseInActivesProps) => {
   const fetchInactiveStudents = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await InActivesService.getAll();
-      
-      let data: IInactiveStudent[] = [];
+      const data = await InActivesService.getAll();
 
-      if (Array.isArray(res)) {
-        data = res;
-      } else if (res && Array.isArray(res)) {
-        data = res;
-      }
+      let filtered = data;
 
-      // Qidiruv mantiqi (agar API-da qidiruv bo'lmasa, front-da filter qilamiz)
       if (name) {
-        data = data.filter(s => 
-          s.fulName?.toLowerCase().includes(name.toLowerCase()) || 
-          s.phoneNumber?.includes(name)
+        filtered = data.filter(
+          (s) =>
+            s.fulName?.toLowerCase().includes(name.toLowerCase()) ||
+            s.phoneNumber?.includes(name)
         );
       }
 
-      setStudents(data);
+      setStudents(filtered);
     } catch (err) {
-      console.error("API xatosi:", err);
       setError("Ma'lumotlarni yuklab bo'lmadi");
     } finally {
       setLoading(false);
     }
-  }, [name]); // name o'zgarganda qayta chaqiriladi
+  }, [name]);
 
-  const activateStudent = useCallback(async (studentId: number) => {
+  const activateStudent = useCallback(
+  async (studentId: number): Promise<void> => {
     setActivatingId(studentId);
+    setError(null);
+
     try {
       const res = await InActivesService.activate(studentId);
-      if (res) {
-        setStudents((prev) => prev.filter((s) => s.id !== studentId));
+
+      if (res.success) {
+        await fetchInactiveStudents();
       }
-      return res;
     } catch (err) {
       setError("Studentni aktivlashtirishda xatolik yuz berdi.");
     } finally {
       setActivatingId(null);
     }
-  }, []);
+  },
+  [fetchInactiveStudents]
+);
 
   useEffect(() => {
     fetchInactiveStudents();
   }, [fetchInactiveStudents]);
 
-  // PAGINATION mantiqini yasaymiz
   const pagination = {
     totalElements: students.length,
-    page: page,
-    size: size,
+    page,
+    size,
   };
 
   return {
-    students: students.slice(page * size, (page + 1) * size), // Faqat kerakli qismini kesib beramiz
-    isLoading: loading, // Komponent isLoading kutyapti, shuning uchun nomini o'zgartirdik
+    students: students.slice(page * size, (page + 1) * size),
+    isLoading: loading,
     activatingId,
-    pagination, // Endi pagination mavjud
+    pagination,
     error,
-    fetchInactiveStudents,
     activateStudent,
   };
 };
