@@ -1,265 +1,175 @@
-// components/AssessmentStudentList.tsx
+// components/StudentList.tsx
 import React, { useState } from "react";
-import {
-  Table,
-  Button,
-  Avatar,
-  Tag,
-  Space,
-  Typography,
-  Empty,
-  Tooltip,
-  Popconfirm,
-} from "antd";
+import { Table, Avatar, Space, Typography, Empty, Button, Tooltip } from "antd";
 import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import dayjs from "dayjs";
+import { useGroupDetails } from "../../hooks/useGroups";
 import { useAssessment } from "../../hooks/useAssessment";
-import type { Assessment } from "../../types/assessment";
 import AssessmentFormModal from "./AssessmentFormModal";
+import type { Assessment } from "../../types/assessment";
 
 const { Text } = Typography;
 
-interface AssessmentStudentListProps {
+interface StudentListProps {
   groupId: number | string;
   groupName?: string;
 }
 
-const categoryColors: Record<string, string> = {
-  YASHIL: "success",
-  SARIQ: "warning",
-  QIZIL: "error",
-};
+// API strukturasiga mos Student interfeysi
+interface Student {
+  id: number;
+  fulName: string;
+  imgUrl: string | null;
+  phoneNumber: string;
+  parentName?: string;
+  parentPhone?: string;
+}
 
-const categoryLabels: Record<string, string> = {
-  YASHIL: "Yaxshi",
-  SARIQ: "O'rtacha",
-  QIZIL: "Yomon",
-};
-
-const AssessmentStudentList: React.FC<AssessmentStudentListProps> = ({
-  groupId,
-}) => {
+const StudentList: React.FC<StudentListProps> = ({ groupId, groupName }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
   const [createStudentId, setCreateStudentId] = useState<number | null>(null);
   const [createStudentName, setCreateStudentName] = useState<string>("");
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
 
+  // Guruhdagi o'quvchilarni olish
+  const { students = [], loading: studentsLoading, error } = useGroupDetails(groupId);
+
+  // Baholar bilan ishlash uchun hook
   const {
-    assessments,
-    pagination,
-    loading,
     createAssessment,
     isCreating,
     updateAssessment,
     isUpdating,
-    deleteAssessment,
-    isDeleting,
-  } = useAssessment(groupId, { page, size: pageSize });
+  } = useAssessment(groupId);
 
-  const handleOpenCreate = (studentId: number, studentName: string) => {
-    setSelectedAssessment(null);
-    setCreateStudentId(studentId);
-    setCreateStudentName(studentName);
-    setModalOpen(true);
-  };
-
-  const handleOpenEdit = (record: Assessment) => {
-    setSelectedAssessment(record);
-    setCreateStudentId(null);
-    setCreateStudentName("");
+  // Bahoni yaratish modali ochish
+  const handleOpenCreateAssessment = (student: Student) => {
+    setCreateStudentId(student.id);
+    setCreateStudentName(student.fulName);
     setModalOpen(true);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    setSelectedAssessment(null);
     setCreateStudentId(null);
     setCreateStudentName("");
   };
 
-  const columns: ColumnsType<Assessment> = [
+  const columns: ColumnsType<Student> = [
     {
       title: "O'quvchi",
-      dataIndex: "studentName",
-      key: "studentName",
-      render: (name: string, record) => (
+      key: "fulName",
+      render: (_, record) => (
         <Space>
           <Avatar
-            src={record.imageUrl}
-            icon={!record.imageUrl ? <UserOutlined /> : undefined}
-            size={36}
+            src={record.imgUrl || undefined}
+            icon={<UserOutlined />}
+            size={40}
             style={{ background: "#4f46e5" }}
           />
-          <Text strong>{name}</Text>
+          <div>
+            <Text strong>{record.fulName}</Text>
+            <div style={{ fontSize: 12, color: "#6b7280" }}>
+              {record.phoneNumber || "—"}
+            </div>
+          </div>
         </Space>
       ),
     },
     {
-      title: "Baho turi",
-      dataIndex: "markStatus",
-      key: "markStatus",
-      render: (status: string) => (
-        <Tag color={status === "KUNLIK_BAHO" ? "blue" : "purple"}>
-          {status === "KUNLIK_BAHO" ? "Kunlik baho" : "Imtihon bahosi"}
-        </Tag>
+      title: "Telefon",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      render: (text?: string) => text || "—",
+    },
+    {
+      title: "Ota-ona",
+      key: "parent",
+      render: (_, record) => (
+        <div style={{ fontSize: 13 }}>
+          {record.parentName || "—"}
+          <br />
+          <span style={{ color: "#6b7280" }}>{record.parentPhone || ""}</span>
+        </div>
       ),
-    },
-    {
-      title: "Faollik",
-      dataIndex: "activityScore",
-      key: "activityScore",
-      align: "center",
-      render: (score: number, record) =>
-        record.markStatus === "KUNLIK_BAHO" ? (
-          <Text strong style={{ color: "#4f46e5" }}>{score}</Text>
-        ) : (
-          <Text type="secondary">—</Text>
-        ),
-    },
-    {
-      title: "Uyga vazifa",
-      dataIndex: "homeworkScore",
-      key: "homeworkScore",
-      align: "center",
-      render: (score: number, record) =>
-        record.markStatus === "KUNLIK_BAHO" ? (
-          <Text strong style={{ color: "#0891b2" }}>{score}</Text>
-        ) : (
-          <Text type="secondary">—</Text>
-        ),
-    },
-    {
-      title: "Jami ball",
-      key: "totalScore",
-      align: "center",
-      render: (_, record) =>
-        record.markStatus === "IMTIHON_BAHO" ? (
-          <Text strong style={{ color: "#7c3aed", fontSize: 16 }}>
-            {record.totalScore}
-          </Text>
-        ) : (
-          <Text strong>{record.activityScore + record.homeworkScore}</Text>
-        ),
-    },
-    {
-      title: "Holat",
-      dataIndex: "markCategoryStatus",
-      key: "markCategoryStatus",
-      align: "center",
-      render: (status: string) =>
-        status ? (
-          <Tag color={categoryColors[status] || "default"}>
-            {categoryLabels[status] || status}
-          </Tag>
-        ) : (
-          <Text type="secondary">—</Text>
-        ),
-    },
-    {
-      title: "Sana",
-      dataIndex: "markDate",
-      key: "markDate",
-      render: (date: string) =>
-        date ? (
-          <Text type="secondary">{dayjs(date).format("DD.MM.YYYY")}</Text>
-        ) : (
-          <Text type="secondary">—</Text>
-        ),
     },
     {
       title: "Amallar",
       key: "actions",
       align: "center",
+      width: 160,
       render: (_, record) => (
-        <Space>
-          <Tooltip title="Shu o'quvchiga yangi baho qo'shish">
-            <Button
-              size="small"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => handleOpenCreate(record.studentId, record.studentName)}
-              style={{ background: "#4f46e5", borderColor: "#4f46e5" }}
-            >
-              Baho
-            </Button>
-          </Tooltip>
-
-          <Tooltip title="Tahrirlash">
-            <Button size="small" onClick={() => handleOpenEdit(record)}>
-              Tahrirlash
-            </Button>
-          </Tooltip>
-
-          <Popconfirm
-            title="Bahoni o'chirish"
-            description="Haqiqatan ham o'chirmoqchimisiz?"
-            okText="Ha"
-            cancelText="Yo'q"
-            okButtonProps={{ danger: true }}
-            onConfirm={() => deleteAssessment(record.markId)}
+        <Tooltip title="Ushbu o'quvchiga baho qo'yish">
+          <Button
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => handleOpenCreateAssessment(record)}
+            style={{ background: "#4f46e5", borderColor: "#4f46e5" }}
           >
-            <Button size="small" danger loading={isDeleting}>
-              O'chirish
-            </Button>
-          </Popconfirm>
-        </Space>
+            Baho
+          </Button>
+        </Tooltip>
       ),
     },
   ];
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        <Text style={{ fontSize: 15, color: "#6b7280" }}>
-          Jami: <b>{pagination.totalElements}</b> ta baho
+      <div
+        style={{
+          marginBottom: 16,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text strong style={{ fontSize: 16 }}>
+          {groupName
+            ? `${groupName} guruhi o'quvchilari`
+            : "Guruh o'quvchilari"}
+        </Text>
+        <Text style={{ color: "#6b7280" }}>
+          Jami: <b>{students.length}</b> ta o'quvchi
         </Text>
       </div>
 
-      <Table<Assessment>
+      <Table<Student>
         columns={columns}
-        dataSource={assessments}
-        loading={loading}
-        rowKey="markId"
+        dataSource={students}
+        rowKey="id"
+        loading={studentsLoading}
         locale={{
           emptyText: (
             <Empty
-              description="Hozircha baholar yo'q"
+              description={
+                error
+                  ? "Ma'lumotlarni yuklab bo'lmadi"
+                  : studentsLoading
+                    ? "Yuklanmoqda..."
+                    : "Hozircha o'quvchilar yo'q"
+              }
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ),
         }}
-        pagination={{
-          current: pagination.page + 1,
-          pageSize: pagination.size,
-          total: pagination.totalElements,
-          showSizeChanger: true,
-          pageSizeOptions: ["10", "20", "50"],
-          onChange: (p, s) => {
-            setPage(p - 1);
-            setPageSize(s);
-          },
-          showTotal: (total) => `Jami ${total} ta yozuv`,
-        }}
-        scroll={{ x: 900 }}
+        pagination={false}
+        scroll={{ x: "max-content" }}
       />
 
+      {/* Baholar qo'yish modali */}
       <AssessmentFormModal
         open={modalOpen}
         onClose={handleModalClose}
         groupId={groupId}
-        editData={selectedAssessment}
         createStudentId={createStudentId}
         createStudentName={createStudentName}
-        onCreate={createAssessment}
+        onCreate={createAssessment} // API ga yuborish
         isCreating={isCreating}
-        onUpdate={updateAssessment}
+        onUpdate={updateAssessment} // Agar kerak bo'lsa yangilash
         isUpdating={isUpdating}
       />
     </div>
   );
 };
 
-export default AssessmentStudentList;
+export default StudentList;

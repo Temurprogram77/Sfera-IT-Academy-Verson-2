@@ -247,8 +247,8 @@ export default function App() {
             {/* Attendance */}
             <Route path="attendance/:id" element={<Attendance />} />
             <Route path="attendance" element={<AttendanceGroup />} />
-            <Route path="presence/:id" element={<Presence />} />
-            <Route path="presence" element={<PresenceGroup />} />
+            <Route path="presence/:id" element={<PresenceGroup />} />
+            <Route path="presence" element={<Presence />} />
 
             {/* Categories & Groups */}
             <Route path="categories" element={<Categories />} />

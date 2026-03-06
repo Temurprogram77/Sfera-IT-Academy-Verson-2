@@ -5,6 +5,7 @@ interface SSEOptions<T> {
   eventName: string;
   onMessage: (data: T) => void;
   onError?: (error: Event) => void;
+  onOpen?: () => void; // 1. Added onOpen to the interface
 }
 
 export function createSSE<T>({
@@ -12,6 +13,7 @@ export function createSSE<T>({
   eventName,
   onMessage,
   onError,
+  onOpen, // 2. Destructure onOpen
 }: SSEOptions<T>) {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
 
@@ -20,6 +22,11 @@ export function createSSE<T>({
   const fullUrl = token ? `${url}?token=${token}` : url;
 
   const eventSource = new EventSource(fullUrl);
+
+  // 3. Handle the open event
+  eventSource.onopen = () => {
+    onOpen?.();
+  };
 
   eventSource.addEventListener(eventName, (e: MessageEvent) => {
     try {
