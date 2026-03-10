@@ -1,7 +1,7 @@
 export interface TopStudent {
   studentId: number;
   studentName: string;
-  percent: number;
+  totalScore: number;
   imageUrl: string;
 }
 

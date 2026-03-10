@@ -12,7 +12,7 @@ import { useDashboardMetrics } from "../../hooks/useDashboard";
 /* Metric Config Type */
 /* ============================= */
 
-type MetricKey = "countLesson" | "groupCount";
+type MetricKey = "countLesson" | "groupCount" | "studentCount";
 
 type MetricConfig = {
   titleKey: string;
@@ -29,7 +29,7 @@ type MetricConfig = {
 const METRIC_CONFIGS: MetricConfig[] = [
   {
     titleKey: "students",
-    dataKey: "countLesson",
+    dataKey: "studentCount",
     icon: <UsergroupAddOutlined style={{ fontSize: 24, color: "#1AA753" }} />,
     badgeColor: "success",
     format: (v) => v.toLocaleString(),

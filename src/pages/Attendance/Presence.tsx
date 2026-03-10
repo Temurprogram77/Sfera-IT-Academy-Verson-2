@@ -1,288 +1,193 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
+// components/Presence.tsx  (yoki pages/Presence/Presence.tsx)
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Spin, Input, Empty } from 'antd';
 import {
-  Card,
-  Breadcrumb,
-  Spin,
-  Alert,
-  message,
-  Modal,
-  Input,
-  Button,
-} from "antd";
-import {
-  ArrowLeftOutlined,
-  CheckCircleFilled,
-  CloseCircleFilled,
-  ExclamationCircleFilled,
-  LockOutlined,
-} from "@ant-design/icons";
-import dayjs, { Dayjs } from "dayjs";
-import { createSSE } from "../../services/sseService";
-import { useParams, useNavigate } from "react-router-dom";
-import { useGroupDetails } from "../../hooks/useGroups";
+  SearchOutlined,
+  TeamOutlined,
+  UserOutlined,
+  ClockCircleOutlined,
+  RightOutlined,
+  CalendarOutlined,     // davomat uchun mosroq icon
+} from '@ant-design/icons';
+import { useAllGroups } from '../../hooks/useGroups'; // yo'lni loyihangizga moslashtiring
 
-interface AttendanceRecord {
-  id?: number;
-  studentId: number;
-  status: "KELDI" | "KELMADI" | "SABABLI";
-  description?: string | null;
-  date: string;
-}
+const PRIMARY_COLOR = '#00A67D';
 
-export default function Attendance() {
-  const { id } = useParams();
+const getColor = (name: string) => {
+  const colors = [
+    '#00A67D', '#6366f1', '#f59e0b', '#ec4899',
+    '#3b82f6', '#10b981', '#f97316', '#8b5cf6',
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+};
+
+const Presence: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedMonth] = useState<Dayjs>(dayjs());
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
-  const [loadingCell, setLoadingCell] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const { groups, loading, error } = useAllGroups();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCell, setSelectedCell] = useState<{
-    studentId: number;
-    date: Dayjs;
-    status: "KELMADI" | "SABABLI";
-  } | null>(null);
-  const [description, setDescription] = useState("");
+  const filteredGroups = groups.filter(
+    (g) =>
+      g.name.toLowerCase().includes(search.toLowerCase()) ||
+      (g.teacherName || '').toLowerCase().includes(search.toLowerCase()) ||
+      (g.categoryName || '').toLowerCase().includes(search.toLowerCase())
+  );
 
-  const { group, students, loading, error } = useGroupDetails(id!);
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  // ================= SSE =================
-  useEffect(() => {
-    if (!id) return;
-
-    const sse = createSSE({
-      url: `${baseUrl}/attendance/stream/${id}`,
-      eventName: "attendance",
-      onMessage: (data: AttendanceRecord[]) => {
-        setAttendance(data);
-      },
-    });
-
-    return () => sse.close();
-  }, [id]);
-
-  const handleBack = () => navigate("/attendance");
-
-  // ================= MONTH DAYS =================
-  const daysInMonth = useMemo(() => {
-    const start = selectedMonth.startOf("month");
-    const end = selectedMonth.endOf("month");
-    const days: Dayjs[] = [];
-
-    let current = start;
-    while (current.isBefore(end) || current.isSame(end, "day")) {
-      days.push(current);
-      current = current.add(1, "day");
-    }
-
-    return days;
-  }, [selectedMonth]);
-
-  // ================= GET STATUS =================
-  const getStatus = (studentId: number, date: Dayjs) => {
-    const found = attendance.find(
-      (a) =>
-        a.studentId === studentId &&
-        dayjs(a.date).isSame(date, "day")
-    );
-    return found?.status;
-  };
-
-  // ================= OPEN STATUS SELECTOR =================
-  const openSelector = (studentId: number, date: Dayjs) => {
-    if (date.isAfter(dayjs(), "day")) return;
-
-    Modal.confirm({
-      title: "Davomatni tanlang",
-      icon: <ExclamationCircleFilled />,
-      content: (
-        <div className="flex gap-2 mt-4">
-          <Button
-            type="primary"
-            onClick={() => sendAttendance(studentId, date, "KELDI")}
-          >
-            Keldi
-          </Button>
-
-          <Button
-            danger
-            onClick={() => {
-              setSelectedCell({ studentId, date, status: "KELMADI" });
-              setModalOpen(true);
-            }}
-          >
-            Kelmadi
-          </Button>
-
-          <Button
-            onClick={() => {
-              setSelectedCell({ studentId, date, status: "SABABLI" });
-              setModalOpen(true);
-            }}
-          >
-            Sababli
-          </Button>
-        </div>
-      ),
-      footer: null,
-    });
-  };
-
-  // ================= SEND =================
-  const sendAttendance = async (
-    studentId: number,
-    date: Dayjs,
-    status: "KELDI" | "KELMADI" | "SABABLI",
-    desc?: string
-  ) => {
-    if (!id) return;
-
-    const key = `${studentId}-${date.format("YYYY-MM-DD")}`;
-    setLoadingCell(key);
-
-    try {
-      await fetch(`${baseUrl}/attendance?groupId=${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([
-          {
-            studentId,
-            status,
-            description: status === "KELDI" ? null : desc,
-            date: date.format("YYYY-MM-DD"),
-          },
-        ]),
-      });
-
-      message.success("Saqlandi");
-    } catch {
-      message.error("Xatolik yuz berdi");
-    } finally {
-      setLoadingCell(null);
-      setModalOpen(false);
-      setDescription("");
-    }
-  };
-  console.log(attendance);
-  
-  // ================= UI =================
-  if (loading) {
+  if (error) {
     return (
-      <div className="flex justify-center py-20">
-        <Spin size="large" />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 flex items-center justify-center">
+        <div className="text-center text-red-600 dark:text-red-400">
+          Guruhlarni yuklashda xatolik yuz berdi
+          <p className="text-sm mt-2">{error.message}</p>
+        </div>
       </div>
     );
   }
 
-  if (error || !group) {
-    return <Alert type="error" message="Ma'lumot yuklanmadi" />;
-  }
-
   return (
-    <div className="max-w-[1400px] mx-auto p-6">
-      <Breadcrumb
-        items={[
-          {
-            title: (
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-2 text-green-600 font-medium"
-              >
-                <ArrowLeftOutlined />
-                Guruhlar
-              </button>
-            ),
-          },
-          { title: group.name },
-        ]}
-      />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+            <CalendarOutlined style={{ color: PRIMARY_COLOR }} />
+            Davomat / Ishtirok
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Davomatni yuritish uchun kerakli guruhni tanlang
+          </p>
+        </div>
 
-      <Card className="mt-4 overflow-auto">
-        <div className="min-w-[1000px]">
+        {/* Search */}
+        <div className="mb-6 max-w-md">
+          <Input
+            prefix={<SearchOutlined className="text-gray-400" />}
+            placeholder="Guruh, o'qituvchi yoki yo'nalish bo'yicha qidirish..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            size="large"
+            className="rounded-xl shadow-sm"
+            allowClear
+          />
+        </div>
 
-          {/* HEADER */}
-          <div className="grid grid-cols-[250px_repeat(auto-fill,60px)] border-b bg-gray-50">
-            <div className="p-3 font-semibold border-r">
-              O‘quvchilar
-            </div>
-
-            {daysInMonth.map((day) => (
-              <div key={day.toString()} className="p-3 text-center border-r">
-                {day.format("DD")}
-              </div>
-            ))}
+        {/* Content */}
+        {loading ? (
+          <div className="flex justify-center items-center py-32">
+            <Spin size="large" />
           </div>
+        ) : filteredGroups.length === 0 ? (
+          <div className="flex justify-center py-20">
+            <Empty
+              description={
+                search
+                  ? 'Qidiruv bo‘yicha guruh topilmadi'
+                  : 'Hozircha guruhlar mavjud emas'
+              }
+            />
+          </div>
+        ) : (
+          <>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+              {filteredGroups.length} ta guruh topildi
+            </p>
 
-          {/* BODY */}
-          {students.map((student: any, index: number) => (
-            <div
-              key={student.id}
-              className="grid grid-cols-[250px_repeat(auto-fill,60px)] border-b"
-            >
-              <div className="p-3 border-r font-medium">
-                {index + 1}. {student.fullName}
-              </div>
-
-              {daysInMonth.map((day) => {
-                const status = getStatus(student.id, day);
-                const isFuture = day.isAfter(dayjs(), "day");
-                const cellKey = `${student.id}-${day.format("YYYY-MM-DD")}`;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {filteredGroups.map((group) => {
+                const color = getColor(group.name || group.id.toString());
 
                 return (
                   <div
-                    key={day.toString()}
-                    onClick={() => openSelector(student.id, day)}
-                    className={`p-3 flex justify-center items-center border-r
-                    ${!isFuture && "cursor-pointer hover:bg-green-50"}`}
+                    key={group.id}
+                    onClick={() => navigate(`/presence/${group.id}`)} // yoki /attendance/${group.id}
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700 overflow-hidden group hover:-translate-y-1"
                   >
-                    {loadingCell === cellKey ? (
-                      <Spin size="small" />
-                    ) : isFuture ? (
-                      <LockOutlined className="text-gray-400 text-lg" />
-                    ) : status === "KELDI" ? (
-                      <CheckCircleFilled className="text-green-500 text-xl" />
-                    ) : status === "KELMADI" ? (
-                      <CloseCircleFilled className="text-red-500 text-xl" />
-                    ) : status === "SABABLI" ? (
-                      <ExclamationCircleFilled className="text-yellow-500 text-xl" />
-                    ) : (
-                      <span className="text-gray-300 text-lg">—</span>
-                    )}
+                    {/* Rangli chiziq */}
+                    <div className="h-1.5 w-full" style={{ backgroundColor: color }} />
+
+                    <div className="p-5">
+                      {/* Yuqori qism */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0 shadow-sm"
+                            style={{ backgroundColor: color }}
+                          >
+                            {group.name?.charAt(0)?.toUpperCase() || '?'}
+                          </div>
+
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-gray-900 dark:text-white text-base truncate group-hover:text-[#00A67D] transition-colors">
+                              {group.name}
+                            </h3>
+                            {group.categoryName && (
+                              <span
+                                className="text-xs px-2.5 py-0.5 rounded-full text-white font-medium mt-1 inline-block"
+                                style={{ backgroundColor: `${color}cc` }}
+                              >
+                                {group.categoryName}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <RightOutlined
+                          className="text-gray-300 group-hover:text-[#00A67D] transition-colors mt-1.5 flex-shrink-0"
+                          style={{ fontSize: 14 }}
+                        />
+                      </div>
+
+                      {/* Ma'lumotlar */}
+                      <div className="space-y-2.5 text-sm">
+                        <div className="flex items-center gap-2.5 text-gray-600 dark:text-gray-300">
+                          <UserOutlined style={{ color: PRIMARY_COLOR }} />
+                          <span className="truncate">
+                            {group.teacherName || 'O‘qituvchi belgilanmagan'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2.5 text-gray-600 dark:text-gray-300">
+                          <TeamOutlined style={{ color: PRIMARY_COLOR }} />
+                          <span>
+                            {group.studentCount ?? 0} ta o‘quvchi
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2.5 text-gray-600 dark:text-gray-300">
+                          <ClockCircleOutlined style={{ color: PRIMARY_COLOR }} />
+                          <span>
+                            {group.categoryName ?? 0}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Pastki qism */}
+                      <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs">
+                        <span className="text-gray-500 dark:text-gray-400">
+                          Davomat yuritish
+                        </span>
+                        <span
+                          className="font-medium"
+                          style={{ color: PRIMARY_COLOR }}
+                        >
+                          Kirish →
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
             </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* DESCRIPTION MODAL */}
-      <Modal
-        title="Sababni kiriting"
-        open={modalOpen}
-        onOk={() => {
-          if (!description) return message.warning("Sabab yozing");
-
-          if (selectedCell) {
-            sendAttendance(
-              selectedCell.studentId,
-              selectedCell.date,
-              selectedCell.status,
-              description
-            );
-          }
-        }}
-        onCancel={() => setModalOpen(false)}
-      >
-        <Input.TextArea
-          rows={4}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </Modal>
+          </>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default Presence;

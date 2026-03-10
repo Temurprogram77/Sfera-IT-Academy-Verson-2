@@ -9,69 +9,62 @@ interface UseInActivesProps {
 }
 
 const useInActives = ({ name, page, size }: UseInActivesProps) => {
-  const [students, setStudents] = useState<IInactiveStudent[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [allStudents, setAllStudents] = useState<IInactiveStudent[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activatingId, setActivatingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchInactiveStudents = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
-
     try {
       const data = await InActivesService.getAll();
-
-      let filtered = data;
-
-      if (name) {
-        filtered = data.filter(
-          (s) =>
-            s.fulName?.toLowerCase().includes(name.toLowerCase()) ||
-            s.phoneNumber?.includes(name)
-        );
-      }
-
-      setStudents(filtered);
+      setAllStudents(data);
     } catch (err) {
       setError("Ma'lumotlarni yuklab bo'lmadi");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [name]);
+  }, []);
 
   const activateStudent = useCallback(
-  async (studentId: number): Promise<void> => {
-    setActivatingId(studentId);
-    setError(null);
-
-    try {
-      const res = await InActivesService.activate(studentId);
-
-      if (res.success) {
-        await fetchInactiveStudents();
+    async (studentId: number): Promise<void> => {
+      setActivatingId(studentId);
+      setError(null);
+      try {
+        await InActivesService.activate(studentId);
+        const data = await InActivesService.getAll();
+        setAllStudents(data);
+      } catch (err) {
+        setError("Studentni aktivlashtirishda xatolik yuz berdi.");
+      } finally {
+        setActivatingId(null);
       }
-    } catch (err) {
-      setError("Studentni aktivlashtirishda xatolik yuz berdi.");
-    } finally {
-      setActivatingId(null);
-    }
-  },
-  [fetchInactiveStudents]
-);
+    },
+    []
+  );
 
   useEffect(() => {
     fetchInactiveStudents();
   }, [fetchInactiveStudents]);
 
+  const filtered = name
+    ? allStudents.filter(
+        (s) =>
+          s.fulName?.toLowerCase().includes(name.toLowerCase()) ||
+          s.phoneNumber?.includes(name)
+      )
+    : allStudents;
+
   const pagination = {
-    totalElements: students.length,
+    totalElements: filtered.length,
     page,
     size,
   };
 
   return {
-    students: students.slice(page * size, (page + 1) * size),
-    isLoading: loading,
+    students: filtered.slice(page * size, (page + 1) * size),
+    isLoading,
     activatingId,
     pagination,
     error,

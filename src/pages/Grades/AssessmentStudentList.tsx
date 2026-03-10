@@ -167,6 +167,7 @@ const StudentList: React.FC<StudentListProps> = ({ groupId, groupName }) => {
         isCreating={isCreating}
         onUpdate={updateAssessment} // Agar kerak bo'lsa yangilash
         isUpdating={isUpdating}
+        editData={null}
       />
     </div>
   );

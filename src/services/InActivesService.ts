@@ -11,22 +11,18 @@ const InActivesService = {
     const response = await apiClient.get<IInactiveStudentsResponse>(
       API_ENDPOINTS.STUDENT.INACTIVE
     );
-
     return response.data;
   },
 
   activate: async (
     studentId: string | number
   ): Promise<IActivateStudentResponse> => {
-    const response = await apiClient.put<IActivateStudentResponse>(
-      API_ENDPOINTS.STUDENT.INACTIVE_UPDATE(studentId)
+    await apiClient.put(
+      API_ENDPOINTS.STUDENT.INACTIVE_UPDATE(studentId),
+      {}
     );
-
-    if (!response.data) {
-      throw new Error("Aktivlashtirishda response bo‘sh qaytdi");
-    }
-
-    return response.data;
+    // PUT muvaffaqiyatli bo'lsa (xato otmasdan o'tsa), success deb hisoblaymiz
+    return { success: true, message: "Activated" };
   },
 };
 

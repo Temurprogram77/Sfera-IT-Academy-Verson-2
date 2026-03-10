@@ -128,7 +128,7 @@ function PodiumCard({
 
       <div className="mt-7 text-center">
         <p className={m.nameCls}>{firstName}</p>
-        <p className={m.scoreCls}>{student.percent}%</p>
+        <p className={m.scoreCls}>{student.totalScore} Ball</p>
       </div>
 
       <div
@@ -237,13 +237,13 @@ export default function TopStudents() {
                     <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full"
-                        style={{ width: `${student.percent}%` }}
+                        style={{ width: `${student.totalScore}` }}
                       />
                     </div>
                   </div>
 
                   <span className="font-black text-indigo-500 dark:text-indigo-400 text-lg min-w-[52px] text-right">
-                    {student.percent}%
+                    {student.totalScore} Ball
                   </span>
                 </div>
               );
