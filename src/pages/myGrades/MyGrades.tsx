@@ -1,3 +1,5 @@
+// pages/MyGrades.tsx
+
 import React, { useState } from "react";
 import WeeklyGradesCards from "./WeeklyGradesCards";
 import MonthlyGradesCards from "./MonthlyGradesCards";
@@ -8,7 +10,6 @@ const MyGrades = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -20,40 +21,22 @@ const MyGrades = () => {
         </div>
 
         <div className="flex gap-2">
-          <button
-            className={`px-4 py-2 rounded-full font-medium ${
-              view === "weekly"
-                ? "bg-[#03906D] text-white"
-                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
-            }`}
-            onClick={() => setView("weekly")}
-          >
-            Haftalik
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full font-medium ${
-              view === "monthly"
-                ? "bg-[#03906D] text-white"
-                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
-            }`}
-            onClick={() => setView("monthly")}
-          >
-            Oylik
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full font-medium ${
-              view === "yearly"
-                ? "bg-[#03906D] text-white"
-                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
-            }`}
-            onClick={() => setView("yearly")}
-          >
-            Yillik
-          </button>
+          {(["weekly", "monthly", "yearly"] as const).map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-2 rounded-full font-medium ${
+                view === tab
+                  ? "bg-[#03906D] text-white"
+                  : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
+              }`}
+              onClick={() => setView(tab)}
+            >
+              {tab === "weekly" ? "Haftalik" : tab === "monthly" ? "Oylik" : "Yillik"}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Cards + Charts */}
       {view === "weekly" && <WeeklyGradesCards />}
       {view === "monthly" && <MonthlyGradesCards />}
       {view === "yearly" && <YearlyGradesCards />}

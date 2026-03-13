@@ -2,41 +2,73 @@
 
 import { useNavigate } from "react-router-dom";
 import { images } from "../../assets/images";
-import WeeklyGradesChart from "./WeeklyGradesChart";
+import { Bar } from "react-chartjs-2";
+import "./ChartsConfig";
 import { useMark } from "../../hooks/useMyMarks";
 import type { Mark } from "../../types/mark";
 
 const { triangle, circle } = images;
 
-// 🔥 rang — backend status + score
-function getCardColor(status: string, score: number): string {
-  if (status === "YASHIL" || score >= 8)
+function getCardColor(status: string): string {
+  if (status === "YASHIL")
     return "bg-gradient-to-tr from-[#115A14] to-[#34A839] text-white";
-  if (status === "SARIQ" || score >= 5)
+  if (status === "SARIQ")
     return "bg-gradient-to-tr from-[#cdbb00] to-[#9d9000] text-white";
   return "bg-gradient-to-tr from-[#d70000] to-[#830000] text-white";
 }
 
-// 🔥 shakl
-function getShape(score: number): string {
-  return score >= 8 ? triangle : circle;
+function getBg(status: string): string {
+  return status === "YASHIL" ? triangle : circle;
 }
 
-// markStatus label
+function getChartColor(status: string): string {
+  if (status === "YASHIL") return "#228126";
+  if (status === "SARIQ") return "#BDAD02";
+  return "#B30100";
+}
+
 function getMarkStatusLabel(status: string): string {
   switch (status) {
-    case "KUNLIK_BAHO":
-      return "Kunlik";
-    case "IMTIHON_BAHO":
-      return "Imtihon";
-    default:
-      return status;
+    case "KUNLIK_BAHO": return "Kunlik";
+    case "IMTIHON_BAHO": return "Imtihon";
+    default: return status;
   }
+}
+
+function formatDate(dateStr?: string): string {
+  if (!dateStr) return "—";
+  const [, month, day] = dateStr.split("-");
+  return `${day}.${month}`;
 }
 
 export default function WeeklyGradesCards() {
   const navigate = useNavigate();
-  const { marks, loading, error } = useMark({ page: 0, size: 10 });
+  const { marks, loading, error } = useMark({ page: 0, size: 7 });
+
+  const chartData = {
+    labels: marks.map((m) => formatDate(m.markDate)),
+    datasets: [
+      {
+        label: "Baholar",
+        data: marks.map((m) => m.totalScore),
+        backgroundColor: marks.map((m) => getChartColor(m.markCategoryStatus)),
+        borderColor: "#ffffff",
+        borderWidth: 1,
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" as const },
+      title: { display: true, text: "Haftalik Baholar Statistikasi" },
+    },
+    scales: {
+      y: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } },
+    },
+  };
 
   return (
     <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] space-y-6">
@@ -46,78 +78,59 @@ export default function WeeklyGradesCards() {
             Haftalik baholarim
           </h3>
           <p className="text-xs text-gray-500 font-medium">
-            O'tgan haftaning baholari (0–10 ball)
+            O'tgan haftaning baholari (0–5 ball)
           </p>
         </div>
         <button
           onClick={() => navigate("/my-grades")}
-          className="text-xs font-medium text-[#03906D] hover:underline"
+          className="text-xs font-semibold text-[#03906D] hover:underline"
         >
           Batafsil
         </button>
       </div>
 
-      {/* Cards */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4">
           {Array.from({ length: 7 }).map((_, i) => (
             <div
               key={i}
               className="flex flex-col items-center justify-center p-4 rounded-sm bg-gray-100 dark:bg-gray-800 animate-pulse h-24"
             >
-              <div className="h-3 w-16 bg-gray-300 dark:bg-gray-600 rounded mb-2" />
+              <div className="h-2 w-10 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
+              <div className="h-3 w-14 bg-gray-300 dark:bg-gray-600 rounded mb-2" />
               <div className="h-5 w-8 bg-gray-300 dark:bg-gray-600 rounded" />
             </div>
           ))}
         </div>
       ) : error ? (
-        <div className="text-center py-6 text-red-500 text-sm">
-          Xatolik yuz berdi
-        </div>
+        <div className="text-center py-6 text-red-500 text-sm">Xatolik yuz berdi</div>
       ) : marks.length === 0 ? (
-        <div className="text-center py-6 text-gray-400 text-sm">
-          Hozircha baholar yo'q
-        </div>
+        <div className="text-center py-6 text-gray-400 text-sm">Hozircha baholar yo'q</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-7 gap-4">
-          {marks.map((mark: Mark) => {
-            const shape = getShape(mark.totalScore);
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4">
+            {marks.map((mark: Mark) => {
+              const bg = getBg(mark.markCategoryStatus);
+              return (
+                <div
+                  key={mark.markId}
+                  className={`relative overflow-hidden flex flex-col items-center justify-center p-4 rounded-sm shadow-sm ${getCardColor(mark.markCategoryStatus)}`}
+                >
+                  <img className="absolute bottom-0 right-0" src={bg} alt="" />
+                  <img className="absolute -bottom-6 right-0" src={bg} alt="" />
+                  <img className="absolute -bottom-12 right-0" src={bg} alt="" />
+                  <span className="text-[11px] font-medium opacity-80">{formatDate(mark.markDate)}</span>
+                  <span className="text-sm font-medium">{getMarkStatusLabel(mark.markStatus)}</span>
+                  <span className="mt-1 text-lg font-bold">{mark.totalScore}</span>
+                </div>
+              );
+            })}
+          </div>
 
-            return (
-              <div
-                key={mark.markId}
-                className={`overflow-hidden relative flex flex-col items-center justify-center p-4 rounded-sm shadow-sm ${getCardColor(
-                  mark.markCategoryStatus,
-                  mark.totalScore,
-                )}`}
-              >
-                {/* 🔥 shakl */}
-                <img className="absolute bottom-0 right-0" src={shape} alt="" />
-                <img
-                  className="absolute -bottom-6 right-0"
-                  src={shape}
-                  alt=""
-                />
-                <img
-                  className="absolute -bottom-12 right-0"
-                  src={shape}
-                  alt=""
-                />
-
-                <span className="text-sm font-medium">
-                  {getMarkStatusLabel(mark.markStatus)}
-                </span>
-                <span className="mt-2 text-lg font-bold">
-                  {mark.totalScore}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+          {/* Haftalik chart */}
+          <Bar data={chartData} options={chartOptions} />
+        </>
       )}
-
-      {/* Chart */}
-      <WeeklyGradesChart />
     </div>
   );
 }
